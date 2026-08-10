@@ -1,0 +1,47 @@
+<section class="admin-shell">
+  <aside class="admin-sidebar" [class.admin-sidebar--open]="menuOpen()">
+    <div class="admin-sidebar__heading">
+      <span>meumip</span>
+      <small>studio admin</small>
+    </div>
+
+    <nav aria-label="Điều hướng quản trị">
+      <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h6V4H4v9Zm0 7h6v-4H4v4Zm10 0h6v-9h-6v9Zm0-16v4h6V4h-6Z" /></svg>
+        Tổng quan
+      </a>
+      <a routerLink="/admin/products" routerLinkActive="active" (click)="closeMenu()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 8-4 8 4-8 4-8-4Zm0 5 8 4 8-4M4 17l8 4 8-4" /></svg>
+        Sản phẩm
+      </a>
+      <a routerLink="/admin/orders" routerLinkActive="active" (click)="closeMenu()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12l2 4v14H4V7l2-4Zm-2 4h16M9 11a3 3 0 0 0 6 0" /></svg>
+        Đơn hàng
+      </a>
+    </nav>
+
+    <div class="admin-sidebar__footer">
+      <a routerLink="/" target="_blank">Xem cửa hàng <span>↗</span></a>
+      @if (authStore.user(); as user) {
+        <div class="admin-user">
+          <span>{{ user.displayName.charAt(0).toUpperCase() }}</span>
+          <div><strong>{{ user.displayName }}</strong><small>{{ user.email }}</small></div>
+        </div>
+      }
+      <button class="admin-logout" type="button" (click)="logout()">Đăng xuất</button>
+    </div>
+  </aside>
+
+  @if (menuOpen()) {
+    <button class="sidebar-backdrop" type="button" (click)="closeMenu()" aria-label="Đóng menu"></button>
+  }
+
+  <div class="admin-main">
+    <header class="admin-mobile-header">
+      <button type="button" (click)="menuOpen.set(true)" aria-label="Mở menu quản trị">☰</button>
+      <strong>studio admin</strong>
+      <a routerLink="/">↗</a>
+    </header>
+    <router-outlet />
+  </div>
+</section>

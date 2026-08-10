@@ -1,0 +1,34 @@
+<section class="orders-page">
+  <app-page-header eyebrow="your lovely parcels" title="Đơn hàng của bạn" description="Theo dõi hành trình của những món đồ nhỏ đang được meumip chuẩn bị." />
+
+  @if (error()) {
+    <div class="orders-feedback"><app-feedback-banner tone="error" [message]="error()!" /><button class="button button--secondary" type="button" (click)="load()">Thử lại</button></div>
+  } @else if (loading()) {
+    <div class="orders-loading"><span></span><span></span><span></span></div>
+  } @else if (orders().length) {
+    <div class="order-list">
+      @for (order of orders(); track order.id) {
+        <a class="order-card" [routerLink]="['/orders', order.orderCode]">
+          <div class="order-card__heading">
+            <div><small>Mã đơn</small><strong>#{{ order.orderCode }}</strong></div>
+            <time>{{ order.createdAt | date: 'dd/MM/yyyy' }}</time>
+          </div>
+          <div class="order-card__body">
+            <div><small>Người nhận</small><span>{{ order.recipientName }}</span></div>
+            <div><small>Sản phẩm</small><span>{{ order.items.length }} dòng · {{ order.items[0]?.productName }}</span></div>
+            <div><small>Tổng cộng</small><b>{{ formatVnd(order.totalVnd) }}</b></div>
+          </div>
+          <div class="order-card__footer">
+            <span class="status" [attr.data-status]="order.orderStatus">{{ orderStatusLabel(order.orderStatus) }}</span>
+            <span class="payment">{{ paymentStatusLabel(order.paymentStatus) }}</span>
+            <b>Xem chi tiết →</b>
+          </div>
+        </a>
+      }
+    </div>
+  } @else {
+    <app-empty-state icon="♡" title="Bạn chưa có đơn hàng" message="Khi bạn đặt món đầu tiên, hành trình của đơn sẽ xuất hiện ở đây.">
+      <a class="button button--primary" routerLink="/products">Dạo quanh tiệm</a>
+    </app-empty-state>
+  }
+</section>

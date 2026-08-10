@@ -1,0 +1,35 @@
+.feedback {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border: 1px dashed currentColor;
+  border-radius: 14px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+
+  &__icon {
+    display: grid;
+    width: 1.35rem;
+    height: 1.35rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 50%;
+    font-weight: 800;
+  }
+
+  &--info {
+    background: var(--pink-soft);
+    color: var(--berry);
+  }
+
+  &--success {
+    background: var(--sage-soft);
+    color: #58705d;
+  }
+
+  &--error {
+    background: #fff0ee;
+    color: #9c4f4f;
+  }
+}

@@ -1,0 +1,49 @@
+<section class="login-page">
+  <div class="login-art" aria-hidden="true">
+    <span class="art-sparkle art-sparkle--one">✦</span>
+    <span class="art-sparkle art-sparkle--two">♡</span>
+    <div class="art-sticker"><span>join</span><strong>meumip!</strong></div>
+    <p>một tài khoản nhỏ để giữ lại những đơn hàng đáng yêu</p>
+  </div>
+
+  <div class="login-panel">
+    <a class="back-link" routerLink="/"><span>←</span> Quay về tiệm</a>
+    <div class="login-heading">
+      <p>new friend</p>
+      <h1>Đăng ký</h1>
+      <div>Tạo tài khoản để theo dõi các món đồ đang được meumip chuẩn bị cho bạn.</div>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="submit()" novalidate>
+      <label class="field">
+        <span>Tên hiển thị</span>
+        <input formControlName="displayName" autocomplete="name" placeholder="Tên của bạn" />
+        @if (registerForm.controls.displayName.invalid && registerForm.controls.displayName.touched) { <small>Vui lòng nhập tên hiển thị.</small> }
+      </label>
+      <label class="field">
+        <span>Email</span>
+        <input type="email" formControlName="email" autocomplete="email" placeholder="hello@example.com" />
+        @if (registerForm.controls.email.invalid && registerForm.controls.email.touched) { <small>Vui lòng nhập một địa chỉ email hợp lệ.</small> }
+      </label>
+      <label class="field">
+        <span>Mật khẩu</span>
+        <div class="password-input">
+          <input [type]="passwordVisible() ? 'text' : 'password'" formControlName="password" autocomplete="new-password" placeholder="Tối thiểu 8 ký tự" />
+          <button type="button" (click)="togglePassword()">{{ passwordVisible() ? 'Ẩn' : 'Hiện' }}</button>
+        </div>
+        @if (registerForm.controls.password.invalid && registerForm.controls.password.touched) { <small>Mật khẩu cần có từ 8 đến 100 ký tự.</small> }
+      </label>
+      <label class="field">
+        <span>Xác nhận mật khẩu</span>
+        <input [type]="passwordVisible() ? 'text' : 'password'" formControlName="confirmPassword" autocomplete="new-password" placeholder="Nhập lại mật khẩu" />
+        @if (registerForm.controls.confirmPassword.invalid && registerForm.controls.confirmPassword.touched) { <small>Mật khẩu xác nhận chưa khớp.</small> }
+      </label>
+
+      @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }
+      <button class="button button--primary login-button" type="submit" [disabled]="submitting()">
+        {{ submitting() ? 'Đang tạo tài khoản...' : 'Tạo tài khoản ♡' }}
+      </button>
+    </form>
+    <p class="privacy-note">Đã có tài khoản? <a routerLink="/login">Đăng nhập tại đây</a>.</p>
+  </div>
+</section>

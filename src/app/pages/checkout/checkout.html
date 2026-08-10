@@ -1,0 +1,141 @@
+<section class="checkout-page">
+  @if (result(); as checkout) {
+    <div class="order-success">
+      <div class="success-mark" aria-hidden="true">♡</div>
+      <p class="success-eyebrow">order received</p>
+      <h1>Cảm ơn bạn!</h1>
+      <p>
+        Đơn <strong>{{ checkout.order.orderCode }}</strong> đã được meumip ghi nhận. Thông tin đơn hàng được gửi tới
+        {{ checkout.order.customerEmail }}.
+      </p>
+
+      <div class="payment-card">
+        @if (checkout.payment.qrImageUrl) {
+          <img [src]="checkout.payment.qrImageUrl" alt="Mã VietQR thanh toán đơn hàng" />
+        }
+        <div>
+          <p class="payment-label">Thanh toán chuyển khoản</p>
+          <h2>{{ formatVnd(checkout.payment.amountVnd) }}</h2>
+          <dl>
+            <div><dt>Ngân hàng</dt><dd>{{ checkout.payment.bankCode }}</dd></div>
+            <div><dt>Số tài khoản</dt><dd>{{ checkout.payment.bankAccountNumber || 'Đang cập nhật' }}</dd></div>
+            <div><dt>Chủ tài khoản</dt><dd>{{ checkout.payment.bankAccountName || 'Đang cập nhật' }}</dd></div>
+            <div><dt>Nội dung</dt><dd><strong>{{ checkout.payment.transferContent }}</strong></dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <a class="button button--primary" routerLink="/products">Tiếp tục xem tiệm</a>
+    </div>
+  } @else {
+    <app-page-header
+      eyebrow="almost yours"
+      title="Thanh toán"
+      description="Điền thông tin nhận hàng, meumip sẽ chuẩn bị từng món thật cẩn thận cho bạn."
+    />
+
+    @if (cartStore.cart()?.items?.length) {
+      <div class="checkout-layout">
+        <form class="checkout-form" [formGroup]="checkoutForm" (ngSubmit)="submit()" novalidate>
+          <fieldset formGroupName="customer">
+            <legend><span>01</span> Thông tin của bạn</legend>
+            <div class="field-grid">
+              <label class="field field--wide">
+                <span>Email <em>*</em></span>
+                <input type="email" formControlName="email" autocomplete="email" placeholder="hello@example.com" />
+                @if (isInvalid('customer', 'email')) { <small>Nhập một địa chỉ email hợp lệ.</small> }
+              </label>
+              <label class="field">
+                <span>Người nhận <em>*</em></span>
+                <input type="text" formControlName="recipientName" autocomplete="name" placeholder="Tên người nhận" />
+                @if (isInvalid('customer', 'recipientName')) { <small>Vui lòng nhập tên người nhận.</small> }
+              </label>
+              <label class="field">
+                <span>Số điện thoại <em>*</em></span>
+                <input type="tel" formControlName="recipientPhone" autocomplete="tel" placeholder="09xx xxx xxx" />
+                @if (isInvalid('customer', 'recipientPhone')) { <small>Vui lòng nhập số điện thoại.</small> }
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset formGroupName="address">
+            <legend><span>02</span> Địa chỉ nhận hàng</legend>
+            <div class="field-grid">
+              <label class="field">
+                <span>Tỉnh / Thành phố <em>*</em></span>
+                <input type="text" formControlName="province" autocomplete="address-level1" placeholder="TP. Hồ Chí Minh" />
+                @if (isInvalid('address', 'province')) { <small>Vui lòng nhập tỉnh hoặc thành phố.</small> }
+              </label>
+              <label class="field">
+                <span>Quận / Huyện</span>
+                <input type="text" formControlName="district" autocomplete="address-level2" placeholder="Quận / Huyện" />
+              </label>
+              <label class="field">
+                <span>Phường / Xã</span>
+                <input type="text" formControlName="ward" autocomplete="address-level3" placeholder="Phường / Xã" />
+              </label>
+              <label class="field">
+                <span>Mã bưu chính</span>
+                <input type="text" formControlName="postalCode" autocomplete="postal-code" placeholder="Nếu có" />
+              </label>
+              <label class="field field--wide">
+                <span>Địa chỉ chi tiết <em>*</em></span>
+                <input type="text" formControlName="addressLine" autocomplete="street-address" placeholder="Số nhà, tên đường..." />
+                @if (isInvalid('address', 'addressLine')) { <small>Vui lòng nhập địa chỉ chi tiết.</small> }
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend><span>03</span> Ghi chú</legend>
+            <label class="field">
+              <span>Lời nhắn cho meumip</span>
+              <textarea formControlName="customerNote" rows="4" placeholder="Bạn muốn nhắn tụi mình điều gì không?"></textarea>
+            </label>
+            <label class="check-field">
+              <input type="checkbox" formControlName="saveAddress" />
+              <span>Lưu địa chỉ nếu bạn đang đăng nhập</span>
+            </label>
+          </fieldset>
+
+          @if (error()) {
+            <app-feedback-banner tone="error" [message]="error()!" />
+          }
+
+          <button class="button button--primary submit-button" type="submit" [disabled]="submitting()">
+            {{ submitting() ? 'Đang tạo đơn...' : 'Hoàn tất đặt hàng' }} <span>♡</span>
+          </button>
+        </form>
+
+        <aside class="order-summary">
+          <p class="summary-eyebrow">your order</p>
+          <h2>Đơn của bạn</h2>
+          <div class="summary-items">
+            @for (item of cartStore.cart()!.items; track item.id) {
+              <div class="summary-item">
+                <div class="summary-image">
+                  <img appImageFallback [src]="item.imageUrl || '/images/product-placeholder.svg'" [alt]="item.productName" />
+                  <span>{{ item.quantity }}</span>
+                </div>
+                <div><strong>{{ item.productName }}</strong><small>{{ formatVnd(item.unitPriceVnd) }}</small></div>
+                <b>{{ formatVnd(item.lineTotalVnd) }}</b>
+              </div>
+            }
+          </div>
+          <dl>
+            <div><dt>Tạm tính</dt><dd>{{ formatVnd(cartStore.cart()!.subtotalVnd) }}</dd></div>
+            <div><dt>Phí giao hàng</dt><dd>Theo backend</dd></div>
+            <div class="summary-total"><dt>Tổng tạm tính</dt><dd>{{ formatVnd(cartStore.cart()!.subtotalVnd) }}</dd></div>
+          </dl>
+          <p class="secure-note">✦ Thanh toán chuyển khoản VietQR sau khi tạo đơn.</p>
+        </aside>
+      </div>
+    } @else if (cartStore.loading()) {
+      <div class="checkout-loading">Đang kiểm tra giỏ hàng...</div>
+    } @else {
+      <app-empty-state icon="♡" title="Chưa có gì để thanh toán" message="Thêm sản phẩm vào giỏ trước nhé.">
+        <a class="button button--primary" routerLink="/products">Xem sản phẩm</a>
+      </app-empty-state>
+    }
+  }
+</section>

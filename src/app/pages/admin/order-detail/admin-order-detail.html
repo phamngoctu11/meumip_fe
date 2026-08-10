@@ -1,0 +1,90 @@
+<div class="admin-page">
+  <a class="back-link" routerLink="/admin/orders">← Quay lại danh sách đơn</a>
+
+  @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }
+  @if (success()) { <app-feedback-banner tone="success" [message]="success()!" /> }
+
+  @if (loading()) {
+    <div class="detail-loading"><span></span><span></span><span></span></div>
+  } @else if (order(); as currentOrder) {
+    <header class="order-heading">
+      <div>
+        <p>order detail</p>
+        <h1>#{{ currentOrder.orderCode }}</h1>
+        <span>Tạo lúc {{ currentOrder.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+      <div class="heading-statuses">
+        <span class="status-badge" [attr.data-status]="currentOrder.paymentStatus">{{ paymentStatusLabel(currentOrder.paymentStatus) }}</span>
+        <span class="status-badge" [attr.data-status]="currentOrder.orderStatus">{{ orderStatusLabel(currentOrder.orderStatus) }}</span>
+      </div>
+    </header>
+
+    <div class="detail-layout">
+      <div class="detail-main">
+        <section class="admin-card">
+          <div class="card-heading"><h2>Sản phẩm</h2><span>{{ currentOrder.items.length }} dòng</span></div>
+          <div class="order-items">
+            @for (item of currentOrder.items; track item.id) {
+              <article>
+                <img appImageFallback [src]="item.productImageUrl || '/images/product-placeholder.svg'" [alt]="item.productName" />
+                <div><strong>{{ item.productName }}</strong><small>{{ formatVnd(item.unitPriceVnd) }} × {{ item.quantity }}</small></div>
+                <b>{{ formatVnd(item.lineTotalVnd) }}</b>
+              </article>
+            }
+          </div>
+          <dl class="totals">
+            <div><dt>Tạm tính</dt><dd>{{ formatVnd(currentOrder.subtotalVnd) }}</dd></div>
+            <div><dt>Phí giao hàng</dt><dd>{{ formatVnd(currentOrder.shippingFeeVnd) }}</dd></div>
+            @if (currentOrder.discountVnd) { <div><dt>Giảm giá</dt><dd>− {{ formatVnd(currentOrder.discountVnd) }}</dd></div> }
+            <div class="total"><dt>Tổng cộng</dt><dd>{{ formatVnd(currentOrder.totalVnd) }}</dd></div>
+          </dl>
+        </section>
+
+        <section class="admin-card customer-card">
+          <div class="card-heading"><h2>Khách hàng & giao hàng</h2></div>
+          <div class="customer-grid">
+            <div><small>Người nhận</small><strong>{{ currentOrder.recipientName }}</strong></div>
+            <div><small>Số điện thoại</small><a [href]="'tel:' + currentOrder.recipientPhone">{{ currentOrder.recipientPhone }}</a></div>
+            <div><small>Email</small><a [href]="'mailto:' + currentOrder.customerEmail">{{ currentOrder.customerEmail }}</a></div>
+            <div class="address"><small>Địa chỉ nhận hàng</small><strong>{{ currentOrder.shippingAddress }}</strong></div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="detail-actions">
+        <form class="admin-card action-card" [formGroup]="statusForm" (ngSubmit)="updateStatus()">
+          <div class="card-heading"><h2>Cập nhật đơn</h2></div>
+          <label>Trạng thái
+            <select formControlName="status">
+              @for (status of orderStatuses; track status.value) { <option [value]="status.value">{{ status.label }}</option> }
+            </select>
+          </label>
+          <label>Ghi chú nội bộ
+            <textarea rows="4" formControlName="note" placeholder="Lý do hoặc ghi chú cho lần cập nhật..."></textarea>
+          </label>
+          <button class="admin-button" type="submit" [disabled]="savingStatus()">
+            {{ savingStatus() ? 'Đang lưu...' : 'Lưu trạng thái' }}
+          </button>
+        </form>
+
+        <form class="admin-card action-card payment-card" [formGroup]="paymentForm" (ngSubmit)="confirmPayment()">
+          <div class="card-heading"><h2>Xác nhận thanh toán</h2></div>
+          @if (currentOrder.paymentStatus === 'PAID') {
+            <div class="paid-note">✓ Đơn này đã được xác nhận thanh toán.</div>
+          } @else {
+            <p>Dùng sau khi đã đối soát giao dịch trong tài khoản ngân hàng.</p>
+            <label>Mã giao dịch (không bắt buộc)
+              <input formControlName="providerTransactionId" placeholder="VD: FT240804123456" />
+            </label>
+            <label>Dữ liệu đối soát (không bắt buộc)
+              <textarea rows="3" formControlName="providerPayload" placeholder="Nội dung hoặc dữ liệu từ ngân hàng..."></textarea>
+            </label>
+            <button class="admin-button payment-button" type="submit" [disabled]="confirmingPayment()">
+              {{ confirmingPayment() ? 'Đang xác nhận...' : 'Xác nhận đã thanh toán' }}
+            </button>
+          }
+        </form>
+      </aside>
+    </div>
+  }
+</div>

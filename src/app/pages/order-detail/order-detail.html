@@ -1,0 +1,47 @@
+<section class="order-page">
+  <a class="back-link" routerLink="/orders">← Tất cả đơn hàng</a>
+
+  @if (error()) {
+    <div class="order-feedback"><app-feedback-banner tone="error" [message]="error()!" /><button type="button" class="button button--secondary" (click)="load()">Thử lại</button></div>
+  } @else if (loading()) {
+    <div class="order-loading"><span></span><span></span></div>
+  } @else if (order(); as currentOrder) {
+    <header class="order-heading">
+      <div><p>your order</p><h1>#{{ currentOrder.orderCode }}</h1><span>Đặt lúc {{ currentOrder.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span></div>
+      <div class="status-group"><span [attr.data-status]="currentOrder.orderStatus">{{ orderStatusLabel(currentOrder.orderStatus) }}</span><small>{{ paymentStatusLabel(currentOrder.paymentStatus) }}</small></div>
+    </header>
+
+    <div class="order-grid">
+      <section class="order-card">
+        <div class="card-heading"><h2>Những món bạn đã chọn</h2><span>{{ currentOrder.items.length }} dòng sản phẩm</span></div>
+        <div class="items">
+          @for (item of currentOrder.items; track item.id) {
+            <article>
+              @if (item.productSlug) {
+                <a [routerLink]="['/products', item.productSlug]"><img appImageFallback [src]="item.productImageUrl || '/images/product-placeholder.svg'" [alt]="item.productName" /></a>
+              } @else {
+                <img appImageFallback [src]="item.productImageUrl || '/images/product-placeholder.svg'" [alt]="item.productName" />
+              }
+              <div><strong>{{ item.productName }}</strong><span>{{ formatVnd(item.unitPriceVnd) }} × {{ item.quantity }}</span></div>
+              <b>{{ formatVnd(item.lineTotalVnd) }}</b>
+            </article>
+          }
+        </div>
+        <dl class="totals">
+          <div><dt>Tạm tính</dt><dd>{{ formatVnd(currentOrder.subtotalVnd) }}</dd></div>
+          <div><dt>Phí giao hàng</dt><dd>{{ formatVnd(currentOrder.shippingFeeVnd) }}</dd></div>
+          @if (currentOrder.discountVnd) { <div><dt>Giảm giá</dt><dd>− {{ formatVnd(currentOrder.discountVnd) }}</dd></div> }
+          <div class="total"><dt>Tổng cộng</dt><dd>{{ formatVnd(currentOrder.totalVnd) }}</dd></div>
+        </dl>
+      </section>
+
+      <aside>
+        <section class="order-card address-card">
+          <div class="card-heading"><h2>Thông tin nhận hàng</h2></div>
+          <dl><div><dt>Người nhận</dt><dd>{{ currentOrder.recipientName }}</dd></div><div><dt>Điện thoại</dt><dd>{{ currentOrder.recipientPhone }}</dd></div><div><dt>Email</dt><dd>{{ currentOrder.customerEmail }}</dd></div><div><dt>Địa chỉ</dt><dd>{{ currentOrder.shippingAddress }}</dd></div></dl>
+        </section>
+        <div class="help-note"><span>♡</span><div><strong>Cần meumip hỗ trợ?</strong><p>Nhắn cho tụi mình và nhớ gửi kèm mã đơn <b>#{{ currentOrder.orderCode }}</b> nhé.</p><a routerLink="/contact">Liên hệ meumip →</a></div></div>
+      </aside>
+    </div>
+  }
+</section>

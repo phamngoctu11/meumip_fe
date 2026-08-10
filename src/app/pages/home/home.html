@@ -1,0 +1,68 @@
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-doodle hero-doodle--left" aria-hidden="true">♡</div>
+  <div class="hero-doodle hero-doodle--right" aria-hidden="true">✦</div>
+  <div class="hero-doodle hero-doodle--tiny" aria-hidden="true">✧</div>
+
+  <p class="hero-eyebrow">fanart keychains, handmade by</p>
+  <h1 id="hero-title">meumip</h1>
+  <p class="hero-copy">Những món đồ be bé được làm chậm rãi, dịu dàng và có một chút phép màu.</p>
+  <a class="hero-cta" href="#featured-products">
+    Xem collection
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5" /></svg>
+  </a>
+
+  <div class="hero-ribbon" aria-hidden="true">
+    <span>made with care</span><span>✿</span><span>packed with love</span><span>✦</span>
+  </div>
+</section>
+
+<section id="featured-products" class="products-section" aria-labelledby="featured-title">
+  <header class="section-heading">
+    <div>
+      <p class="eyebrow">meumip's picks</p>
+      <h2 id="featured-title">Lovely things</h2>
+    </div>
+    <p>Mỗi sản phẩm mang dấu vết riêng của đôi tay làm ra nó — không chiếc nào giống hệt chiếc nào.</p>
+  </header>
+
+  @if (previewMode()) {
+    <app-feedback-banner message="Backend chưa phản hồi, đang hiển thị dữ liệu mẫu để xem trước giao diện." />
+  }
+
+  @if (loading()) {
+    <div class="product-grid" aria-label="Đang tải sản phẩm">
+      @for (item of [1, 2, 3]; track item) {
+        <div class="product-skeleton">
+          <div></div>
+          <span></span>
+          <small></small>
+        </div>
+      }
+    </div>
+  } @else if (products().length) {
+    <div class="product-grid">
+      @for (product of products(); track product.id; let index = $index) {
+        <app-product-card [product]="product" [animationDelay]="index * 80" />
+      }
+    </div>
+  } @else {
+    <app-empty-state title="Tiệm đang chuẩn bị sản phẩm mới" message="Ghé lại một chút nữa nha!" />
+  }
+</section>
+
+<section class="maker-note">
+  <div class="maker-visual" aria-hidden="true">
+    <span class="maker-heart">♥</span>
+    <span class="maker-stitch">handmade</span>
+    <span class="maker-flower">✿</span>
+  </div>
+  <div class="maker-copy">
+    <p class="eyebrow">from our tiny desk</p>
+    <h2>Made slowly,<br />loved for a long time.</h2>
+    <p>
+      Từ tạo hình đến đóng gói, từng công đoạn đều được meumip làm bằng tay. Những khác biệt nho nhỏ
+      chính là nét duyên riêng của mỗi bé.
+    </p>
+    <a routerLink="/contact" class="text-link">Chuyện trò với meumip <span>→</span></a>
+  </div>
+</section>

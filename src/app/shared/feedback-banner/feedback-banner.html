@@ -1,0 +1,4 @@
+<div class="feedback" [class]="'feedback feedback--' + tone()" [attr.role]="role()">
+  <span class="feedback__icon" aria-hidden="true">{{ icon() }}</span>
+  <span>{{ message() }}</span>
+</div>

@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700;800&family=Modak&family=Nunito:wght@600;700;800;900&display=swap');
+
+:root {
+  --cream: #fffdfb;
+  --cream-deep: #fff7f1;
+  --cocoa: #9b7044;
+  --caramel: #bd835f;
+  --caramel-dark: #a96f4d;
+  --berry: #a65e7b;
+  --pink: #ea9fc2;
+  --pink-strong: #df78aa;
+  --pink-soft: #fbe7f0;
+  --sage: #9db89f;
+  --sage-soft: #edf5eb;
+  --lavender: #a893bd;
+  --lavender-soft: #f1ebf5;
+  --sand: #e8d2c1;
+  --muted: #8f7768;
+  --font-display: 'Modak', 'Arial Rounded MT Bold', cursive;
+  --font-rounded: 'Nunito', 'Arial Rounded MT Bold', sans-serif;
+  --font-body: 'Karla', Arial, sans-serif;
+  --shadow-soft: 0 18px 55px rgba(122, 82, 57, 0.12);
+  color-scheme: light;
+  font-family: var(--font-body);
+  font-synthesis: none;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: clip;
+  background: var(--cream);
+  color: var(--caramel-dark);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a,
+button,
+input,
+textarea {
+  &:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--pink-strong) 45%, transparent);
+    outline-offset: 3px;
+  }
+}
+
+.button {
+  display: inline-flex;
+  min-height: 52px;
+  width: max-content;
+  max-width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.8rem 1.4rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 800;
+  text-align: center;
+  text-decoration: none;
+  transition: background 160ms ease, color 160ms ease, border-color 160ms ease, transform 160ms ease,
+    box-shadow 160ms ease;
+
+  &--primary {
+    background: var(--cocoa);
+    box-shadow: 0 6px 0 var(--caramel-dark);
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: var(--pink-strong);
+      box-shadow: 0 6px 0 var(--berry);
+      transform: translateY(-2px);
+    }
+
+    &:active:not(:disabled) {
+      box-shadow: 0 2px 0 var(--berry);
+      transform: translateY(3px);
+    }
+  }
+
+  &--secondary {
+    border-color: var(--sand);
+    background: white;
+    color: var(--caramel-dark);
+
+    &:hover:not(:disabled) {
+      border-color: var(--pink);
+      background: var(--pink-soft);
+      color: var(--berry);
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

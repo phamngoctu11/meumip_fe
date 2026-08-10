@@ -1,0 +1,39 @@
+<div class="admin-page">
+  <header class="admin-page-header">
+    <div><p>studio overview</p><h1>Tổng quan</h1><span>Mọi thứ đang diễn ra trong tiệm hôm nay.</span></div>
+    <a class="admin-primary-action" routerLink="/admin/products/new">+ Thêm sản phẩm</a>
+  </header>
+
+  @if (error()) {
+    <app-feedback-banner tone="error" [message]="error()!" />
+  }
+
+  @if (loading()) {
+    <div class="stats-grid stats-grid--loading"><span></span><span></span><span></span><span></span></div>
+  } @else {
+    <section class="stats-grid" aria-label="Thống kê cửa hàng">
+      <article><small>Tổng sản phẩm</small><strong>{{ products().length }}</strong><span>{{ activeProducts() }} đang bán</span></article>
+      <article><small>Tổng đơn hàng</small><strong>{{ orders().length }}</strong><span>{{ pendingOrders() }} cần xử lý</span></article>
+      <article><small>Doanh thu đã trả</small><strong class="stat-money">{{ formatVnd(paidRevenue()) }}</strong><span>Từ đơn đã thanh toán</span></article>
+      <article><small>Đơn chờ xác nhận</small><strong>{{ awaitingPaymentConfirmation() }}</strong><span>Kiểm tra chuyển khoản</span></article>
+    </section>
+
+    <section class="dashboard-section">
+      <div class="section-title"><div><p>recent activity</p><h2>Đơn hàng gần đây</h2></div><a routerLink="/admin/orders">Xem tất cả →</a></div>
+      @if (orders().length) {
+        <div class="recent-orders">
+          @for (order of orders().slice(0, 5); track order.id) {
+            <a [routerLink]="['/admin/orders', order.id]">
+              <div><strong>#{{ order.orderCode }}</strong><span>{{ order.recipientName }} · {{ order.customerEmail }}</span></div>
+              <b>{{ formatVnd(order.totalVnd) }}</b>
+              <small [attr.data-status]="order.orderStatus">{{ orderStatusLabel(order.orderStatus) }}</small>
+              <span>→</span>
+            </a>
+          }
+        </div>
+      } @else {
+        <div class="dashboard-empty">Chưa có đơn hàng nào.</div>
+      }
+    </section>
+  }
+</div>

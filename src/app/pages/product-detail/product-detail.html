@@ -1,0 +1,108 @@
+<div class="page-shell">
+  <a class="back-link" routerLink="/products"><span>←</span> Quay lại tiệm</a>
+
+  @if (loading()) {
+    <div class="detail-skeleton" aria-label="Đang tải sản phẩm">
+      <div class="detail-skeleton__image"></div>
+      <div class="detail-skeleton__copy"><span></span><span></span><span></span></div>
+    </div>
+  } @else if (product(); as item) {
+    @if (previewMode()) {
+      <app-feedback-banner message="Đang xem dữ liệu mẫu vì backend chưa phản hồi." />
+    }
+
+    <article class="product-detail">
+      <div class="gallery">
+        <div class="gallery-main">
+          <img
+            appImageFallback
+            [src]="item.images[selectedImage()]?.imageUrl || item.primaryImageUrl || '/images/product-placeholder.svg'"
+            [alt]="item.images[selectedImage()]?.altText || item.name"
+          />
+          @if (item.madeToOrder) {
+            <span class="made-label">made to order</span>
+          }
+        </div>
+
+        @if (item.images.length > 1) {
+          <div class="gallery-thumbs" aria-label="Ảnh sản phẩm">
+            @for (image of item.images; track image.id; let index = $index) {
+              <button
+                type="button"
+                [class.active]="selectedImage() === index"
+                (click)="selectImage(index)"
+                [attr.aria-label]="'Xem ảnh ' + (index + 1)"
+              >
+                <img appImageFallback [src]="image.imageUrl" [alt]="image.altText || item.name" />
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="product-copy">
+        <p class="eyebrow">handmade little thing</p>
+        <h1>{{ item.name }}</h1>
+        <p class="price">{{ formatVnd(item.priceVnd) }}</p>
+        @if (item.shortDescription) {
+          <p class="short-description">{{ item.shortDescription }}</p>
+        }
+
+        <div class="divider"><span>✿</span></div>
+
+        @if (item.description) {
+          <p class="description">{{ item.description }}</p>
+        }
+
+        <dl class="product-notes">
+          @if (item.materialNote) {
+            <div><dt>Chất liệu</dt><dd>{{ item.materialNote }}</dd></div>
+          }
+          @if (item.sizeNote) {
+            <div><dt>Kích thước</dt><dd>{{ item.sizeNote }}</dd></div>
+          }
+          @if (item.madeToOrder && item.productionMinDays) {
+            <div>
+              <dt>Thời gian làm</dt>
+              <dd>{{ item.productionMinDays }}–{{ item.productionMaxDays || item.productionMinDays }} ngày</dd>
+            </div>
+          }
+          @if (item.shippingNote) {
+            <div><dt>Giao hàng</dt><dd>{{ item.shippingNote }}</dd></div>
+          }
+        </dl>
+
+        <form class="buy-row" [formGroup]="purchaseForm" (ngSubmit)="addToCart()">
+          <app-quantity-stepper
+            formControlName="quantity"
+            [disabled]="cartStore.loading()"
+          />
+          <button
+            class="add-button"
+            type="submit"
+            [disabled]="cartStore.loading() || item.status !== 'ACTIVE'"
+          >
+            @if (cartStore.loading()) {
+              Đang thêm...
+            } @else if (item.status !== 'ACTIVE') {
+              Tạm hết hàng
+            } @else {
+              Thêm vào giỏ <span>♡</span>
+            }
+          </button>
+        </form>
+
+        @if (added()) {
+          <app-feedback-banner tone="success" message="Đã thêm bé này vào giỏ hàng rồi nhé!" />
+        }
+        @if (cartStore.error()) {
+          <app-feedback-banner tone="error" [message]="cartStore.error()!" />
+        }
+      </div>
+    </article>
+  } @else {
+    <app-empty-state [title]="error() || 'Không tìm thấy sản phẩm'">
+      <a class="button button--secondary" routerLink="/products">Xem các sản phẩm khác</a>
+    </app-empty-state>
+  }
+</div>

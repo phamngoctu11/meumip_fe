@@ -1,0 +1,61 @@
+<div class="admin-page">
+  <header class="admin-page-header">
+    <div>
+      <p>order manager</p>
+      <h1>Đơn hàng</h1>
+      <span>Theo dõi thanh toán và cập nhật tiến độ xử lý từng đơn.</span>
+    </div>
+  </header>
+
+  @if (error()) {
+    <app-feedback-banner tone="error" [message]="error()!" />
+  }
+
+  <form class="filter-bar" [formGroup]="filterForm">
+    <label>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.4-4.4M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" /></svg>
+      <input type="search" formControlName="search" placeholder="Mã đơn, khách hàng, email, số điện thoại..." />
+    </label>
+    <select formControlName="orderStatus" aria-label="Lọc trạng thái đơn">
+      <option value="ALL">Tất cả trạng thái đơn</option>
+      @for (status of orderStatuses; track status.value) {
+        <option [value]="status.value">{{ status.label }}</option>
+      }
+    </select>
+    <select formControlName="paymentStatus" aria-label="Lọc trạng thái thanh toán">
+      <option value="ALL">Tất cả thanh toán</option>
+      <option value="UNPAID">Chưa thanh toán</option>
+      <option value="WAITING_CONFIRMATION">Chờ xác nhận</option>
+      <option value="PAID">Đã thanh toán</option>
+      <option value="FAILED">Thất bại</option>
+      <option value="REFUNDED">Đã hoàn tiền</option>
+    </select>
+    <span>{{ visibleOrders().length }} đơn</span>
+  </form>
+
+  @if (loading()) {
+    <div class="order-loading"><span></span><span></span><span></span></div>
+  } @else if (visibleOrders().length) {
+    <div class="order-table-wrap">
+      <table>
+        <thead>
+          <tr><th>Đơn hàng</th><th>Khách nhận</th><th>Ngày tạo</th><th>Thanh toán</th><th>Trạng thái</th><th>Tổng</th></tr>
+        </thead>
+        <tbody>
+          @for (order of visibleOrders(); track order.id) {
+            <tr [routerLink]="['/admin/orders', order.id]" tabindex="0">
+              <td><a [routerLink]="['/admin/orders', order.id]">#{{ order.orderCode }}</a><small>{{ order.items.length }} sản phẩm</small></td>
+              <td><strong>{{ order.recipientName }}</strong><small>{{ order.customerEmail }}</small></td>
+              <td>{{ order.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td><span class="status-badge" [attr.data-status]="order.paymentStatus">{{ paymentStatusLabel(order.paymentStatus) }}</span></td>
+              <td><span class="status-badge" [attr.data-status]="order.orderStatus">{{ orderStatusLabel(order.orderStatus) }}</span></td>
+              <td><b>{{ formatVnd(order.totalVnd) }}</b></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div class="empty-list"><span>☁</span><h2>Không tìm thấy đơn hàng</h2><p>Thử thay đổi từ khóa hoặc bộ lọc.</p></div>
+  }
+</div>

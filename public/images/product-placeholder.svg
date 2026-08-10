@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-labelledby="title description">
+  <title id="title">Ảnh sản phẩm meumip</title>
+  <desc id="description">Ảnh tạm màu pastel với logo meumip</desc>
+  <rect width="800" height="800" fill="#fff7f1"/>
+  <circle cx="170" cy="180" r="100" fill="#fbe7f0"/>
+  <circle cx="675" cy="650" r="135" fill="#edf5eb"/>
+  <path d="M625 135l14 34 34 14-34 14-14 34-14-34-34-14 34-14z" fill="#ea9fc2"/>
+  <path d="M185 590c-35-39-100-10-74 45 18 38 74 72 74 72s56-34 74-72c26-55-39-84-74-45z" fill="#f1ebf5" stroke="#a893bd" stroke-width="7"/>
+  <text x="400" y="405" fill="#9b7044" font-family="Arial Rounded MT Bold, Arial, sans-serif" font-size="112" font-weight="900" text-anchor="middle">meumip</text>
+  <text x="400" y="465" fill="#a65e7b" font-family="Arial, sans-serif" font-size="24" letter-spacing="5" text-anchor="middle">HANDMADE WITH CARE</text>
+</svg>

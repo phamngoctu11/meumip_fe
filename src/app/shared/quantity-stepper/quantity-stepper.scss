@@ -1,0 +1,28 @@
+.quantity {
+  display: grid;
+  width: max-content;
+  grid-template-columns: 42px 38px 42px;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid var(--sand);
+  border-radius: 999px;
+  background: white;
+
+  button {
+    height: 52px;
+    border: 0;
+    background: transparent;
+    color: var(--cocoa);
+    cursor: pointer;
+    font-size: 1.2rem;
+
+    &:hover:not(:disabled) { background: var(--pink-soft); }
+    &:disabled { cursor: not-allowed; opacity: 0.3; }
+  }
+
+  span {
+    color: var(--cocoa);
+    font-weight: 800;
+    text-align: center;
+  }
+}
