@@ -94,6 +94,21 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/admin/slides/admin-slides').then((page) => page.AdminSlides),
       },
       {
+        path: 'categories',
+        title: 'Quản lý danh mục — meumip',
+        loadComponent: () => import('./pages/admin/categories/admin-categories').then((page) => page.AdminCategories),
+      },
+      {
+        path: 'combos',
+        title: 'Quản lý combo — meumip',
+        loadComponent: () => import('./pages/admin/combos/admin-combos').then((page) => page.AdminCombos),
+      },
+      {
+        path: 'product-blanks',
+        title: 'Quản lý phôi — meumip',
+        loadComponent: () => import('./pages/admin/product-blanks/admin-product-blanks').then((page) => page.AdminProductBlanks),
+      },
+      {
         path: 'products/new',
         title: 'Thêm sản phẩm — meumip',
         loadComponent: () =>

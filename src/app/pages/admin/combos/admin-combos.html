@@ -1,0 +1,29 @@
+<div class="admin-page">
+  <header><div><p>combo options</p><h1>Combo</h1><span>Quản lý các gói để khách tự chọn 1–3 sản phẩm và phôi tương ứng.</span></div><b>{{ combos().length }} combo</b></header>
+  @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }
+  @if (message()) { <app-feedback-banner tone="success" [message]="message()!" /> }
+  <div class="notice">Mỗi số lượng món chỉ có một cấu hình combo. Backend sẽ từ chối nếu tạo hai combo cùng số món.</div>
+  <div class="layout">
+    <form class="editor" [formGroup]="comboForm" (ngSubmit)="submit()">
+      <div class="editor-heading"><div><small>{{ editingId() === null ? 'Tạo mới' : 'Đang chỉnh sửa' }}</small><h2>{{ editingId() === null ? 'Thêm combo' : 'Cập nhật combo' }}</h2></div>@if (editingId() !== null) { <button type="button" (click)="reset()">Hủy sửa</button> }</div>
+      <div class="row"><label><span>Mã combo</span><input formControlName="code" placeholder="COMBO_2" /></label><label><span>Số món *</span><select formControlName="itemCount"><option [ngValue]="1">1 món</option><option [ngValue]="2">2 món</option><option [ngValue]="3">3 món</option></select></label></div>
+      <label><span>Tiêu đề *</span><input formControlName="title" placeholder="Combo đôi xinh xắn" /></label>
+      <label><span>Mô tả</span><textarea formControlName="description" rows="4"></textarea></label>
+      <label><span>Ghi chú giá</span><input formControlName="priceNote" placeholder="Giá tính theo sản phẩm và phôi đã chọn" /></label>
+      <label><span>Ảnh combo</span><input formControlName="imageUrl" placeholder="https://..." /></label>
+      <label class="upload"><input type="file" accept="image/*" (change)="uploadImage($event)" [disabled]="uploading()" /><span>{{ uploading() ? 'Đang tải...' : '↑ Tải ảnh lên' }}</span></label>
+      @if (comboForm.controls.imageUrl.value) { <img class="preview" appImageFallback [src]="comboForm.controls.imageUrl.value" alt="Xem trước combo" /> }
+      <div class="row"><label><span>Thứ tự</span><input type="number" formControlName="sortOrder" /></label><label class="check"><input type="checkbox" formControlName="active" /><span>Hiển thị combo</span></label></div>
+      <button class="save" type="submit" [disabled]="saving() || uploading()">{{ saving() ? 'Đang lưu...' : (editingId() === null ? 'Tạo combo' : 'Lưu thay đổi') }}</button>
+    </form>
+    <section class="combo-list">
+      @if (loading()) { <div class="empty">Đang tải combo...</div> }
+      @else { @for (combo of combos(); track combo.id) {
+        <article [class.inactive]="!combo.active">
+          @if (combo.imageUrl) { <img appImageFallback [src]="combo.imageUrl" [alt]="combo.title" /> } @else { <div class="placeholder">♡</div> }
+          <div class="copy"><small>#{{ combo.sortOrder }} · {{ combo.active ? 'Đang hiển thị' : 'Đang ẩn' }}</small><h2>{{ combo.title }}</h2><strong>{{ combo.itemCount }} món tự chọn</strong>@if (combo.code) { <code>{{ combo.code }}</code> }<p>{{ combo.description || 'Không có mô tả' }}</p>@if (combo.priceNote) { <em>{{ combo.priceNote }}</em> }<div><button type="button" (click)="edit(combo)">Chỉnh sửa</button><button type="button" (click)="toggle(combo)">{{ combo.active ? 'Ẩn' : 'Hiện' }}</button><button class="danger" type="button" (click)="archive(combo)">Lưu trữ</button></div></div>
+        </article>
+      } @empty { <div class="empty">Chưa có combo nào.</div> } }
+    </section>
+  </div>
+</div>

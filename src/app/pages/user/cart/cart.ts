@@ -21,4 +21,8 @@ export class CartPage {
   reload(): void {
     this.cartStore.load();
   }
+
+  removeItem(itemId: number): void {
+    this.cartStore.remove(itemId).subscribe();
+  }
 }

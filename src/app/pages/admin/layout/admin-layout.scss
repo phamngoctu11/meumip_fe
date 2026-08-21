@@ -2,7 +2,7 @@
   display: grid;
   min-height: 100vh;
   grid-template-columns: 245px minmax(0, 1fr);
-  background: #faf8f6;
+  background: transparent;
 }
 
 .admin-sidebar {
@@ -13,7 +13,8 @@
   flex-direction: column;
   padding: 2rem 1.1rem 1.3rem;
   border-right: 1px solid #eadfd7;
-  background: #fffdfb;
+  background: rgba(255, 253, 251, 0.92);
+  backdrop-filter: blur(18px);
   z-index: 30;
 
   &__heading {
@@ -159,7 +160,8 @@
     justify-content: space-between;
     padding: 0 1rem;
     border-bottom: 1px solid #eadfd7;
-    background: white;
+    background: rgba(255, 253, 251, 0.92);
+    backdrop-filter: blur(18px);
     color: var(--cocoa);
 
     button { border: 0; background: none; color: inherit; cursor: pointer; font-size: 1.2rem; }

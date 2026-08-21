@@ -44,18 +44,21 @@ export interface HomeSlide {
 
 export interface HomeCombo {
   id: number;
+  code: string | null;
   title: string;
   description: string | null;
   imageUrl: string | null;
+  itemCount: number;
+  priceNote: string | null;
   sortOrder: number;
   active: boolean;
-  products: ProductSummary[];
   blanks: ProductBlank[];
 }
 
 export interface ComboBlankSelection {
   productId: number;
-  productBlankId: number;
+  productBlankId: number | null;
+  quantity: number;
 }
 
 export interface CategoryUpsertRequest {
@@ -79,12 +82,14 @@ export interface HomeSlideUpsertRequest {
 }
 
 export interface HomeComboUpsertRequest {
+  code: string;
   title: string;
   description: string;
   imageUrl: string;
+  itemCount: number;
+  priceNote: string;
   sortOrder: number;
   active: boolean;
-  productIds: number[];
 }
 
 export interface ProductBlankUpsertRequest {

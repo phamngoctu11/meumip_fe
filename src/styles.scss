@@ -42,7 +42,7 @@ body {
   min-height: 100vh;
   margin: 0;
   overflow-x: clip;
-  background: radial-gradient(circle at 8% 8%, #ffe8ed88 0 4px, transparent 5px) 0 0 / 72px 72px, var(--cream);
+  background: var(--cream);
   color: var(--caramel-dark);
   font-family: var(--font-body);
   line-height: 1.5;

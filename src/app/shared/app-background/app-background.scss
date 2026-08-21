@@ -1,0 +1,30 @@
+:host {
+  position: relative;
+  display: block;
+  min-height: 100vh;
+}
+
+.app-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255, 250, 246, 0.2), rgba(255, 250, 246, 0.38)),
+    var(--app-background-image) center top / cover no-repeat;
+}
+
+.app-background::after {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 12% 16%, rgba(234, 159, 194, 0.12), transparent 28%),
+    radial-gradient(circle at 86% 12%, rgba(157, 184, 159, 0.08), transparent 30%);
+  content: '';
+}
+
+.app-background__content {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}

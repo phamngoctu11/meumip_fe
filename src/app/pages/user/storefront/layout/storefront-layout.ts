@@ -18,8 +18,7 @@ export class StorefrontLayout {
   readonly currentYear = new Date().getFullYear();
 
   constructor() {
-    this.authStore.checkSession();
-    this.cartStore.load();
+    this.authStore.checkSession().subscribe(() => this.cartStore.load());
   }
 
   toggleAccountMenu(): void { this.accountMenuOpen.update((open) => !open); }

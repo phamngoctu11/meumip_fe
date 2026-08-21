@@ -17,17 +17,43 @@
   </section>
 
   <section class="combo-section" aria-labelledby="combo-title">
-    <div class="section-intro"><div><span>Gợi ý kết hợp</span><h2 id="combo-title">Combo sản phẩm</h2></div><p>Mỗi combo gồm những sản phẩm được meumip chọn để đi cùng nhau.</p></div>
+    <div class="section-intro"><div><span>Tự chọn theo ý bạn</span><h2 id="combo-title">Combo sản phẩm</h2></div><p>Chọn đủ số món trong gói, sau đó chọn phôi riêng cho từng sản phẩm.</p></div>
     @if (comboMessage()) { <app-feedback-banner [message]="comboMessage()!" /> }
     <div class="combo-grid">@for (combo of combos(); track combo.id) {
-      <article class="combo-card">
+      <article class="combo-card" role="button" tabindex="0" (click)="openCombo(combo)" (keydown.enter)="openCombo(combo)" (keydown.space)="openCombo(combo); $event.preventDefault()">
         @if (combo.imageUrl) { <img class="combo-cover" [src]="combo.imageUrl" [alt]="combo.title" /> } @else { <div class="combo-visual" aria-hidden="true"><i>♡</i><i>✦</i><i>☆</i></div> }
-        <span>{{ combo.products.length }} sản phẩm</span><h3>{{ combo.title }}</h3>@if (combo.description) { <p>{{ combo.description }}</p> }
-        <div class="combo-products">@for (product of combo.products; track product.id) { <div class="combo-product"><a [routerLink]="['/products', product.slug]"><img [src]="product.primaryImageUrl || '/images/product-placeholder.svg'" [alt]="product.name" /><span>{{ product.name }}</span></a><select [value]="selectedComboBlank(combo.id, product.id) ?? ''" (change)="selectComboBlank(combo.id, product.id, $event)" [attr.aria-label]="'Chọn phôi cho ' + product.name"><option value="">Chọn phôi</option>@for (blank of combo.blanks; track blank.id) { <option [value]="blank.id">{{ blank.name }} · {{ blank.size }}</option> }</select></div> }</div>
-        <strong class="combo-total">{{ formatVnd(comboTotal(combo)) }}</strong>
-        <button class="combo-add" type="button" (click)="addCombo(combo)" [disabled]="addingComboId() === combo.id || !combo.products.length || !combo.blanks.length">{{ addingComboId() === combo.id ? 'Đang thêm...' : 'Thêm combo vào giỏ' }}</button>
+        <div class="combo-card-copy"><span>{{ combo.itemCount }} {{ combo.itemCount === 1 ? 'sản phẩm' : 'sản phẩm tự chọn' }}</span><h3>{{ combo.title }}</h3>@if (combo.description) { <p>{{ combo.description }}</p> }<button type="button" (click)="openCombo(combo); $event.stopPropagation()">Chọn combo <b>→</b></button></div>
       </article>
     } @empty { @if (!loading()) { <app-empty-state title="Combo đang được chuẩn bị" message="Meumip sẽ sớm cập nhật những kết hợp mới." /> } }</div>
   </section>
   <section id="voucher" class="voucher"><span>☆</span><div><small>Quà chào thành viên mới</small><h2>Nhận voucher cho đơn đầu tiên</h2><p>Đăng ký tài khoản để không bỏ lỡ quà nhỏ và sản phẩm mới.</p></div><a routerLink="/register">Đăng ký ngay</a></section>
 </div>
+
+@if (selectedCombo(); as combo) {
+  <div class="combo-modal-backdrop" (click)="closeCombo()">
+    <section class="combo-modal" role="dialog" aria-modal="true" [attr.aria-labelledby]="'combo-modal-title-' + combo.id" (click)="$event.stopPropagation()">
+      <button class="combo-modal-close" type="button" (click)="closeCombo()" aria-label="Đóng cửa sổ combo">×</button>
+      <div class="combo-modal-hero">
+        @if (combo.imageUrl) { <img [src]="combo.imageUrl" [alt]="combo.title" /> } @else { <div class="combo-modal-placeholder">♡</div> }
+        <div><span>Combo {{ combo.itemCount }} món tự chọn</span><h2 [id]="'combo-modal-title-' + combo.id">{{ combo.title }}</h2>@if (combo.description) { <p>{{ combo.description }}</p> }@if (combo.priceNote) { <small>{{ combo.priceNote }}</small> }</div>
+      </div>
+      <div class="combo-modal-body">
+        @for (slot of comboSlots(combo.id); track $index; let index = $index) {
+          <article class="combo-slot">
+            <header><b>Món {{ index + 1 }}</b><span>{{ slot.productId && slot.productBlankId ? 'Đã chọn đủ' : 'Chưa hoàn tất' }}</span></header>
+            <div class="combo-slot-fields">
+              <label><span>Sản phẩm</span><select [value]="slot.productId ?? ''" (change)="selectComboProduct(combo.id, index, $event)"><option value="">-- Chọn sản phẩm --</option>@for (product of comboProducts(); track product.id) { <option [value]="product.id">{{ product.name }} · {{ formatVnd(product.priceVnd) }}</option> }</select></label>
+              <label><span>Phôi</span><select [value]="slot.productBlankId ?? ''" (change)="selectComboBlank(combo.id, index, $event)"><option value="">-- Chọn phôi --</option>@for (blank of combo.blanks; track blank.id) { <option [value]="blank.id">{{ blank.name }} · {{ blank.size }}</option> }</select></label>
+            </div>
+            <div class="combo-previews">
+              @if (selectedProduct(slot.productId); as product) { <div><img [src]="product.primaryImageUrl || '/images/product-placeholder.svg'" [alt]="product.name" /><span><small>Sản phẩm</small><strong>{{ product.name }}</strong></span></div> } @else { <div class="preview-empty">Chưa chọn sản phẩm</div> }
+              @if (selectedBlank(combo, slot.productBlankId); as blank) { <div><img [src]="blank.imageUrl" [alt]="blank.name" /><span><small>Phôi</small><strong>{{ blank.name }}</strong><em>{{ blank.size }}</em></span></div> } @else { <div class="preview-empty">Chưa chọn phôi</div> }
+            </div>
+          </article>
+        }
+      </div>
+      <footer class="combo-modal-footer">@if (comboTotal(combo.id)) { <div><small>Tạm tính</small><strong>{{ formatVnd(comboTotal(combo.id)) }}</strong></div> } @else { <span>Chọn đủ sản phẩm và phôi để tiếp tục</span> }<button type="button" (click)="addCombo(combo)" [disabled]="addingComboId() === combo.id || !comboProducts().length || !combo.blanks.length">{{ addingComboId() === combo.id ? 'Đang thêm...' : 'Thêm combo vào giỏ' }}</button></footer>
+      @if (comboMessage()) { <app-feedback-banner tone="error" [message]="comboMessage()!" /> }
+    </section>
+  </div>
+}

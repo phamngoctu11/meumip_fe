@@ -55,7 +55,24 @@ export class CartStore {
     );
   }
 
+  remove(itemId: number): Observable<Cart> {
+    this.loading.set(true);
+    this.error.set(null);
+    return this.api.removeCartItem(this.requestSessionId(), itemId).pipe(
+      tap({
+        next: (cart) => this.cartState.set(cart),
+        error: (error: HttpErrorResponse) =>
+          this.error.set(error.error?.message ?? 'Không thể xóa sản phẩm khỏi giỏ.'),
+      }),
+      finalize(() => this.loading.set(false)),
+    );
+  }
+
   requestSessionId(): string | null {
+    const currentCartSessionId = this.cartState()?.sessionId?.trim();
+    if (currentCartSessionId) {
+      return currentCartSessionId;
+    }
     return this.authStore.user() ? null : this.sessionId();
   }
 

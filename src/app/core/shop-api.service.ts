@@ -34,6 +34,7 @@ export class ShopApiService {
 
   getHomeSlides(): Observable<HomeSlide[]> { return this.get<HomeSlide[]>(`${API_BASE_URL}/home/slides`); }
   getHomeCombos(): Observable<HomeCombo[]> { return this.get<HomeCombo[]>(`${API_BASE_URL}/home/combos`); }
+  getHomeCombo(comboId: number): Observable<HomeCombo> { return this.get<HomeCombo>(`${API_BASE_URL}/home/combos/${comboId}`); }
   getCategories(): Observable<Category[]> { return this.get<Category[]>(`${API_BASE_URL}/categories`); }
   getCategoryProducts(slug: string, limit = 2): Observable<ProductSummary[]> {
     const params = new HttpParams().set('limit', limit);
@@ -83,6 +84,20 @@ export class ShopApiService {
     const resolvedSessionId = sessionId?.trim();
     if (resolvedSessionId) body.sessionId = resolvedSessionId;
     return this.http.post<ApiResponse<Cart>>(`${API_BASE_URL}/cart/combos`, body, { withCredentials: true }).pipe(map((response) => this.unwrap(response)));
+  }
+
+  removeCartItem(sessionId: string | null, itemId: number): Observable<Cart> {
+    let params = new HttpParams();
+    const resolvedSessionId = sessionId?.trim();
+    if (resolvedSessionId) {
+      params = params.set('sessionId', resolvedSessionId);
+    }
+    return this.http
+      .delete<ApiResponse<Cart>>(`${API_BASE_URL}/cart/items/${itemId}`, {
+        params,
+        withCredentials: true,
+      })
+      .pipe(map((response) => this.unwrap(response)));
   }
 
   checkout(request: CheckoutRequest): Observable<CheckoutResponse> {

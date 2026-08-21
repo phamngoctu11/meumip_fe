@@ -33,13 +33,16 @@
                 <span class="blank-info">Phôi: {{ item.productBlankName }} · {{ item.productBlankSize }}</span>
                 <span>Số lượng: {{ item.quantity }}</span>
               </div>
-              <strong>{{ formatVnd(item.lineTotalVnd) }}</strong>
+              <div class="cart-item__total">
+                <strong>{{ formatVnd(item.lineTotalVnd) }}</strong>
+                <button type="button" (click)="removeItem(item.id)" [disabled]="cartStore.loading()">Xóa</button>
+              </div>
             </article>
           }
 
-          <p class="cart-api-note">
+          <!--
             ✦ Giỏ hàng được đồng bộ trực tiếp với meumip backend. API hiện chưa có thao tác giảm hoặc xóa sản phẩm.
-          </p>
+          -->
         </div>
 
         <aside class="cart-summary">

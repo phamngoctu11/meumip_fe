@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { catchError, finalize, forkJoin, map, of, switchMap } from 'rxjs';
 import { CartStore } from '../../../core/cart.store';
@@ -10,12 +10,13 @@ import { FeedbackBanner } from '../../../shared/feedback-banner/feedback-banner'
 import { ProductCard } from '../../../shared/product-card/product-card';
 
 interface CategoryView extends Category { products: ProductSummary[]; }
+interface ComboSlot { productId: number | null; productBlankId: number | null; quantity: number; }
 
 const FALLBACK_SLIDES: HomeSlide[] = [
   { id: -1, eyebrow: 'Lovely handmade things', title: 'Một góc nhỏ đầy phép màu', description: 'Những món đồ bé xinh được làm chậm rãi và gói bằng thật nhiều yêu thương.', imageUrl: 'https://images.unsplash.com/photo-1594784054224-4e97266e6c68?auto=format&fit=crop&w=1600&q=85', linkLabel: 'Khám phá sản phẩm', linkUrl: '#products-section', sortOrder: 0, active: true },
 ];
 
-@Component({ selector: 'app-home', imports: [RouterLink, ProductCard, FeedbackBanner, EmptyState], templateUrl: './home.html', styleUrl: './home.scss', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-home', imports: [RouterLink, ProductCard, FeedbackBanner, EmptyState], templateUrl: './home.html', styleUrls: ['./home.scss', './home-combo.scss'], changeDetection: ChangeDetectionStrategy.OnPush })
 export class Home implements OnInit, OnDestroy {
   private readonly api = inject(ShopApiService);
   readonly cartStore = inject(CartStore);
@@ -24,7 +25,9 @@ export class Home implements OnInit, OnDestroy {
   readonly activeSlide = signal(0);
   readonly categories = signal<CategoryView[]>([]);
   readonly combos = signal<HomeCombo[]>([]);
-  readonly comboBlankSelections = signal<Record<number, Record<number, number | null>>>({});
+  readonly selectedCombo = signal<HomeCombo | null>(null);
+  readonly comboProducts = signal<ProductSummary[]>([]);
+  readonly comboSelections = signal<Record<number, ComboSlot[]>>({});
   readonly addingComboId = signal<number | null>(null);
   readonly comboMessage = signal<string | null>(null);
   readonly loading = signal(true);
@@ -35,6 +38,7 @@ export class Home implements OnInit, OnDestroy {
     forkJoin({
       slides: this.api.getHomeSlides().pipe(catchError(() => of(FALLBACK_SLIDES))),
       combos: this.api.getHomeCombos().pipe(catchError(() => of([] as HomeCombo[]))),
+      products: this.api.getProducts(undefined, 0, 100),
       categories: this.api.getCategories(),
     }).pipe(
       switchMap((home) => {
@@ -43,11 +47,12 @@ export class Home implements OnInit, OnDestroy {
       }),
       finalize(() => this.loading.set(false)),
     ).subscribe({
-      next: ({ slides, combos, categoryViews }) => {
+      next: ({ slides, combos, products, categoryViews }) => {
         this.slides.set(slides.length ? slides : FALLBACK_SLIDES);
         this.combos.set(combos);
+        this.comboProducts.set(products);
         this.categories.set(categoryViews);
-        this.comboBlankSelections.set(Object.fromEntries(combos.map((combo) => [combo.id, Object.fromEntries(combo.products.map((product) => [product.id, null]))])));
+        this.comboSelections.set(Object.fromEntries(combos.map((combo) => [combo.id, Array.from({ length: combo.itemCount }, () => ({ productId: null, productBlankId: null, quantity: 1 }))])));
         this.startSlider();
       },
       error: () => {
@@ -63,18 +68,28 @@ export class Home implements OnInit, OnDestroy {
   previousSlide(): void { this.activeSlide.update((current) => (current - 1 + this.slides().length) % this.slides().length); this.startSlider(); }
   nextSlide(): void { this.activeSlide.update((current) => (current + 1) % this.slides().length); this.startSlider(); }
   isFragmentLink(url: string | null): boolean { return Boolean(url?.startsWith('#')); }
-  comboTotal(combo: HomeCombo): number { return combo.products.reduce((total, product) => total + product.priceVnd, 0); }
-  selectedComboBlank(comboId: number, productId: number): number | null { return this.comboBlankSelections()[comboId]?.[productId] ?? null; }
-  selectComboBlank(comboId: number, productId: number, event: Event): void {
+  openCombo(combo: HomeCombo): void { this.comboMessage.set(null); this.selectedCombo.set(combo); }
+  closeCombo(): void { if (!this.addingComboId()) this.selectedCombo.set(null); }
+  @HostListener('document:keydown.escape') closeComboWithEscape(): void { this.closeCombo(); }
+  comboSlots(comboId: number): ComboSlot[] { return this.comboSelections()[comboId] ?? []; }
+  selectedProduct(productId: number | null): ProductSummary | null { return this.comboProducts().find((product) => product.id === productId) ?? null; }
+  selectedBlank(combo: HomeCombo, blankId: number | null) { return combo.blanks.find((blank) => blank.id === blankId) ?? null; }
+  comboTotal(comboId: number): number { return this.comboSlots(comboId).reduce((total, slot) => total + (this.comboProducts().find((product) => product.id === slot.productId)?.priceVnd ?? 0) * slot.quantity, 0); }
+  selectComboProduct(comboId: number, index: number, event: Event): void {
     const value = Number((event.target as HTMLSelectElement).value);
-    this.comboBlankSelections.update((selections) => ({ ...selections, [comboId]: { ...selections[comboId], [productId]: Number.isFinite(value) && value > 0 ? value : null } }));
+    this.updateComboSlot(comboId, index, { productId: Number.isFinite(value) && value > 0 ? value : null });
+  }
+  selectComboBlank(comboId: number, index: number, event: Event): void {
+    const value = Number((event.target as HTMLSelectElement).value);
+    this.updateComboSlot(comboId, index, { productBlankId: Number.isFinite(value) && value > 0 ? value : null });
   }
   addCombo(combo: HomeCombo): void {
-    const selections = combo.products.map((product) => ({ productId: product.id, productBlankId: this.selectedComboBlank(combo.id, product.id) }));
-    if (selections.some((selection) => !selection.productBlankId)) { this.comboMessage.set('Bạn hãy chọn phôi cho từng sản phẩm trong combo trước nhé.'); return; }
+    const slots = this.comboSlots(combo.id);
+    if (slots.length !== combo.itemCount || slots.some((slot) => !slot.productId || !slot.productBlankId)) { this.comboMessage.set(`Bạn hãy chọn đủ ${combo.itemCount} sản phẩm và phôi tương ứng.`); return; }
     this.addingComboId.set(combo.id);
     this.comboMessage.set(null);
-    this.cartStore.addCombo(combo.id, selections.map((selection) => ({ productId: selection.productId, productBlankId: selection.productBlankId! }))).pipe(finalize(() => this.addingComboId.set(null))).subscribe({ next: () => this.comboMessage.set(`Đã thêm combo “${combo.title}” vào giỏ.`), error: () => undefined });
+    this.cartStore.addCombo(combo.id, slots.map((slot) => ({ productId: slot.productId!, productBlankId: slot.productBlankId!, quantity: slot.quantity }))).pipe(finalize(() => this.addingComboId.set(null))).subscribe({ next: () => { this.comboMessage.set(`Đã thêm combo “${combo.title}” vào giỏ.`); this.selectedCombo.set(null); }, error: () => undefined });
   }
+  private updateComboSlot(comboId: number, index: number, patch: Partial<ComboSlot>): void { this.comboSelections.update((all) => ({ ...all, [comboId]: (all[comboId] ?? []).map((slot, slotIndex) => slotIndex === index ? { ...slot, ...patch } : slot) })); }
   private startSlider(): void { if (this.slideTimer) clearInterval(this.slideTimer); if (this.slides().length > 1) this.slideTimer = setInterval(() => this.activeSlide.update((current) => (current + 1) % this.slides().length), 6000); }
 }

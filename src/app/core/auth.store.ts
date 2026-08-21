@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { finalize, Observable, tap } from 'rxjs';
+import { catchError, finalize, Observable, of, tap } from 'rxjs';
 import { AuthApiService } from './auth-api.service';
 import { ShopUser } from './models';
 
@@ -13,15 +13,18 @@ export class AuthStore {
   readonly submitting = signal(false);
   readonly error = signal<string | null>(null);
 
-  checkSession(): void {
+  checkSession(): Observable<ShopUser | null> {
     this.checkingSession.set(true);
-    this.api
+    return this.api
       .getCurrentUser()
-      .pipe(finalize(() => this.checkingSession.set(false)))
-      .subscribe({
-        next: (user) => this.user.set(user),
-        error: () => this.user.set(null),
-      });
+      .pipe(
+        tap((user) => this.user.set(user)),
+        catchError(() => {
+          this.user.set(null);
+          return of(null);
+        }),
+        finalize(() => this.checkingSession.set(false)),
+      );
   }
 
   login(email: string, password: string): Observable<ShopUser> {

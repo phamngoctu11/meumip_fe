@@ -1,0 +1,20 @@
+<div class="admin-page">
+  <header><div><p>product organization</p><h1>Danh mục</h1><span>Sắp xếp sản phẩm thành những nhóm dễ tìm trong cửa hàng.</span></div><b>{{ categories().length }} danh mục</b></header>
+  @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> } @if (message()) { <app-feedback-banner tone="success" [message]="message()!" /> }
+  <div class="layout">
+    <form class="editor" [formGroup]="categoryForm" (ngSubmit)="submit()">
+      <div class="editor-heading"><div><small>{{ editingId() === null ? 'Tạo mới' : 'Đang chỉnh sửa' }}</small><h2>{{ editingId() === null ? 'Thêm danh mục' : 'Cập nhật danh mục' }}</h2></div>@if (editingId() !== null) { <button type="button" (click)="reset()">Hủy sửa</button> }</div>
+      <label><span>Tên danh mục *</span><input formControlName="name" (blur)="generateSlug()" placeholder="Charm thủ công" /></label>
+      <label><span>Slug *</span><div class="slug"><b>/products?category=</b><input formControlName="slug" placeholder="charm-thu-cong" /></div></label>
+      <label><span>Mô tả</span><textarea formControlName="description" rows="4"></textarea></label>
+      <label><span>Ảnh đại diện</span><input formControlName="imageUrl" placeholder="https://..." /></label>
+      <label class="upload"><input type="file" accept="image/*" (change)="uploadImage($event)" [disabled]="uploading()" /><span>{{ uploading() ? 'Đang tải...' : '↑ Tải ảnh lên' }}</span></label>
+      @if (categoryForm.controls.imageUrl.value) { <img class="preview" appImageFallback [src]="categoryForm.controls.imageUrl.value" alt="Xem trước danh mục" /> }
+      <div class="row"><label><span>Thứ tự</span><input type="number" formControlName="sortOrder" /></label><label class="check"><input type="checkbox" formControlName="active" /><span>Hiển thị danh mục</span></label></div>
+      <button class="save" type="submit" [disabled]="saving() || uploading()">{{ saving() ? 'Đang lưu...' : (editingId() === null ? 'Tạo danh mục' : 'Lưu thay đổi') }}</button>
+    </form>
+    <section class="category-list">
+      @if (loading()) { <div class="empty">Đang tải danh mục...</div> } @else { @for (category of categories(); track category.id) { <article [class.inactive]="!category.active">@if (category.imageUrl) { <img appImageFallback [src]="category.imageUrl" [alt]="category.name" /> } @else { <div class="placeholder">☷</div> }<div class="copy"><small>#{{ category.sortOrder }} · {{ category.active ? 'Đang hiển thị' : 'Đang ẩn' }}</small><h2>{{ category.name }}</h2><code>{{ category.slug }}</code><p>{{ category.description || 'Không có mô tả' }}</p><div><button type="button" (click)="edit(category)">Chỉnh sửa</button><button type="button" (click)="toggle(category)">{{ category.active ? 'Ẩn' : 'Hiện' }}</button><button class="danger" type="button" (click)="archive(category)">Lưu trữ</button></div></div></article> } @empty { <div class="empty">Chưa có danh mục nào.</div> } }
+    </section>
+  </div>
+</div>

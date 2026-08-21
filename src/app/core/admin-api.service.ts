@@ -66,6 +66,10 @@ export class AdminApiService {
     return this.get<HomeCombo[]>(`${this.adminUrl}/combos`);
   }
 
+  getCombo(comboId: number): Observable<HomeCombo> {
+    return this.get<HomeCombo>(`${this.adminUrl}/combos/${comboId}`);
+  }
+
   createCombo(request: HomeComboUpsertRequest): Observable<HomeCombo> {
     return this.post<HomeCombo>(`${this.adminUrl}/combos`, request);
   }
