@@ -6,6 +6,93 @@ export interface ProductSummary {
   priceVnd: number;
   status: string;
   primaryImageUrl: string | null;
+  categoryId: number | null;
+  categorySlug: string | null;
+  categoryName: string | null;
+}
+
+export interface Category {
+  id: number;
+  slug: string;
+  name: string;
+  description: string | null;
+  imageUrl: string | null;
+  sortOrder: number;
+  active: boolean;
+}
+
+export interface ProductBlank {
+  id: number;
+  name: string;
+  size: string;
+  imageUrl: string;
+  sortOrder: number;
+  active: boolean;
+}
+
+export interface HomeSlide {
+  id: number;
+  title: string;
+  eyebrow: string | null;
+  description: string | null;
+  imageUrl: string;
+  linkLabel: string | null;
+  linkUrl: string | null;
+  sortOrder: number;
+  active: boolean;
+}
+
+export interface HomeCombo {
+  id: number;
+  title: string;
+  description: string | null;
+  imageUrl: string | null;
+  sortOrder: number;
+  active: boolean;
+  products: ProductSummary[];
+  blanks: ProductBlank[];
+}
+
+export interface ComboBlankSelection {
+  productId: number;
+  productBlankId: number;
+}
+
+export interface CategoryUpsertRequest {
+  slug: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  sortOrder: number;
+  active: boolean;
+}
+
+export interface HomeSlideUpsertRequest {
+  title: string;
+  eyebrow: string;
+  description: string;
+  imageUrl: string;
+  linkLabel: string;
+  linkUrl: string;
+  sortOrder: number;
+  active: boolean;
+}
+
+export interface HomeComboUpsertRequest {
+  title: string;
+  description: string;
+  imageUrl: string;
+  sortOrder: number;
+  active: boolean;
+  productIds: number[];
+}
+
+export interface ProductBlankUpsertRequest {
+  name: string;
+  size: string;
+  imageUrl: string;
+  sortOrder: number;
+  active: boolean;
 }
 
 export interface ProductImage {
@@ -38,6 +125,8 @@ export interface ProductUpsertRequest {
   shippingNote: string;
   sizeNote: string;
   materialNote: string;
+  categoryId: number | null;
+  categorySlug: string | null;
   stockQuantity: number | null;
   sortOrder: number;
   images: ProductImageRequest[];
@@ -63,6 +152,7 @@ export interface ProductDetail extends ProductSummary {
   stockQuantity: number | null;
   sortOrder: number;
   images: ProductImage[];
+  blanks: ProductBlank[];
 }
 
 export interface CartItem {
@@ -71,6 +161,10 @@ export interface CartItem {
   productSlug: string;
   productName: string;
   imageUrl: string | null;
+  productBlankId: number;
+  productBlankName: string;
+  productBlankSize: string;
+  productBlankImageUrl: string | null;
   unitPriceVnd: number;
   quantity: number;
   lineTotalVnd: number;
@@ -103,6 +197,10 @@ export interface OrderItem {
   productName: string;
   productSlug: string | null;
   productImageUrl: string | null;
+  productBlankId: number | null;
+  blankName: string | null;
+  blankSize: string | null;
+  blankImageUrl: string | null;
   unitPriceVnd: number;
   quantity: number;
   lineTotalVnd: number;

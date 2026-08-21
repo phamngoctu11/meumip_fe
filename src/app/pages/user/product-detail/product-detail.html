@@ -72,6 +72,23 @@
           }
         </dl>
 
+        <fieldset class="blank-picker" [formGroup]="purchaseForm">
+          <legend>Chọn phôi <small>* bắt buộc</small></legend>
+          <p>Chọn kích thước và kiểu phôi bạn muốn dùng cho sản phẩm này.</p>
+          <div class="blank-options">
+            @for (blank of item.blanks; track blank.id) {
+              <label [class.selected]="purchaseForm.controls.productBlankId.value === blank.id">
+                <input type="radio" formControlName="productBlankId" [value]="blank.id" />
+                <img appImageFallback [src]="blank.imageUrl" [alt]="blank.name" />
+                <span><strong>{{ blank.name }}</strong><small>{{ blank.size }}</small></span>
+              </label>
+            } @empty {
+              <app-feedback-banner tone="error" message="Sản phẩm hiện chưa có phôi khả dụng." />
+            }
+          </div>
+          @if (purchaseForm.controls.productBlankId.invalid && purchaseForm.controls.productBlankId.touched && item.blanks.length) { <small class="blank-error">Bạn cần chọn một phôi.</small> }
+        </fieldset>
+
         <form class="buy-row" [formGroup]="purchaseForm" (ngSubmit)="addToCart()">
           <app-quantity-stepper
             formControlName="quantity"
@@ -80,7 +97,7 @@
           <button
             class="add-button"
             type="submit"
-            [disabled]="cartStore.loading() || item.status !== 'ACTIVE'"
+            [disabled]="cartStore.loading() || item.status !== 'ACTIVE' || !item.blanks.length"
           >
             @if (cartStore.loading()) {
               Đang thêm...
@@ -95,6 +112,7 @@
         @if (added()) {
           <app-feedback-banner tone="success" message="Đã thêm bé này vào giỏ hàng rồi nhé!" />
         }
+        @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }
         @if (cartStore.error()) {
           <app-feedback-banner tone="error" [message]="cartStore.error()!" />
         }

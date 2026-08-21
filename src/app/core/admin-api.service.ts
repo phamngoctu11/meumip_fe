@@ -5,11 +5,19 @@ import { API_BASE_URL } from './api.config';
 import {
   ApiResponse,
   ChangeOrderStatusRequest,
+  Category,
+  CategoryUpsertRequest,
   ConfirmPaymentRequest,
+  HomeCombo,
+  HomeComboUpsertRequest,
+  HomeSlide,
+  HomeSlideUpsertRequest,
   ImageUploadResponse,
   Order,
   Payment,
   ProductDetail,
+  ProductBlank,
+  ProductBlankUpsertRequest,
   ProductUpsertRequest,
 } from './models';
 
@@ -17,6 +25,82 @@ import {
 export class AdminApiService {
   private readonly http = inject(HttpClient);
   private readonly adminUrl = `${API_BASE_URL}/admin`;
+
+  listCategories(): Observable<Category[]> {
+    return this.get<Category[]>(`${this.adminUrl}/categories`);
+  }
+
+  createCategory(request: CategoryUpsertRequest): Observable<Category> {
+    return this.post<Category>(`${this.adminUrl}/categories`, request);
+  }
+
+  updateCategory(categoryId: number, request: CategoryUpsertRequest): Observable<Category> {
+    return this.put<Category>(`${this.adminUrl}/categories/${categoryId}`, request);
+  }
+
+  archiveCategory(categoryId: number): Observable<Category> {
+    return this.delete<Category>(`${this.adminUrl}/categories/${categoryId}`);
+  }
+
+  listSlides(): Observable<HomeSlide[]> {
+    return this.get<HomeSlide[]>(`${this.adminUrl}/slides`);
+  }
+
+  createSlide(request: HomeSlideUpsertRequest): Observable<HomeSlide> {
+    return this.post<HomeSlide>(`${this.adminUrl}/slides`, request);
+  }
+
+  updateSlide(slideId: number, request: HomeSlideUpsertRequest): Observable<HomeSlide> {
+    return this.put<HomeSlide>(`${this.adminUrl}/slides/${slideId}`, request);
+  }
+
+  archiveSlide(slideId: number): Observable<HomeSlide> {
+    return this.delete<HomeSlide>(`${this.adminUrl}/slides/${slideId}`);
+  }
+
+  changeSlideStatus(slideId: number, active: boolean): Observable<HomeSlide> {
+    return this.patch<HomeSlide>(`${this.adminUrl}/slides/${slideId}/status`, { active });
+  }
+
+  listCombos(): Observable<HomeCombo[]> {
+    return this.get<HomeCombo[]>(`${this.adminUrl}/combos`);
+  }
+
+  createCombo(request: HomeComboUpsertRequest): Observable<HomeCombo> {
+    return this.post<HomeCombo>(`${this.adminUrl}/combos`, request);
+  }
+
+  updateCombo(comboId: number, request: HomeComboUpsertRequest): Observable<HomeCombo> {
+    return this.put<HomeCombo>(`${this.adminUrl}/combos/${comboId}`, request);
+  }
+
+  archiveCombo(comboId: number): Observable<HomeCombo> {
+    return this.delete<HomeCombo>(`${this.adminUrl}/combos/${comboId}`);
+  }
+
+  changeComboStatus(comboId: number, active: boolean): Observable<HomeCombo> {
+    return this.patch<HomeCombo>(`${this.adminUrl}/combos/${comboId}/status`, { active });
+  }
+
+  listProductBlanks(): Observable<ProductBlank[]> {
+    return this.get<ProductBlank[]>(`${this.adminUrl}/product-blanks`);
+  }
+
+  createProductBlank(request: ProductBlankUpsertRequest): Observable<ProductBlank> {
+    return this.post<ProductBlank>(`${this.adminUrl}/product-blanks`, request);
+  }
+
+  updateProductBlank(blankId: number, request: ProductBlankUpsertRequest): Observable<ProductBlank> {
+    return this.put<ProductBlank>(`${this.adminUrl}/product-blanks/${blankId}`, request);
+  }
+
+  archiveProductBlank(blankId: number): Observable<ProductBlank> {
+    return this.delete<ProductBlank>(`${this.adminUrl}/product-blanks/${blankId}`);
+  }
+
+  changeProductBlankStatus(blankId: number, active: boolean): Observable<ProductBlank> {
+    return this.patch<ProductBlank>(`${this.adminUrl}/product-blanks/${blankId}/status`, { active });
+  }
 
   listProducts(): Observable<ProductDetail[]> {
     return this.get<ProductDetail[]>(`${this.adminUrl}/products`);
@@ -82,6 +166,18 @@ export class AdminApiService {
     return this.http
       .post<ApiResponse<T>>(url, body, { withCredentials: true })
       .pipe(map((response) => this.unwrap(response)));
+  }
+
+  private put<T>(url: string, body: unknown): Observable<T> {
+    return this.http.put<ApiResponse<T>>(url, body, { withCredentials: true }).pipe(map((response) => this.unwrap(response)));
+  }
+
+  private patch<T>(url: string, body: unknown): Observable<T> {
+    return this.http.patch<ApiResponse<T>>(url, body, { withCredentials: true }).pipe(map((response) => this.unwrap(response)));
+  }
+
+  private delete<T>(url: string): Observable<T> {
+    return this.http.delete<ApiResponse<T>>(url, { withCredentials: true }).pipe(map((response) => this.unwrap(response)));
   }
 
   private unwrap<T>(response: ApiResponse<T>): T {

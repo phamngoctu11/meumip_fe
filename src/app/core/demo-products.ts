@@ -14,6 +14,9 @@ export const demoProducts: ProductSummary[] = [
     priceVnd: 1_200_000,
     status: 'ACTIVE',
     primaryImageUrl: mikuImage,
+    categoryId: null,
+    categorySlug: null,
+    categoryName: null,
   },
   {
     id: 2,
@@ -23,6 +26,9 @@ export const demoProducts: ProductSummary[] = [
     priceVnd: 1_200_000,
     status: 'ACTIVE',
     primaryImageUrl: tetoImage,
+    categoryId: null,
+    categorySlug: null,
+    categoryName: null,
   },
 ];
 
@@ -42,6 +48,7 @@ export const demoProductDetails: Record<string, ProductDetail> = {
     images: [
       { id: 1, imageUrl: mikuImage, altText: 'Móc khóa fanart Miku', sortOrder: 0, primaryImage: true },
     ],
+    blanks: [{ id: 1, name: 'Phôi tiêu chuẩn', size: '5–6 cm', imageUrl: mikuImage, sortOrder: 0, active: true }],
   },
   teto: {
     ...demoProducts[1],
@@ -58,5 +65,6 @@ export const demoProductDetails: Record<string, ProductDetail> = {
     images: [
       { id: 2, imageUrl: tetoImage, altText: 'Móc khóa fanart Teto', sortOrder: 0, primaryImage: true },
     ],
+    blanks: [{ id: 1, name: 'Phôi tiêu chuẩn', size: '5–6 cm', imageUrl: tetoImage, sortOrder: 0, active: true }],
   },
 };

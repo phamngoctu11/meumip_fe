@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { finalize } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 import { AdminApiService } from '../../../core/admin-api.service';
 import {
+  Category,
   ProductDetail,
   ProductImage,
   ProductStatus,
@@ -36,6 +37,7 @@ export class AdminProductForm implements OnInit {
   readonly productId = this.parseProductId();
   readonly isEdit = this.productId !== null;
   readonly statuses = PRODUCT_STATUSES;
+  readonly categories = signal<Category[]>([]);
   readonly loading = signal(this.isEdit);
   readonly saving = signal(false);
   readonly uploading = signal(false);
@@ -47,6 +49,8 @@ export class AdminProductForm implements OnInit {
     slug: this.formBuilder.nonNullable.control('', [Validators.required, Validators.maxLength(160)]),
     shortDescription: this.formBuilder.nonNullable.control('', Validators.maxLength(255)),
     description: this.formBuilder.nonNullable.control(''),
+    categoryId: this.formBuilder.control<number | null>(null),
+    categorySlug: this.formBuilder.control<string | null>(null),
     priceVnd: this.formBuilder.nonNullable.control(0, [Validators.required, Validators.min(0)]),
     status: this.formBuilder.nonNullable.control<ProductStatus>('DRAFT', Validators.required),
     madeToOrder: this.formBuilder.nonNullable.control(true),
@@ -62,14 +66,20 @@ export class AdminProductForm implements OnInit {
 
   ngOnInit(): void {
     if (!this.isEdit || this.productId === null) {
+      this.api.listCategories().subscribe({
+        next: (categories) => this.categories.set(categories),
+        error: () => this.error.set('Không thể tải danh mục sản phẩm.'),
+      });
       return;
     }
 
-    this.api
-      .getProduct(this.productId)
+    forkJoin({ categories: this.api.listCategories(), product: this.api.getProduct(this.productId) })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (product) => this.fillForm(product),
+        next: ({ categories, product }) => {
+          this.categories.set(categories);
+          this.fillForm(product);
+        },
         error: () => this.error.set('Không thể tải thông tin sản phẩm.'),
       });
   }
@@ -167,6 +177,8 @@ export class AdminProductForm implements OnInit {
       slug: product.slug,
       shortDescription: product.shortDescription ?? '',
       description: product.description ?? '',
+      categoryId: product.categoryId,
+      categorySlug: product.categorySlug,
       priceVnd: product.priceVnd,
       status: product.status as ProductStatus,
       madeToOrder: product.madeToOrder,

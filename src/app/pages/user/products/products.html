@@ -1,0 +1,6 @@
+<section class="products-page">
+  <app-page-header eyebrow="all little things" title="Sản phẩm" description="Khám phá toàn bộ những món đồ đang có tại meumip." />
+  <nav class="category-filter" aria-label="Lọc theo danh mục"><a routerLink="/products" [class.active]="!selectedCategory()">Tất cả</a>@for (category of categories(); track category.id) { <a routerLink="/products" [queryParams]="{ category: category.slug }" [class.active]="selectedCategory() === category.slug">{{ category.name }}</a> }</nav>
+  @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }
+  @if (loading()) { <div class="products-loading">@for (item of [1,2,3,4]; track item) { <span></span> }</div> } @else if (products().length) { <div class="products-grid">@for (product of products(); track product.id; let index = $index) { <app-product-card [product]="product" [animationDelay]="index * 60" /> }</div> } @else { <app-empty-state title="Danh mục chưa có sản phẩm" message="Meumip sẽ sớm cập nhật thêm sản phẩm mới." /> }
+</section>

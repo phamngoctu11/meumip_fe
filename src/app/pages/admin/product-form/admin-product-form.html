@@ -17,6 +17,7 @@
             <label class="field field--wide"><span>Tên sản phẩm *</span><input formControlName="name" type="text" (blur)="generateSlug()" placeholder="Miku keychain" />@if (productForm.controls.name.invalid && productForm.controls.name.touched) { <small>Vui lòng nhập tên sản phẩm.</small> }</label>
             <label class="field field--wide"><span>Slug *</span><div class="slug-input"><b>/products/</b><input formControlName="slug" type="text" placeholder="miku-keychain" /></div>@if (productForm.controls.slug.invalid && productForm.controls.slug.touched) { <small>Vui lòng nhập slug.</small> }</label>
             <label class="field field--wide"><span>Mô tả ngắn</span><input formControlName="shortDescription" type="text" placeholder="Một câu giới thiệu ngắn..." /></label>
+            <label class="field field--wide"><span>Danh mục</span><select formControlName="categoryId"><option [ngValue]="null">Chưa phân loại</option>@for (category of categories(); track category.id) { <option [ngValue]="category.id">{{ category.name }}</option> }</select></label>
             <label class="field field--wide"><span>Mô tả chi tiết</span><textarea formControlName="description" rows="7" placeholder="Câu chuyện, cách sử dụng và lưu ý..."></textarea></label>
           </div>
         </section>

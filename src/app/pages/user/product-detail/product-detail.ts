@@ -35,6 +35,7 @@ export class ProductDetail implements OnInit {
   readonly selectedImage = signal(0);
   readonly purchaseForm = this.formBuilder.nonNullable.group({
     quantity: [1, [Validators.required, Validators.min(1), Validators.max(10)]],
+    productBlankId: this.formBuilder.control<number | null>(null, Validators.required),
   });
   readonly loading = signal(true);
   readonly previewMode = signal(false);
@@ -50,6 +51,7 @@ export class ProductDetail implements OnInit {
           this.error.set(null);
           this.previewMode.set(false);
           this.selectedImage.set(0);
+          this.purchaseForm.controls.productBlankId.setValue(null);
           return this.api
             .getProduct(params.get('slug') ?? '')
             .pipe(finalize(() => this.loading.set(false)));
@@ -82,10 +84,15 @@ export class ProductDetail implements OnInit {
 
     this.added.set(false);
     if (this.purchaseForm.invalid) {
+      this.purchaseForm.markAllAsTouched();
+      this.error.set('Bạn hãy chọn một loại phôi trước khi thêm vào giỏ.');
       return;
     }
 
-    this.cartStore.add(product.id, this.purchaseForm.controls.quantity.value).subscribe({
+    const blankId = this.purchaseForm.controls.productBlankId.value;
+    if (!blankId) return;
+    this.error.set(null);
+    this.cartStore.add(product.id, blankId, this.purchaseForm.controls.quantity.value).subscribe({
       next: () => {
         this.added.set(true);
         window.setTimeout(() => this.added.set(false), 2500);

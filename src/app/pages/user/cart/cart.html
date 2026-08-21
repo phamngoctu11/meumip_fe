@@ -30,6 +30,7 @@
               <div class="cart-item__copy">
                 <h2><a [routerLink]="['/products', item.productSlug]">{{ item.productName }}</a></h2>
                 <p>{{ formatVnd(item.unitPriceVnd) }} × {{ item.quantity }}</p>
+                <span class="blank-info">Phôi: {{ item.productBlankName }} · {{ item.productBlankSize }}</span>
                 <span>Số lượng: {{ item.quantity }}</span>
               </div>
               <strong>{{ formatVnd(item.lineTotalVnd) }}</strong>

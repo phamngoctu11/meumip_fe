@@ -117,7 +117,7 @@
                   <img appImageFallback [src]="item.imageUrl || '/images/product-placeholder.svg'" [alt]="item.productName" />
                   <span>{{ item.quantity }}</span>
                 </div>
-                <div><strong>{{ item.productName }}</strong><small>{{ formatVnd(item.unitPriceVnd) }}</small></div>
+                <div><strong>{{ item.productName }}</strong><small>Phôi: {{ item.productBlankName }} · {{ item.productBlankSize }}</small><small>{{ formatVnd(item.unitPriceVnd) }}</small></div>
                 <b>{{ formatVnd(item.lineTotalVnd) }}</b>
               </div>
             }

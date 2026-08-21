@@ -16,7 +16,7 @@ export const routes: Routes = [
   {
     path: 'products',
     title: 'Sản phẩm — meumip',
-    loadComponent: () => import('./pages/user/home/home').then((page) => page.Home),
+    loadComponent: () => import('./pages/user/products/products').then((page) => page.ProductsPage),
   },
   {
     path: 'products/:slug',
@@ -87,6 +87,11 @@ export const routes: Routes = [
         title: 'Quản lý sản phẩm — meumip',
         loadComponent: () =>
           import('./pages/admin/products/admin-products').then((page) => page.AdminProducts),
+      },
+      {
+        path: 'slides',
+        title: 'Quản lý slide — meumip',
+        loadComponent: () => import('./pages/admin/slides/admin-slides').then((page) => page.AdminSlides),
       },
       {
         path: 'products/new',

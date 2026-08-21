@@ -1,0 +1,21 @@
+<div class="admin-page">
+  <header><div><p>homepage content</p><h1>Slide trang chủ</h1><span>Quản lý hình ảnh và nội dung xuất hiện ở đầu cửa hàng.</span></div><b>{{ slides().length }} slide</b></header>
+  @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> } @if (message()) { <app-feedback-banner tone="success" [message]="message()!" /> }
+  <div class="slide-layout">
+    <form class="editor" [formGroup]="slideForm" (ngSubmit)="submit()">
+      <div class="editor-heading"><div><small>{{ editingId() === null ? 'Tạo mới' : 'Đang chỉnh sửa' }}</small><h2>{{ editingId() === null ? 'Thêm slide' : 'Cập nhật slide' }}</h2></div>@if (editingId() !== null) { <button type="button" (click)="reset()">Hủy sửa</button> }</div>
+      <label><span>Tiêu đề *</span><input formControlName="title" placeholder="Một góc nhỏ đầy phép màu" /></label>
+      <label><span>Dòng giới thiệu</span><input formControlName="eyebrow" placeholder="Lovely handmade things" /></label>
+      <label><span>Mô tả</span><textarea formControlName="description" rows="3"></textarea></label>
+      <label><span>Ảnh slide *</span><input formControlName="imageUrl" placeholder="https://..." /></label>
+      <label class="upload"><input type="file" accept="image/*" (change)="uploadImage($event)" [disabled]="uploading()" /><span>{{ uploading() ? 'Đang tải...' : '↑ Tải ảnh lên' }}</span></label>
+      @if (slideForm.controls.imageUrl.value) { <img class="preview" appImageFallback [src]="slideForm.controls.imageUrl.value" alt="Xem trước slide" /> }
+      <div class="row"><label><span>Nhãn liên kết</span><input formControlName="linkLabel" placeholder="Khám phá ngay" /></label><label><span>Đường dẫn</span><input formControlName="linkUrl" placeholder="/products" /></label></div>
+      <div class="row"><label><span>Thứ tự</span><input type="number" formControlName="sortOrder" /></label><label class="check"><input type="checkbox" formControlName="active" /><span>Hiển thị slide</span></label></div>
+      <button class="save" type="submit" [disabled]="saving() || uploading()">{{ saving() ? 'Đang lưu...' : (editingId() === null ? 'Tạo slide' : 'Lưu thay đổi') }}</button>
+    </form>
+    <section class="slide-list">
+      @if (loading()) { <div class="loading">Đang tải slide...</div> } @else { @for (slide of slides(); track slide.id) { <article [class.inactive]="!slide.active"><img appImageFallback [src]="slide.imageUrl" [alt]="slide.title" /><div class="slide-copy"><small>#{{ slide.sortOrder }} · {{ slide.active ? 'Đang hiển thị' : 'Đang ẩn' }}</small><h2>{{ slide.title }}</h2><p>{{ slide.description || 'Không có mô tả' }}</p><div><button type="button" (click)="edit(slide)">Chỉnh sửa</button><button type="button" (click)="toggle(slide)">{{ slide.active ? 'Ẩn' : 'Hiện' }}</button><button class="danger" type="button" (click)="archive(slide)">Lưu trữ</button></div></div></article> } @empty { <div class="loading">Chưa có slide nào.</div> } }
+    </section>
+  </div>
+</div>
