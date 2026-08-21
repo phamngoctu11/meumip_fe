@@ -1,28 +1,8 @@
 <article class="product-card" [style.--delay]="animationDelay() + 'ms'">
-  <a
-    class="product-image"
-    [routerLink]="['/products', product().slug]"
-    [attr.aria-label]="'Xem ' + product().name"
-  >
-    <img
-      appImageFallback
-      [src]="product().primaryImageUrl || '/images/product-placeholder.svg'"
-      [alt]="product().name"
-      loading="lazy"
-    />
-    <span class="image-action">Xem chi tiết</span>
-    @if (product().status !== 'ACTIVE') {
-      <span class="status-pill">{{ product().status }}</span>
-    }
+  <a class="product-image" [routerLink]="['/products', product().slug]" [attr.aria-label]="'Xem ' + product().name">
+    <img appImageFallback [src]="product().primaryImageUrl || '/images/product-placeholder.svg'" [alt]="product().name" loading="lazy" />
+    <span class="new-pill">MỚI</span><span class="image-action">Xem chi tiết</span>
+    @if (product().status !== 'ACTIVE') { <span class="status-pill">{{ product().status }}</span> }
   </a>
-
-  <div class="product-info">
-    <div>
-      <h3><a [routerLink]="['/products', product().slug]">{{ product().name }}</a></h3>
-      @if (product().shortDescription) {
-        <p>{{ product().shortDescription }}</p>
-      }
-    </div>
-    <strong>{{ formatVnd(product().priceVnd) }}</strong>
-  </div>
+  <div class="product-info"><div><h3><a [routerLink]="['/products', product().slug]">{{ product().name }}</a></h3>@if (product().shortDescription) { <p>{{ product().shortDescription }}</p> }</div><strong>{{ formatVnd(product().priceVnd) }}</strong><button type="button" aria-label="Thêm vào yêu thích">♡</button></div>
 </article>

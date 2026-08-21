@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { PageHeader } from '../../shared/page-header/page-header';
+import { PageHeader } from '../../../shared/page-header/page-header';
 
 @Component({
   selector: 'app-contact',

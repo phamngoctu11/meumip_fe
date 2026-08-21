@@ -2,14 +2,14 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@ang
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize, switchMap } from 'rxjs';
-import { CartStore } from '../../core/cart.store';
-import { demoProductDetails } from '../../core/demo-products';
-import { formatVnd, ProductDetail as ProductDetailModel } from '../../core/models';
-import { ShopApiService } from '../../core/shop-api.service';
-import { EmptyState } from '../../shared/empty-state/empty-state';
-import { FeedbackBanner } from '../../shared/feedback-banner/feedback-banner';
-import { ImageFallbackDirective } from '../../shared/image-fallback.directive';
-import { QuantityStepper } from '../../shared/quantity-stepper/quantity-stepper';
+import { CartStore } from '../../../core/cart.store';
+import { demoProductDetails } from '../../../core/demo-products';
+import { formatVnd, ProductDetail as ProductDetailModel } from '../../../core/models';
+import { ShopApiService } from '../../../core/shop-api.service';
+import { EmptyState } from '../../../shared/empty-state/empty-state';
+import { FeedbackBanner } from '../../../shared/feedback-banner/feedback-banner';
+import { ImageFallbackDirective } from '../../../shared/image-fallback.directive';
+import { QuantityStepper } from '../../../shared/quantity-stepper/quantity-stepper';
 
 @Component({
   selector: 'app-product-detail',

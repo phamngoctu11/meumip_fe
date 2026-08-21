@@ -3,13 +3,13 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
-import { CartStore } from '../../core/cart.store';
-import { CheckoutRequest, CheckoutResponse, formatVnd } from '../../core/models';
-import { ShopApiService } from '../../core/shop-api.service';
-import { EmptyState } from '../../shared/empty-state/empty-state';
-import { FeedbackBanner } from '../../shared/feedback-banner/feedback-banner';
-import { ImageFallbackDirective } from '../../shared/image-fallback.directive';
-import { PageHeader } from '../../shared/page-header/page-header';
+import { CartStore } from '../../../core/cart.store';
+import { CheckoutRequest, CheckoutResponse, formatVnd } from '../../../core/models';
+import { ShopApiService } from '../../../core/shop-api.service';
+import { EmptyState } from '../../../shared/empty-state/empty-state';
+import { FeedbackBanner } from '../../../shared/feedback-banner/feedback-banner';
+import { ImageFallbackDirective } from '../../../shared/image-fallback.directive';
+import { PageHeader } from '../../../shared/page-header/page-header';
 
 @Component({
   selector: 'app-checkout',

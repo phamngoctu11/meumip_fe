@@ -9,7 +9,7 @@ export const adminGuard: CanActivateFn = (_route, state) => {
 
   return authApi.getCurrentUser().pipe(
     map((user) =>
-      user.role === 'ADMIN'
+      user.role?.toUpperCase().replace('ROLE_', '') === 'ADMIN'
         ? true
         : router.createUrlTree(['/'], { queryParams: { adminDenied: true } }),
     ),

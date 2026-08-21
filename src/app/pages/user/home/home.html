@@ -1,0 +1,42 @@
+<div class="home-page">
+  <section class="hero-slider" aria-roledescription="carousel" aria-label="Giới thiệu về meumip">
+    <div class="slides" [style.transform]="'translateX(-' + activeSlide() * 100 + '%)'">
+      @for (slide of slides; track slide.id; let index = $index) {
+        <article class="slide" [attr.aria-hidden]="activeSlide() !== index">
+          <img [src]="slide.imageUrl" alt="" />
+          <div class="slide-overlay"></div>
+          <div class="slide-content"><span>{{ slide.eyebrow }}</span><h1>{{ slide.title }}</h1><p>{{ slide.description }}</p>
+            @if (isFragmentLink(slide.linkUrl)) { <a [href]="slide.linkUrl">{{ slide.linkLabel }} <b>→</b></a> } @else { <a [routerLink]="slide.linkUrl">{{ slide.linkLabel }} <b>→</b></a> }
+          </div>
+        </article>
+      }
+    </div>
+    <button class="slider-arrow previous" type="button" (click)="previousSlide()" aria-label="Slide trước">‹</button><button class="slider-arrow next" type="button" (click)="nextSlide()" aria-label="Slide tiếp theo">›</button>
+    <div class="slider-dots">@for (slide of slides; track slide.id; let index = $index) { <button type="button" [class.active]="activeSlide() === index" (click)="selectSlide(index)" [attr.aria-label]="'Chuyển đến slide ' + (index + 1)"></button> }</div>
+  </section>
+
+  <section id="products-section" class="products-section" aria-labelledby="products-title">
+    <div class="section-intro"><div><span>Sản phẩm của meumip</span><h2 id="products-title">Tìm một món dành riêng cho bạn</h2></div><p>Mỗi danh mục là một góc nhỏ, nơi những sản phẩm cùng câu chuyện được đặt cạnh nhau.</p></div>
+    @if (previewMode()) { <app-feedback-banner message="Backend chưa phản hồi, đang hiển thị dữ liệu mẫu để xem trước giao diện." /> }
+    @if (loading()) {
+      <div class="category-skeleton">@for (item of [1,2,3]; track item) { <div></div> }</div>
+    } @else {
+      <div class="category-list">
+        @for (category of categories(); track category.id) {
+          <article class="category-box">
+            <header><div><small>Danh mục</small><h3>{{ category.name }}</h3></div><p>{{ category.description }}</p></header>
+            @if (category.products.length) { <div class="category-products">@for (product of category.products; track product.id; let index = $index) { <app-product-card [product]="product" [animationDelay]="index * 80" /> }</div> } @else { <app-empty-state title="Danh mục đang được chuẩn bị" message="Sản phẩm mới sẽ sớm xuất hiện ở đây." /> }
+            <footer><a routerLink="/products" [queryParams]="{ category: category.id }">Xem tất cả {{ category.name }} <span>→</span></a></footer>
+          </article>
+        }
+      </div>
+    }
+  </section>
+
+  <section class="combo-section" aria-labelledby="combo-title">
+    <div class="section-intro"><div><span>Gợi ý kết hợp</span><h2 id="combo-title">Ba combo dành cho bạn</h2></div><p>Phần thông tin chi tiết và sản phẩm trong combo sẽ được hoàn thiện ở bước tiếp theo.</p></div>
+    <div class="combo-grid">@for (combo of combos; track combo.id) { <article class="combo-card" [class]="'combo-card combo-card--' + combo.tone"><span>{{ combo.label }}</span><div class="combo-visual" aria-hidden="true"><i>♡</i><i>✦</i><i>☆</i></div><h3>{{ combo.title }}</h3><p>{{ combo.description }}</p><button type="button" disabled>Sắp ra mắt</button></article> }</div>
+  </section>
+
+  <section id="voucher" class="voucher"><span>☆</span><div><small>Quà chào thành viên mới</small><h2>Nhận voucher cho đơn đầu tiên</h2><p>Đăng ký tài khoản để không bỏ lỡ quà nhỏ và sản phẩm mới.</p></div><a routerLink="/register">Đăng ký ngay</a></section>
+</div>

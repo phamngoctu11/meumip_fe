@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AuthStore } from '../../core/auth.store';
-import { CartStore } from '../../core/cart.store';
-import { FeedbackBanner } from '../../shared/feedback-banner/feedback-banner';
+import { AuthStore } from '../../../core/auth.store';
+import { CartStore } from '../../../core/cart.store';
+import { FeedbackBanner } from '../../../shared/feedback-banner/feedback-banner';
 
 @Component({
   selector: 'app-login',
@@ -27,8 +27,9 @@ export class LoginPage implements OnInit {
 
   ngOnInit(): void {
     this.authStore.clearError();
-    if (this.authStore.user()) {
-      void this.router.navigateByUrl('/');
+    const currentUser = this.authStore.user();
+    if (currentUser) {
+      void this.router.navigateByUrl(this.destinationFor(currentUser.role));
     }
   }
 
@@ -40,9 +41,9 @@ export class LoginPage implements OnInit {
 
     const { email, password } = this.loginForm.getRawValue();
     this.authStore.login(email.trim(), password).subscribe({
-      next: () => {
+      next: (user) => {
         this.cartStore.load();
-        void this.router.navigateByUrl(this.safeReturnUrl());
+        void this.router.navigateByUrl(this.destinationFor(user.role));
       },
       error: () => undefined,
     });
@@ -52,8 +53,9 @@ export class LoginPage implements OnInit {
     this.passwordVisible.update((visible) => !visible);
   }
 
-  private safeReturnUrl(): string {
+  private destinationFor(role: string): string {
     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-    return returnUrl?.startsWith('/') && !returnUrl.startsWith('//') ? returnUrl : '/';
+    if (returnUrl?.startsWith('/') && !returnUrl.startsWith('//')) return returnUrl;
+    return role?.toUpperCase().replace('ROLE_', '') === 'ADMIN' ? '/admin' : '/';
   }
 }

@@ -17,11 +17,10 @@ describe('App', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('should render the meumip navigation and footer', () => {
+  it('should provide a router outlet for the selected application area', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.mini-brand')?.textContent).toContain('meumip');
-    expect(compiled.querySelector('.site-footer')).toBeTruthy();
+    expect(compiled.querySelector('router-outlet')).toBeTruthy();
   });
 });

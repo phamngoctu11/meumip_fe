@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700;800&family=Modak&family=Nunito:wght@600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700;800&family=Nunito:wght@600;700;800;900&display=swap');
 
 :root {
-  --cream: #fffdfb;
-  --cream-deep: #fff7f1;
-  --cocoa: #9b7044;
+  --cream: #fffaf6;
+  --cream-deep: #fff3ed;
+  --cocoa: #70402e;
   --caramel: #bd835f;
   --caramel-dark: #a96f4d;
   --berry: #a65e7b;
@@ -16,10 +16,11 @@
   --lavender-soft: #f1ebf5;
   --sand: #e8d2c1;
   --muted: #8f7768;
-  --font-display: 'Modak', 'Arial Rounded MT Bold', cursive;
+  --font-display: 'Nunito', 'Arial Rounded MT Bold', sans-serif;
   --font-rounded: 'Nunito', 'Arial Rounded MT Bold', sans-serif;
   --font-body: 'Karla', Arial, sans-serif;
   --shadow-soft: 0 18px 55px rgba(122, 82, 57, 0.12);
+  --line: #f2dcd5;
   color-scheme: light;
   font-family: var(--font-body);
   font-synthesis: none;
@@ -41,7 +42,7 @@ body {
   min-height: 100vh;
   margin: 0;
   overflow-x: clip;
-  background: var(--cream);
+  background: radial-gradient(circle at 8% 8%, #ffe8ed88 0 4px, transparent 5px) 0 0 / 72px 72px, var(--cream);
   color: var(--caramel-dark);
   font-family: var(--font-body);
   line-height: 1.5;

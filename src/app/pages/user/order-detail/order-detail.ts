@@ -3,11 +3,11 @@ import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
-import { formatVnd, Order } from '../../core/models';
-import { orderStatusLabel, paymentStatusLabel } from '../../core/order-status.utils';
-import { ShopApiService } from '../../core/shop-api.service';
-import { FeedbackBanner } from '../../shared/feedback-banner/feedback-banner';
-import { ImageFallbackDirective } from '../../shared/image-fallback.directive';
+import { formatVnd, Order } from '../../../core/models';
+import { orderStatusLabel, paymentStatusLabel } from '../../../core/order-status.utils';
+import { ShopApiService } from '../../../core/shop-api.service';
+import { FeedbackBanner } from '../../../shared/feedback-banner/feedback-banner';
+import { ImageFallbackDirective } from '../../../shared/image-fallback.directive';
 
 @Component({
   selector: 'app-order-detail',

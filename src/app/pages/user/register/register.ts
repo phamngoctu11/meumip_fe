@@ -3,10 +3,10 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize, switchMap } from 'rxjs';
-import { AuthApiService } from '../../core/auth-api.service';
-import { AuthStore } from '../../core/auth.store';
-import { CartStore } from '../../core/cart.store';
-import { FeedbackBanner } from '../../shared/feedback-banner/feedback-banner';
+import { AuthApiService } from '../../../core/auth-api.service';
+import { AuthStore } from '../../../core/auth.store';
+import { CartStore } from '../../../core/cart.store';
+import { FeedbackBanner } from '../../../shared/feedback-banner/feedback-banner';
 
 @Component({
   selector: 'app-register',
