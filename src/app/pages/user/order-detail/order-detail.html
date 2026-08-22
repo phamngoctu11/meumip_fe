@@ -22,7 +22,21 @@
               } @else {
                 <img appImageFallback [src]="item.productImageUrl || '/images/product-placeholder.svg'" [alt]="item.productName" />
               }
-              <div><strong>{{ item.productName }}</strong>@if (item.blankName) { <small>Phôi: {{ item.blankName }}@if (item.blankSize) { · {{ item.blankSize }} }</small> }<span>{{ formatVnd(item.unitPriceVnd) }} × {{ item.quantity }}</span></div>
+              <div>
+                <strong>{{ item.productName }}</strong>
+                <small>{{ item.itemTypeLabel }}</small>
+                @if (item.selectedBlanks.length) {
+                  <small>
+                    Phôi:
+                    @for (blank of item.selectedBlanks; track blank.id; let last = $last) {
+                      {{ blank.name }} · {{ blank.size }}@if ((blank.quantity ?? 1) > 1) { × {{ blank.quantity }} }@if (!last) { , }
+                    }
+                  </small>
+                } @else if (item.blankName) {
+                  <small>Phôi: {{ item.blankName }}@if (item.blankSize) { · {{ item.blankSize }} }</small>
+                }
+                <span>{{ formatVnd(item.unitPriceVnd) }} × {{ item.quantity }}</span>
+              </div>
               <b>{{ formatVnd(item.lineTotalVnd) }}</b>
             </article>
           }

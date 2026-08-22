@@ -117,7 +117,21 @@
                   <img appImageFallback [src]="item.imageUrl || '/images/product-placeholder.svg'" [alt]="item.productName" />
                   <span>{{ item.quantity }}</span>
                 </div>
-                <div><strong>{{ item.productName }}</strong><small>Phôi: {{ item.productBlankName }} · {{ item.productBlankSize }}</small><small>{{ formatVnd(item.unitPriceVnd) }}</small></div>
+                <div>
+                  <strong>{{ item.productName }}</strong>
+                  <small>{{ item.itemTypeLabel }}</small>
+                  @if (item.selectedBlanks.length) {
+                    <small>
+                      Phôi:
+                      @for (blank of item.selectedBlanks; track blank.id; let last = $last) {
+                        {{ blank.name }} · {{ blank.size }}@if ((blank.quantity ?? 1) > 1) { × {{ blank.quantity }} }@if (!last) { , }
+                      }
+                    </small>
+                  } @else if (item.productBlankName) {
+                    <small>Phôi: {{ item.productBlankName }}@if (item.productBlankSize) { · {{ item.productBlankSize }} }</small>
+                  }
+                  <small>{{ formatVnd(item.unitPriceVnd) }}</small>
+                </div>
                 <b>{{ formatVnd(item.lineTotalVnd) }}</b>
               </div>
             }
@@ -134,7 +148,7 @@
       <div class="checkout-loading">Đang kiểm tra giỏ hàng...</div>
     } @else {
       <app-empty-state icon="♡" title="Chưa có gì để thanh toán" message="Thêm sản phẩm vào giỏ trước nhé.">
-        <a class="button button--primary" routerLink="/products">Xem sản phẩm</a>
+        <a class="button button--primary" routerLink="/products">Xem 3 nhóm mặt hàng</a>
       </app-empty-state>
     }
   }

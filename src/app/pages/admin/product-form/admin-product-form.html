@@ -1,7 +1,16 @@
 <div class="admin-page">
   <header class="form-header">
-    <div><a routerLink="/admin/products">← Sản phẩm</a><p>{{ isEdit ? 'edit product' : 'new product' }}</p><h1>{{ isEdit ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm' }}</h1></div>
-    <div class="header-actions"><a routerLink="/admin/products">Hủy</a><button type="button" (click)="submit()" [disabled]="saving() || uploading()">{{ saving() ? 'Đang lưu...' : 'Lưu sản phẩm' }}</button></div>
+    <div>
+      <a routerLink="/admin/products">← Món bán lẻ</a>
+      <p>{{ isEdit ? 'edit material' : 'new material' }}</p>
+      <h1>{{ isEdit ? 'Chỉnh sửa món bán lẻ' : 'Thêm món bán lẻ' }}</h1>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/admin/products">Hủy</a>
+      <button type="button" (click)="submit()" [disabled]="saving() || uploading()">
+        {{ saving() ? 'Đang lưu...' : 'Lưu món bán lẻ' }}
+      </button>
+    </div>
   </header>
 
   @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }
@@ -12,13 +21,25 @@
     <form [formGroup]="productForm" (ngSubmit)="submit()" novalidate>
       <div class="form-main">
         <section class="form-card">
-          <div class="card-title"><span>01</span><div><h2>Thông tin cơ bản</h2><p>Tên, đường dẫn và nội dung hiển thị trong cửa hàng.</p></div></div>
+          <div class="card-title">
+            <span>01</span>
+            <div><h2>Thông tin cơ bản</h2><p>Tên, đường dẫn và nội dung hiển thị trong cửa hàng.</p></div>
+          </div>
           <div class="field-grid">
-            <label class="field field--wide"><span>Tên sản phẩm *</span><input formControlName="name" type="text" (blur)="generateSlug()" placeholder="Miku keychain" />@if (productForm.controls.name.invalid && productForm.controls.name.touched) { <small>Vui lòng nhập tên sản phẩm.</small> }</label>
-            <label class="field field--wide"><span>Slug *</span><div class="slug-input"><b>/products/</b><input formControlName="slug" type="text" placeholder="miku-keychain" /></div>@if (productForm.controls.slug.invalid && productForm.controls.slug.touched) { <small>Vui lòng nhập slug.</small> }</label>
-            <label class="field field--wide"><span>Mô tả ngắn</span><input formControlName="shortDescription" type="text" placeholder="Một câu giới thiệu ngắn..." /></label>
-            <label class="field field--wide"><span>Danh mục</span><select formControlName="categoryId"><option [ngValue]="null">Chưa phân loại</option>@for (category of categories(); track category.id) { <option [ngValue]="category.id">{{ category.name }}</option> }</select></label>
-            <label class="field field--wide"><span>Mô tả chi tiết</span><textarea formControlName="description" rows="7" placeholder="Câu chuyện, cách sử dụng và lưu ý..."></textarea></label>
+            <label class="field field--wide">
+              <span>Tên mặt hàng *</span>
+              <input formControlName="name" type="text" (blur)="generateSlug()" placeholder="Đất lẻ 100g" />
+              @if (productForm.controls.name.invalid && productForm.controls.name.touched) { <small>Vui lòng nhập tên mặt hàng.</small> }
+            </label>
+            <label class="field field--wide">
+              <span>Slug *</span>
+              <div class="slug-input"><b>/products/</b><input formControlName="slug" type="text" placeholder="dat-le-100g" /></div>
+              @if (productForm.controls.slug.invalid && productForm.controls.slug.touched) { <small>Vui lòng nhập slug.</small> }
+            </label>
+            <label class="field field--wide"><span>Mô tả ngắn</span><input formControlName="shortDescription" type="text" placeholder="Đất lẻ dùng kèm bộ kit..." /></label>
+            <label class="field field--wide"><span>Hashtag</span><input formControlName="tagsText" type="text" placeholder="#dat #mau #pastel" /></label>
+            <label class="field field--wide"><span>Danh mục phụ</span><select formControlName="categoryId"><option [ngValue]="null">Tự động: nguyên liệu/món bán lẻ</option>@for (category of categories(); track category.id) { <option [ngValue]="category.id">{{ category.name }}</option> }</select></label>
+            <label class="field field--wide"><span>Mô tả chi tiết</span><textarea formControlName="description" rows="7" placeholder="Thông tin quy cách, cách dùng và lưu ý..."></textarea></label>
           </div>
         </section>
 
@@ -39,36 +60,37 @@
                 <div class="image-actions"><button type="button" [class.active]="image.controls.primaryImage.value" (click)="setPrimary(index)">{{ image.controls.primaryImage.value ? 'Ảnh chính' : 'Đặt ảnh chính' }}</button><button class="remove" type="button" (click)="removeImage(index)">Xóa</button></div>
               </div>
             } @empty {
-              <div class="images-empty">Chưa có ảnh. Bạn có thể lưu sản phẩm không ảnh và bổ sung sau.</div>
+              <div class="images-empty">Chưa có ảnh. Bạn có thể lưu mặt hàng không ảnh và bổ sung sau.</div>
             }
           </div>
         </section>
 
         <section class="form-card">
-          <div class="card-title"><span>03</span><div><h2>Thông tin làm & giao hàng</h2><p>Giúp khách biết thời gian chờ và đặc điểm sản phẩm.</p></div></div>
+          <div class="card-title"><span>03</span><div><h2>Thông tin bán hàng</h2><p>Quy cách, tồn kho và lưu ý giao hàng.</p></div></div>
           <div class="field-grid">
-            <label class="field"><span>Chất liệu</span><input formControlName="materialNote" type="text" placeholder="Đất sét, resin..." /></label>
-            <label class="field"><span>Kích thước</span><input formControlName="sizeNote" type="text" placeholder="Khoảng 5–6 cm" /></label>
+            <label class="field"><span>Chất liệu / quy cách</span><input formControlName="materialNote" type="text" placeholder="Đất sét 100g, bộ màu 12 màu..." /></label>
+            <label class="field"><span>Kích thước / phân loại</span><input formControlName="sizeNote" type="text" placeholder="100g, 200g, Basic, Pastel..." /></label>
             <label class="field"><span>Thời gian tối thiểu (ngày)</span><input formControlName="productionMinDays" type="number" min="0" /></label>
             <label class="field"><span>Thời gian tối đa (ngày)</span><input formControlName="productionMaxDays" type="number" min="0" /></label>
-            <label class="field field--wide"><span>Lưu ý giao hàng</span><input formControlName="shippingNote" type="text" placeholder="Đơn được đóng gói sau khi hoàn thiện..." /></label>
+            <label class="field field--wide"><span>Lưu ý giao hàng</span><input formControlName="shippingNote" type="text" placeholder="Đơn được đóng gói sau khi xác nhận thanh toán..." /></label>
           </div>
         </section>
       </div>
 
       <aside class="form-aside">
         <section class="form-card">
-          <div class="card-title card-title--compact"><div><h2>Trạng thái</h2><p>Quyết định sản phẩm có xuất hiện trong tiệm.</p></div></div>
+          <div class="card-title card-title--compact"><div><h2>Trạng thái</h2><p>Quyết định mặt hàng có xuất hiện trong tiệm.</p></div></div>
           <label class="field"><span>Trạng thái bán</span><select formControlName="status">@for (status of statuses; track status.value) { <option [value]="status.value">{{ status.label }}</option> }</select></label>
-          <label class="switch-field"><input type="checkbox" formControlName="madeToOrder" /><span><b>Làm theo đơn</b><small>Sản phẩm cần thời gian sản xuất</small></span></label>
+          <label class="switch-field"><input type="checkbox" formControlName="madeToOrder" /><span><b>Làm theo đơn</b><small>Mặt hàng cần thời gian chuẩn bị</small></span></label>
         </section>
+
         <section class="form-card">
           <div class="card-title card-title--compact"><div><h2>Giá & kho</h2></div></div>
           <label class="field"><span>Giá bán (VND) *</span><input formControlName="priceVnd" type="number" min="0" step="1000" /></label>
           <label class="field"><span>Số lượng tồn</span><input formControlName="stockQuantity" type="number" min="0" placeholder="Để trống nếu không áp dụng" /></label>
           <label class="field"><span>Thứ tự hiển thị</span><input formControlName="sortOrder" type="number" /></label>
         </section>
-        <button class="mobile-save" type="submit" [disabled]="saving() || uploading()">{{ saving() ? 'Đang lưu...' : 'Lưu sản phẩm' }}</button>
+        <button class="mobile-save" type="submit" [disabled]="saving() || uploading()">{{ saving() ? 'Đang lưu...' : 'Lưu món bán lẻ' }}</button>
       </aside>
     </form>
   }

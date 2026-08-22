@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@ang
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { AdminApiService } from '../../../core/admin-api.service';
-import { ProductBlank, ProductBlankUpsertRequest } from '../../../core/models';
+import { formatVnd, ProductBlank, ProductBlankUpsertRequest } from '../../../core/models';
 import { FeedbackBanner } from '../../../shared/feedback-banner/feedback-banner';
 import { ImageFallbackDirective } from '../../../shared/image-fallback.directive';
 
@@ -24,11 +24,13 @@ export class AdminProductBlanks implements OnInit {
   readonly uploading = signal(false);
   readonly error = signal<string | null>(null);
   readonly message = signal<string | null>(null);
+  readonly formatVnd = formatVnd;
 
   readonly blankForm = this.formBuilder.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(160)]],
     size: ['', [Validators.required, Validators.maxLength(100)]],
     imageUrl: ['', [Validators.required, Validators.maxLength(700)]],
+    priceVnd: [25000, [Validators.required, Validators.min(0)]],
     sortOrder: [0],
     active: [true],
   });
@@ -46,13 +48,13 @@ export class AdminProductBlanks implements OnInit {
   edit(blank: ProductBlank): void {
     this.editingId.set(blank.id);
     this.error.set(null); this.message.set(null);
-    this.blankForm.setValue({ name: blank.name, size: blank.size, imageUrl: blank.imageUrl, sortOrder: blank.sortOrder, active: blank.active });
+    this.blankForm.setValue({ name: blank.name, size: blank.size, imageUrl: blank.imageUrl, priceVnd: blank.priceVnd, sortOrder: blank.sortOrder, active: blank.active });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   reset(): void {
     this.editingId.set(null);
-    this.blankForm.reset({ name: '', size: '', imageUrl: '', sortOrder: 0, active: true });
+    this.blankForm.reset({ name: '', size: '', imageUrl: '', priceVnd: 25000, sortOrder: 0, active: true });
     this.error.set(null);
   }
 

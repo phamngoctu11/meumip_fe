@@ -42,6 +42,7 @@ export class AdminProducts implements OnInit {
     const term = (search ?? '').trim().toLowerCase();
     return this.products().filter(
       (product) =>
+        product.type === 'MATERIAL' &&
         (status === 'ALL' || product.status === status) &&
         (!term || product.name.toLowerCase().includes(term) || product.slug.toLowerCase().includes(term)),
     );
@@ -58,14 +59,14 @@ export class AdminProducts implements OnInit {
       .listProducts()
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (products) => this.products.set(products),
-        error: () => this.error.set('Chưa thể tải danh sách sản phẩm.'),
+        next: (products) => this.products.set(products.filter((product) => product.type === 'MATERIAL')),
+        error: () => this.error.set('Chưa thể tải danh sách món bán lẻ.'),
       });
   }
 
   archive(product: ProductDetail): void {
     const confirmed = window.confirm(
-      `Ẩn sản phẩm “${product.name}”? Sản phẩm sẽ biến mất khỏi cửa hàng nhưng dữ liệu đơn cũ vẫn được giữ.`,
+      `Ẩn món bán lẻ “${product.name}”? Mặt hàng sẽ biến mất khỏi cửa hàng nhưng dữ liệu đơn cũ vẫn được giữ.`,
     );
     if (!confirmed) {
       return;
@@ -82,9 +83,9 @@ export class AdminProducts implements OnInit {
           this.products.update((products) =>
             products.map((item) => (item.id === archived.id ? archived : item)),
           );
-          this.success.set(`Đã ẩn sản phẩm “${product.name}”.`);
+          this.success.set(`Đã ẩn món bán lẻ “${product.name}”.`);
         },
-        error: () => this.error.set('Không thể ẩn sản phẩm. Vui lòng thử lại.'),
+        error: () => this.error.set('Không thể ẩn món bán lẻ. Vui lòng thử lại.'),
       });
   }
 }

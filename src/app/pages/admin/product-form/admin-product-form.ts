@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
 import { AdminApiService } from '../../../core/admin-api.service';
 import {
+  CatalogItemType,
   Category,
   ProductDetail,
   ProductImage,
@@ -37,6 +38,11 @@ export class AdminProductForm implements OnInit {
   readonly productId = this.parseProductId();
   readonly isEdit = this.productId !== null;
   readonly statuses = PRODUCT_STATUSES;
+  readonly itemTypes: Array<{ value: CatalogItemType; label: string }> = [
+    { value: 'BLANK', label: 'Phôi lẻ' },
+    { value: 'KIT', label: 'Combo Kit' },
+    { value: 'MATERIAL', label: 'Nguyên liệu / món bán lẻ' },
+  ];
   readonly categories = signal<Category[]>([]);
   readonly loading = signal(this.isEdit);
   readonly saving = signal(false);
@@ -45,6 +51,7 @@ export class AdminProductForm implements OnInit {
   readonly images = new FormArray<ProductImageForm>([]);
 
   readonly productForm = this.formBuilder.group({
+    type: this.formBuilder.nonNullable.control<CatalogItemType>('MATERIAL', Validators.required),
     name: this.formBuilder.nonNullable.control('', [Validators.required, Validators.maxLength(160)]),
     slug: this.formBuilder.nonNullable.control('', [Validators.required, Validators.maxLength(160)]),
     shortDescription: this.formBuilder.nonNullable.control('', Validators.maxLength(255)),
@@ -59,6 +66,12 @@ export class AdminProductForm implements OnInit {
     shippingNote: this.formBuilder.nonNullable.control('', Validators.maxLength(255)),
     sizeNote: this.formBuilder.nonNullable.control('', Validators.maxLength(100)),
     materialNote: this.formBuilder.nonNullable.control('', Validators.maxLength(255)),
+    blankSize: this.formBuilder.nonNullable.control('', Validators.maxLength(100)),
+    blankShape: this.formBuilder.nonNullable.control('', Validators.maxLength(120)),
+    includedBlankCount: this.formBuilder.control<number | null>(null, Validators.min(0)),
+    selectionRequired: this.formBuilder.nonNullable.control(false),
+    selectionNote: this.formBuilder.nonNullable.control('', Validators.maxLength(255)),
+    tagsText: this.formBuilder.nonNullable.control('', Validators.maxLength(255)),
     stockQuantity: this.formBuilder.control<number | null>(null, Validators.min(0)),
     sortOrder: this.formBuilder.nonNullable.control(0),
     images: this.images,
@@ -96,7 +109,7 @@ export class AdminProductForm implements OnInit {
     const index = this.images.length;
     this.images.push(
       this.formBuilder.nonNullable.group({
-        imageUrl: [image?.imageUrl ?? '', [Validators.required, Validators.maxLength(500)]],
+        imageUrl: [image?.imageUrl ?? '', [Validators.required, Validators.maxLength(700)]],
         altText: [image?.altText ?? '', Validators.maxLength(160)],
         sortOrder: [image?.sortOrder ?? index],
         primaryImage: [image?.primaryImage ?? index === 0],
@@ -153,10 +166,31 @@ export class AdminProductForm implements OnInit {
 
     const value = this.productForm.getRawValue();
     const request: ProductUpsertRequest = {
-      ...value,
+      type: 'MATERIAL',
       slug: value.slug.trim().toLowerCase(),
       name: value.name.trim(),
+      shortDescription: value.shortDescription.trim(),
+      description: value.description.trim(),
+      priceVnd: value.priceVnd,
+      status: value.status,
+      madeToOrder: value.madeToOrder,
+      productionMinDays: value.productionMinDays,
+      productionMaxDays: value.productionMaxDays,
+      shippingNote: value.shippingNote.trim(),
+      sizeNote: value.sizeNote.trim(),
+      materialNote: value.materialNote.trim(),
+      blankSize: value.blankSize.trim(),
+      blankShape: value.blankShape.trim(),
+      includedBlankCount: value.includedBlankCount,
+      selectionRequired: value.selectionRequired,
+      selectionNote: value.selectionNote.trim(),
+      categoryId: value.categoryId,
+      categorySlug: value.categorySlug,
+      stockQuantity: value.stockQuantity,
+      sortOrder: value.sortOrder,
       images: value.images.map((image, index) => ({ ...image, sortOrder: image.sortOrder ?? index })),
+      tags: this.parseTags(value.tagsText),
+      kitComponents: [],
     };
 
     this.saving.set(true);
@@ -174,6 +208,7 @@ export class AdminProductForm implements OnInit {
   private fillForm(product: ProductDetail): void {
     this.productForm.patchValue({
       name: product.name,
+      type: product.type,
       slug: product.slug,
       shortDescription: product.shortDescription ?? '',
       description: product.description ?? '',
@@ -187,6 +222,12 @@ export class AdminProductForm implements OnInit {
       shippingNote: product.shippingNote ?? '',
       sizeNote: product.sizeNote ?? '',
       materialNote: product.materialNote ?? '',
+      blankSize: product.blankSize ?? '',
+      blankShape: product.blankShape ?? '',
+      includedBlankCount: product.includedBlankCount,
+      selectionRequired: product.selectionRequired,
+      selectionNote: product.selectionNote ?? '',
+      tagsText: product.tags.join(', '),
       stockQuantity: product.stockQuantity,
       sortOrder: product.sortOrder,
     });
@@ -213,5 +254,12 @@ export class AdminProductForm implements OnInit {
       .trim()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '');
+  }
+
+  private parseTags(value: string): string[] {
+    return value
+      .split(/[,\s#]+/)
+      .map((tag) => tag.trim())
+      .filter(Boolean);
   }
 }

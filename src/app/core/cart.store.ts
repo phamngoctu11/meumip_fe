@@ -33,10 +33,10 @@ export class CartStore {
       });
   }
 
-  add(productId: number, productBlankId: number, quantity: number): Observable<Cart> {
+  add(productId: number, quantity: number, productBlankId?: number | null): Observable<Cart> {
     this.loading.set(true);
     this.error.set(null);
-    return this.api.addCartItem(this.requestSessionId(), productId, productBlankId, quantity).pipe(
+    return this.api.addCartItem(this.requestSessionId(), productId, quantity, productBlankId).pipe(
       tap({
         next: (cart) => this.cartState.set(cart),
         error: (error: HttpErrorResponse) =>

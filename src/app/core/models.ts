@@ -1,14 +1,24 @@
+export type CatalogItemType = 'BLANK' | 'KIT' | 'MATERIAL';
+
 export interface ProductSummary {
   id: number;
+  type: CatalogItemType;
+  typeLabel: string;
   slug: string;
   name: string;
   shortDescription: string | null;
   priceVnd: number;
   status: string;
   primaryImageUrl: string | null;
+  images: ProductImage[];
   categoryId: number | null;
   categorySlug: string | null;
   categoryName: string | null;
+  blankSize: string | null;
+  blankShape: string | null;
+  includedBlankCount: number | null;
+  selectionRequired: boolean;
+  tags: string[];
 }
 
 export interface Category {
@@ -23,9 +33,13 @@ export interface Category {
 
 export interface ProductBlank {
   id: number;
+  slug: string | null;
   name: string;
   size: string;
   imageUrl: string;
+  images: ProductImage[];
+  priceVnd: number;
+  quantity?: number | null;
   sortOrder: number;
   active: boolean;
 }
@@ -48,17 +62,37 @@ export interface HomeCombo {
   title: string;
   description: string | null;
   imageUrl: string | null;
+  images: ProductImage[];
   itemCount: number;
+  priceVnd: number;
   priceNote: string | null;
+  components: KitComponent[];
+  tags: string[];
   sortOrder: number;
   active: boolean;
   blanks: ProductBlank[];
 }
 
 export interface ComboBlankSelection {
-  productId: number;
-  productBlankId: number | null;
+  productBlankId: number;
   quantity: number;
+}
+
+export interface KitComponent {
+  id: number | null;
+  name: string;
+  quantity: number;
+  unit: string | null;
+  note: string | null;
+  sortOrder: number;
+}
+
+export interface KitComponentRequest {
+  name: string;
+  quantity: number;
+  unit: string;
+  note: string;
+  sortOrder: number;
 }
 
 export interface CategoryUpsertRequest {
@@ -87,15 +121,21 @@ export interface HomeComboUpsertRequest {
   description: string;
   imageUrl: string;
   itemCount: number;
+  priceVnd: number;
   priceNote: string;
+  images?: ProductImageRequest[];
+  components?: KitComponentRequest[];
+  tags?: string[];
   sortOrder: number;
   active: boolean;
 }
 
 export interface ProductBlankUpsertRequest {
+  slug?: string;
   name: string;
   size: string;
   imageUrl: string;
+  priceVnd?: number;
   sortOrder: number;
   active: boolean;
 }
@@ -118,6 +158,7 @@ export interface ProductImageRequest {
 }
 
 export interface ProductUpsertRequest {
+  type: CatalogItemType;
   slug: string;
   name: string;
   shortDescription: string;
@@ -130,11 +171,18 @@ export interface ProductUpsertRequest {
   shippingNote: string;
   sizeNote: string;
   materialNote: string;
+  blankSize: string;
+  blankShape: string;
+  includedBlankCount: number | null;
+  selectionRequired: boolean;
+  selectionNote: string;
   categoryId: number | null;
   categorySlug: string | null;
   stockQuantity: number | null;
   sortOrder: number;
   images: ProductImageRequest[];
+  tags: string[];
+  kitComponents: KitComponentRequest[];
 }
 
 export interface ImageUploadResponse {
@@ -154,25 +202,29 @@ export interface ProductDetail extends ProductSummary {
   shippingNote: string | null;
   sizeNote: string | null;
   materialNote: string | null;
+  selectionNote: string | null;
   stockQuantity: number | null;
   sortOrder: number;
-  images: ProductImage[];
+  kitComponents: KitComponent[];
   blanks: ProductBlank[];
 }
 
 export interface CartItem {
   id: number;
+  itemType: CatalogItemType;
+  itemTypeLabel: string;
   productId: number;
   productSlug: string;
   productName: string;
   imageUrl: string | null;
-  productBlankId: number;
-  productBlankName: string;
-  productBlankSize: string;
+  productBlankId: number | null;
+  productBlankName: string | null;
+  productBlankSize: string | null;
   productBlankImageUrl: string | null;
   unitPriceVnd: number;
   quantity: number;
   lineTotalVnd: number;
+  selectedBlanks: ProductBlank[];
 }
 
 export interface Cart {
@@ -199,6 +251,8 @@ export interface CheckoutRequest {
 
 export interface OrderItem {
   id: number;
+  itemType: CatalogItemType;
+  itemTypeLabel: string;
   productName: string;
   productSlug: string | null;
   productImageUrl: string | null;
@@ -209,6 +263,7 @@ export interface OrderItem {
   unitPriceVnd: number;
   quantity: number;
   lineTotalVnd: number;
+  selectedBlanks: ProductBlank[];
 }
 
 export interface Order {

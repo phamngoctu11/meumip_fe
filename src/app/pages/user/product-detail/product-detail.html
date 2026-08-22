@@ -41,11 +41,16 @@
       </div>
 
       <div class="product-copy">
-        <p class="eyebrow">handmade little thing</p>
+        <p class="eyebrow">{{ item.typeLabel || 'handmade little thing' }}</p>
         <h1>{{ item.name }}</h1>
         <p class="price">{{ formatVnd(item.priceVnd) }}</p>
         @if (item.shortDescription) {
           <p class="short-description">{{ item.shortDescription }}</p>
+        }
+        @if (item.tags.length) {
+          <div class="tag-list">
+            @for (tag of item.tags; track tag) { <span>#{{ tag }}</span> }
+          </div>
         }
 
         <div class="divider"><span>✿</span></div>
@@ -55,6 +60,12 @@
         }
 
         <dl class="product-notes">
+          @if (item.blankShape) {
+            <div><dt>Hình dáng phôi</dt><dd>{{ item.blankShape }}</dd></div>
+          }
+          @if (item.blankSize) {
+            <div><dt>Kích cỡ phôi</dt><dd>{{ item.blankSize }}</dd></div>
+          }
           @if (item.materialNote) {
             <div><dt>Chất liệu</dt><dd>{{ item.materialNote }}</dd></div>
           }
@@ -72,37 +83,57 @@
           }
         </dl>
 
-        <fieldset class="blank-picker" [formGroup]="purchaseForm">
-          <legend>Chọn phôi <small>* bắt buộc</small></legend>
-          <p>Chọn kích thước và kiểu phôi bạn muốn dùng cho sản phẩm này.</p>
-          <div class="blank-options">
-            @for (blank of item.blanks; track blank.id) {
-              <label [class.selected]="purchaseForm.controls.productBlankId.value === blank.id">
-                <input type="radio" formControlName="productBlankId" [value]="blank.id" />
-                <img appImageFallback [src]="blank.imageUrl" [alt]="blank.name" />
-                <span><strong>{{ blank.name }}</strong><small>{{ blank.size }}</small></span>
-              </label>
-            } @empty {
-              <app-feedback-banner tone="error" message="Sản phẩm hiện chưa có phôi khả dụng." />
+        @if (item.type === 'KIT') {
+          <app-feedback-banner message="Combo kit cần chọn phôi miễn phí trong khu vực Combo trên trang chủ trước khi thêm vào giỏ." />
+          @if (item.kitComponents.length) {
+            <dl class="product-notes">
+              @for (component of item.kitComponents; track component.id ?? component.name) {
+                <div>
+                  <dt>{{ component.name }}</dt>
+                  <dd>{{ component.quantity }}{{ component.unit ? ' ' + component.unit : '' }}@if (component.note) { · {{ component.note }} }</dd>
+                </div>
+              }
+            </dl>
+          }
+        }
+
+        @if (needsBlankSelection(item)) {
+          <fieldset class="blank-picker" [formGroup]="purchaseForm">
+            <legend>Chọn phôi <small>* bắt buộc</small></legend>
+            <p>{{ item.selectionNote || 'Chọn kích thước và kiểu phôi bạn muốn dùng cho sản phẩm này.' }}</p>
+            <div class="blank-options">
+              @for (blank of item.blanks; track blank.id) {
+                <label [class.selected]="purchaseForm.controls.productBlankId.value === blank.id">
+                  <input type="radio" formControlName="productBlankId" [value]="blank.id" />
+                  <img appImageFallback [src]="blank.imageUrl || blank.images[0]?.imageUrl || '/images/product-placeholder.svg'" [alt]="blank.name" />
+                  <span><strong>{{ blank.name }}</strong><small>{{ blank.size }}</small></span>
+                </label>
+              }
+            </div>
+            @if (purchaseForm.controls.productBlankId.invalid && purchaseForm.controls.productBlankId.touched) {
+              <small class="blank-error">Bạn cần chọn một phôi.</small>
             }
-          </div>
-          @if (purchaseForm.controls.productBlankId.invalid && purchaseForm.controls.productBlankId.touched && item.blanks.length) { <small class="blank-error">Bạn cần chọn một phôi.</small> }
-        </fieldset>
+          </fieldset>
+        } @else if (item.selectionRequired && item.type !== 'KIT') {
+          <app-feedback-banner tone="error" message="Sản phẩm này yêu cầu chọn phôi nhưng hiện chưa có phôi khả dụng." />
+        }
 
         <form class="buy-row" [formGroup]="purchaseForm" (ngSubmit)="addToCart()">
           <app-quantity-stepper
             formControlName="quantity"
-            [disabled]="cartStore.loading()"
+            [disabled]="cartStore.loading() || item.type === 'KIT'"
           />
           <button
             class="add-button"
             type="submit"
-            [disabled]="cartStore.loading() || item.status !== 'ACTIVE' || !item.blanks.length"
+            [disabled]="cartStore.loading() || !canAddToCart(item)"
           >
             @if (cartStore.loading()) {
               Đang thêm...
             } @else if (item.status !== 'ACTIVE') {
               Tạm hết hàng
+            } @else if (item.type === 'KIT') {
+              Chọn ở trang chủ
             } @else {
               Thêm vào giỏ <span>♡</span>
             }
@@ -110,7 +141,7 @@
         </form>
 
         @if (added()) {
-          <app-feedback-banner tone="success" message="Đã thêm bé này vào giỏ hàng rồi nhé!" />
+          <app-feedback-banner tone="success" message="Đã thêm sản phẩm vào giỏ hàng." />
         }
         @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }
         @if (cartStore.error()) {

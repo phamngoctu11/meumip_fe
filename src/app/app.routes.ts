@@ -15,7 +15,7 @@ export const routes: Routes = [
       },
   {
     path: 'products',
-    title: 'Sản phẩm — meumip',
+    title: '3 nhóm mặt hàng — meumip',
     loadComponent: () => import('./pages/user/products/products').then((page) => page.ProductsPage),
   },
   {
@@ -84,7 +84,7 @@ export const routes: Routes = [
       },
       {
         path: 'products',
-        title: 'Quản lý sản phẩm — meumip',
+        title: 'Quản lý món bán lẻ — meumip',
         loadComponent: () =>
           import('./pages/admin/products/admin-products').then((page) => page.AdminProducts),
       },
@@ -110,7 +110,7 @@ export const routes: Routes = [
       },
       {
         path: 'products/new',
-        title: 'Thêm sản phẩm — meumip',
+        title: 'Thêm món bán lẻ — meumip',
         loadComponent: () =>
           import('./pages/admin/product-form/admin-product-form').then(
             (page) => page.AdminProductForm,
@@ -118,7 +118,7 @@ export const routes: Routes = [
       },
       {
         path: 'products/:id/edit',
-        title: 'Sửa sản phẩm — meumip',
+        title: 'Sửa món bán lẻ — meumip',
         loadComponent: () =>
           import('./pages/admin/product-form/admin-product-form').then(
             (page) => page.AdminProductForm,

@@ -35,7 +35,7 @@ export class ProductDetail implements OnInit {
   readonly selectedImage = signal(0);
   readonly purchaseForm = this.formBuilder.nonNullable.group({
     quantity: [1, [Validators.required, Validators.min(1), Validators.max(10)]],
-    productBlankId: this.formBuilder.control<number | null>(null, Validators.required),
+    productBlankId: this.formBuilder.control<number | null>(null),
   });
   readonly loading = signal(true);
   readonly previewMode = signal(false);
@@ -83,21 +83,39 @@ export class ProductDetail implements OnInit {
     }
 
     this.added.set(false);
+    if (product.type === 'KIT') {
+      this.error.set('Combo kit cần chọn đủ phôi miễn phí ở khu vực Combo trên trang chủ.');
+      return;
+    }
+
     if (this.purchaseForm.invalid) {
       this.purchaseForm.markAllAsTouched();
-      this.error.set('Bạn hãy chọn một loại phôi trước khi thêm vào giỏ.');
+      this.error.set('Bạn hãy kiểm tra lại số lượng trước khi thêm vào giỏ.');
       return;
     }
 
     const blankId = this.purchaseForm.controls.productBlankId.value;
-    if (!blankId) return;
+    if (this.needsBlankSelection(product) && !blankId) {
+      this.purchaseForm.controls.productBlankId.markAsTouched();
+      this.error.set('Bạn hãy chọn một phôi trước khi thêm vào giỏ.');
+      return;
+    }
+
     this.error.set(null);
-    this.cartStore.add(product.id, blankId, this.purchaseForm.controls.quantity.value).subscribe({
+    this.cartStore.add(product.id, this.purchaseForm.controls.quantity.value, blankId).subscribe({
       next: () => {
         this.added.set(true);
         window.setTimeout(() => this.added.set(false), 2500);
       },
       error: () => undefined,
     });
+  }
+
+  needsBlankSelection(product: ProductDetailModel): boolean {
+    return product.type !== 'KIT' && product.selectionRequired && product.blanks.length > 0;
+  }
+
+  canAddToCart(product: ProductDetailModel): boolean {
+    return product.status === 'ACTIVE' && product.type !== 'KIT';
   }
 }

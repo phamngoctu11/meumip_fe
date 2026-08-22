@@ -30,7 +30,17 @@
               <div class="cart-item__copy">
                 <h2><a [routerLink]="['/products', item.productSlug]">{{ item.productName }}</a></h2>
                 <p>{{ formatVnd(item.unitPriceVnd) }} × {{ item.quantity }}</p>
-                <span class="blank-info">Phôi: {{ item.productBlankName }} · {{ item.productBlankSize }}</span>
+                <span class="blank-info">{{ item.itemTypeLabel }}</span>
+                @if (item.selectedBlanks.length) {
+                  <span class="blank-info">
+                    Phôi:
+                    @for (blank of item.selectedBlanks; track blank.id; let last = $last) {
+                      {{ blank.name }} · {{ blank.size }}@if ((blank.quantity ?? 1) > 1) { × {{ blank.quantity }} }@if (!last) { , }
+                    }
+                  </span>
+                } @else if (item.productBlankName) {
+                  <span class="blank-info">Phôi: {{ item.productBlankName }}@if (item.productBlankSize) { · {{ item.productBlankSize }} }</span>
+                }
                 <span>Số lượng: {{ item.quantity }}</span>
               </div>
               <div class="cart-item__total">
@@ -39,10 +49,6 @@
               </div>
             </article>
           }
-
-          <!--
-            ✦ Giỏ hàng được đồng bộ trực tiếp với meumip backend. API hiện chưa có thao tác giảm hoặc xóa sản phẩm.
-          -->
         </div>
 
         <aside class="cart-summary">
@@ -54,7 +60,7 @@
             <div class="summary-total"><dt>Tạm tính</dt><dd>{{ formatVnd(cart.subtotalVnd) }}</dd></div>
           </dl>
           <a class="button button--primary" routerLink="/checkout">Tiến hành đặt hàng <span>→</span></a>
-          <a class="continue-link" routerLink="/products">← Tiếp tục xem sản phẩm</a>
+          <a class="continue-link" routerLink="/products">← Tiếp tục xem mặt hàng</a>
         </aside>
       </div>
     } @else {
@@ -63,12 +69,12 @@
         title="Giỏ hàng còn trống"
         message="Hãy chọn một món nhỏ xinh để bắt đầu nhé."
       >
-        <a class="button button--primary" routerLink="/products">Xem sản phẩm</a>
+        <a class="button button--primary" routerLink="/products">Xem 3 nhóm mặt hàng</a>
       </app-empty-state>
     }
   } @else {
     <app-empty-state icon="♡" title="Giỏ hàng còn trống" message="Hãy chọn một món nhỏ xinh để bắt đầu nhé.">
-      <a class="button button--primary" routerLink="/products">Xem sản phẩm</a>
+      <a class="button button--primary" routerLink="/products">Xem 3 nhóm mặt hàng</a>
     </app-empty-state>
   }
 </section>

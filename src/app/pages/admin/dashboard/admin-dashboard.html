@@ -1,7 +1,7 @@
 <div class="admin-page">
   <header class="admin-page-header">
     <div><p>studio overview</p><h1>Tổng quan</h1><span>Mọi thứ đang diễn ra trong tiệm hôm nay.</span></div>
-    <a class="admin-primary-action" routerLink="/admin/products/new">+ Thêm sản phẩm</a>
+    <a class="admin-primary-action" routerLink="/admin/products/new">+ Thêm món bán lẻ</a>
   </header>
 
   @if (error()) {
@@ -12,7 +12,7 @@
     <div class="stats-grid stats-grid--loading"><span></span><span></span><span></span><span></span></div>
   } @else {
     <section class="stats-grid" aria-label="Thống kê cửa hàng">
-      <article><small>Tổng sản phẩm</small><strong>{{ products().length }}</strong><span>{{ activeProducts() }} đang bán</span></article>
+      <article><small>Tổng mặt hàng</small><strong>{{ products().length }}</strong><span>{{ activeProducts() }} đang bán</span></article>
       <article><small>Tổng đơn hàng</small><strong>{{ orders().length }}</strong><span>{{ pendingOrders() }} cần xử lý</span></article>
       <article><small>Doanh thu đã trả</small><strong class="stat-money">{{ formatVnd(paidRevenue()) }}</strong><span>Từ đơn đã thanh toán</span></article>
       <article><small>Đơn chờ xác nhận</small><strong>{{ awaitingPaymentConfirmation() }}</strong><span>Kiểm tra chuyển khoản</span></article>

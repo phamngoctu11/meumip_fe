@@ -1,7 +1,7 @@
 <div class="admin-page">
   <header class="admin-page-header">
-    <div><p>catalog manager</p><h1>Sản phẩm</h1><span>Thêm, chỉnh sửa và quản lý trạng thái sản phẩm trong tiệm.</span></div>
-    <a class="admin-primary-action" routerLink="/admin/products/new">+ Thêm sản phẩm</a>
+    <div><p>materials manager</p><h1>Món bán lẻ</h1><span>Quản lý đất, màu và các nguyên liệu/món mua kèm.</span></div>
+    <a class="admin-primary-action" routerLink="/admin/products/new">+ Thêm món bán lẻ</a>
   </header>
 
   @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }
@@ -18,7 +18,7 @@
         <option [value]="status.value">{{ status.label }}</option>
       }
     </select>
-    <span>{{ visibleProducts().length }} sản phẩm</span>
+    <span>{{ visibleProducts().length }} món bán lẻ</span>
   </form>
 
   @if (loading()) {
@@ -26,7 +26,7 @@
   } @else if (visibleProducts().length) {
     <div class="product-table-wrap">
       <table>
-        <thead><tr><th>Sản phẩm</th><th>Trạng thái</th><th>Giá</th><th>Tồn kho</th><th>Thứ tự</th><th><span class="sr-only">Thao tác</span></th></tr></thead>
+        <thead><tr><th>Mặt hàng</th><th>Trạng thái</th><th>Giá</th><th>Tồn kho</th><th>Thứ tự</th><th><span class="sr-only">Thao tác</span></th></tr></thead>
         <tbody>
           @for (product of visibleProducts(); track product.id) {
             <tr>
@@ -54,6 +54,6 @@
       </table>
     </div>
   } @else {
-    <div class="empty-list"><span>☁</span><h2>Không tìm thấy sản phẩm</h2><p>Thử đổi từ khóa hoặc bộ lọc trạng thái.</p></div>
+    <div class="empty-list"><span>☁</span><h2>Không tìm thấy món bán lẻ</h2><p>Thử đổi từ khóa hoặc bộ lọc trạng thái.</p></div>
   }
 </div>

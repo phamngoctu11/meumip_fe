@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import {
   ApiResponse,
   Cart,
+  CatalogItemType,
   Category,
   ComboBlankSelection,
   CheckoutRequest,
@@ -22,13 +23,26 @@ import { API_BASE_URL } from './api.config';
 export class ShopApiService {
   private readonly http = inject(HttpClient);
 
-  getProducts(category?: string, page?: number, size?: number): Observable<ProductSummary[]> {
+  getProducts(category?: string, page?: number, size?: number, type?: CatalogItemType | string, q?: string, tag?: string): Observable<ProductSummary[]> {
     let params = new HttpParams();
     if (category) params = params.set('category', category);
     if (page !== undefined) params = params.set('page', page);
     if (size !== undefined) params = params.set('size', size);
+    if (type) params = params.set('type', type);
+    if (q) params = params.set('q', q);
+    if (tag) params = params.set('tag', tag);
     return this.http
       .get<ApiResponse<ProductSummary[]>>(`${API_BASE_URL}/products`, { params })
+      .pipe(map((response) => this.unwrap(response)));
+  }
+
+  getCatalog(type?: CatalogItemType | string, q?: string, tag?: string, page = 0, size = 100): Observable<ProductSummary[]> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (type) params = params.set('type', type);
+    if (q) params = params.set('q', q);
+    if (tag) params = params.set('tag', tag);
+    return this.http
+      .get<ApiResponse<ProductSummary[]>>(`${API_BASE_URL}/catalog`, { params })
       .pipe(map((response) => this.unwrap(response)));
   }
 
@@ -59,12 +73,14 @@ export class ShopApiService {
       .pipe(map((response) => this.unwrap(response)));
   }
 
-  addCartItem(sessionId: string | null, productId: number, productBlankId: number, quantity: number): Observable<Cart> {
-    const body: { sessionId?: string; productId: number; productBlankId: number; quantity: number } = {
+  addCartItem(sessionId: string | null, productId: number, quantity: number, productBlankId?: number | null): Observable<Cart> {
+    const body: { sessionId?: string; productId: number; productBlankId?: number | null; quantity: number } = {
       productId,
-      productBlankId,
       quantity,
     };
+    if (productBlankId) {
+      body.productBlankId = productBlankId;
+    }
     const resolvedSessionId = sessionId?.trim();
     if (resolvedSessionId) {
       body.sessionId = resolvedSessionId;

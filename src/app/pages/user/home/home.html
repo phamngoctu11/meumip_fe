@@ -2,31 +2,123 @@
   <section class="hero-slider" aria-roledescription="carousel" aria-label="Giới thiệu về meumip">
     <div class="slides" [style.transform]="'translateX(-' + activeSlide() * 100 + '%)'">
       @for (slide of slides(); track slide.id; let index = $index) {
-        <article class="slide" [attr.aria-hidden]="activeSlide() !== index"><img [src]="slide.imageUrl" alt="" /><div class="slide-overlay"></div><div class="slide-content">@if (slide.eyebrow) { <span>{{ slide.eyebrow }}</span> }<h1>{{ slide.title }}</h1>@if (slide.description) { <p>{{ slide.description }}</p> }@if (slide.linkUrl && slide.linkLabel) { @if (isFragmentLink(slide.linkUrl)) { <a [href]="slide.linkUrl">{{ slide.linkLabel }} <b>→</b></a> } @else { <a [routerLink]="slide.linkUrl">{{ slide.linkLabel }} <b>→</b></a> } }</div></article>
+        <article class="slide" [attr.aria-hidden]="activeSlide() !== index">
+          <img [src]="slide.imageUrl" alt="" />
+          <div class="slide-overlay"></div>
+          <div class="slide-content">
+            @if (slide.eyebrow) { <span>{{ slide.eyebrow }}</span> }
+            <h1>{{ slide.title }}</h1>
+            @if (slide.description) { <p>{{ slide.description }}</p> }
+            @if (slide.linkUrl && slide.linkLabel) {
+              @if (isFragmentLink(slide.linkUrl)) {
+                <a [href]="slide.linkUrl">{{ slide.linkLabel }} <b>→</b></a>
+              } @else {
+                <a [routerLink]="slide.linkUrl">{{ slide.linkLabel }} <b>→</b></a>
+              }
+            }
+          </div>
+        </article>
       }
     </div>
-    @if (slides().length > 1) { <button class="slider-arrow previous" type="button" (click)="previousSlide()" aria-label="Slide trước">‹</button><button class="slider-arrow next" type="button" (click)="nextSlide()" aria-label="Slide tiếp theo">›</button><div class="slider-dots">@for (slide of slides(); track slide.id; let index = $index) { <button type="button" [class.active]="activeSlide() === index" (click)="selectSlide(index)" [attr.aria-label]="'Chuyển đến slide ' + (index + 1)"></button> }</div> }
+    @if (slides().length > 1) {
+      <button class="slider-arrow previous" type="button" (click)="previousSlide()" aria-label="Slide trước">‹</button>
+      <button class="slider-arrow next" type="button" (click)="nextSlide()" aria-label="Slide tiếp theo">›</button>
+      <div class="slider-dots">
+        @for (slide of slides(); track slide.id; let index = $index) {
+          <button type="button" [class.active]="activeSlide() === index" (click)="selectSlide(index)" [attr.aria-label]="'Chuyển đến slide ' + (index + 1)"></button>
+        }
+      </div>
+    }
   </section>
 
-  <section id="products-section" class="products-section" aria-labelledby="products-title">
-    <div class="section-intro"><div><span>Sản phẩm của meumip</span><h2 id="products-title">Tìm một món dành riêng cho bạn</h2></div><p>Mỗi danh mục là một góc nhỏ, nơi những sản phẩm cùng câu chuyện được đặt cạnh nhau.</p></div>
-    @if (previewMode()) { <app-feedback-banner message="Backend chưa phản hồi, đang hiển thị dữ liệu mẫu." /> }
-    @if (loading()) { <div class="category-skeleton">@for (item of [1,2,3]; track item) { <div></div> }</div> } @else {
-      <div class="category-list">@for (category of categories(); track category.id) { <article class="category-box"><header><div><small>Danh mục</small><h3>{{ category.name }}</h3></div>@if (category.description) { <p>{{ category.description }}</p> }</header>@if (category.products.length) { <div class="category-products">@for (product of category.products; track product.id; let index = $index) { <app-product-card [product]="product" [animationDelay]="index * 80" /> }</div> } @else { <app-empty-state title="Danh mục đang được chuẩn bị" message="Sản phẩm mới sẽ sớm xuất hiện ở đây." /> }<footer><a routerLink="/products" [queryParams]="{ category: category.slug }">Xem tất cả {{ category.name }} <span>→</span></a></footer></article> } @empty { <app-empty-state title="Tiệm đang chuẩn bị danh mục" message="Ghé lại một chút nữa nha!" /> }</div>
+  @if (previewMode()) { <app-feedback-banner message="Backend chưa phản hồi, đang hiển thị giao diện rỗng." /> }
+
+  <section id="products-section" class="products-section" aria-labelledby="blank-title">
+    <div class="section-intro">
+      <div>
+        <span>Phôi lẻ</span>
+        <h2 id="blank-title">Phôi trơn để tự tạo móc khóa</h2>
+      </div>
+      <p>Các mẫu phôi chưa tô màu, khách có thể mua riêng hoặc chọn miễn phí khi mua combo kit.</p>
+    </div>
+    @if (loading()) {
+      <div class="products-loading">@for (item of [1,2,3]; track item) { <span></span> }</div>
+    } @else if (blankProducts().length) {
+      <div class="products-grid">
+        @for (product of blankProducts(); track product.id; let index = $index) {
+          <app-product-card [product]="product" [animationDelay]="index * 80" />
+        }
+      </div>
+      <footer class="section-link"><a routerLink="/products" [queryParams]="{ type: 'BLANK' }">Xem tất cả phôi lẻ <span>→</span></a></footer>
+    } @else {
+      <app-empty-state title="Chưa có phôi lẻ" message="Admin thêm phôi ở mục Phôi lẻ để hiển thị tại đây." />
     }
   </section>
 
   <section class="combo-section" aria-labelledby="combo-title">
-    <div class="section-intro"><div><span>Tự chọn theo ý bạn</span><h2 id="combo-title">Combo sản phẩm</h2></div><p>Chọn đủ số món trong gói, sau đó chọn phôi riêng cho từng sản phẩm.</p></div>
+    <div class="section-intro">
+      <div>
+        <span>Combo Kit</span>
+        <h2 id="combo-title">Chọn kit, chọn phôi miễn phí</h2>
+      </div>
+      <p>Mỗi combo có giá cố định. Khách chọn đúng số phôi đi kèm theo combo, không cộng thêm tiền phôi.</p>
+    </div>
     @if (comboMessage()) { <app-feedback-banner [message]="comboMessage()!" /> }
-    <div class="combo-grid">@for (combo of combos(); track combo.id) {
-      <article class="combo-card" role="button" tabindex="0" (click)="openCombo(combo)" (keydown.enter)="openCombo(combo)" (keydown.space)="openCombo(combo); $event.preventDefault()">
-        @if (combo.imageUrl) { <img class="combo-cover" [src]="combo.imageUrl" [alt]="combo.title" /> } @else { <div class="combo-visual" aria-hidden="true"><i>♡</i><i>✦</i><i>☆</i></div> }
-        <div class="combo-card-copy"><span>{{ combo.itemCount }} {{ combo.itemCount === 1 ? 'sản phẩm' : 'sản phẩm tự chọn' }}</span><h3>{{ combo.title }}</h3>@if (combo.description) { <p>{{ combo.description }}</p> }<button type="button" (click)="openCombo(combo); $event.stopPropagation()">Chọn combo <b>→</b></button></div>
-      </article>
-    } @empty { @if (!loading()) { <app-empty-state title="Combo đang được chuẩn bị" message="Meumip sẽ sớm cập nhật những kết hợp mới." /> } }</div>
+    <div class="combo-grid">
+      @for (combo of combos(); track combo.id) {
+        <article class="combo-card" role="button" tabindex="0" (click)="openCombo(combo)" (keydown.enter)="openCombo(combo)" (keydown.space)="openCombo(combo); $event.preventDefault()">
+          @if (comboCover(combo)) {
+            <img class="combo-cover" [src]="comboCover(combo)!" [alt]="combo.title" />
+          } @else {
+            <div class="combo-visual" aria-hidden="true"><i>♡</i><i>✦</i><i>☆</i></div>
+          }
+          <div class="combo-card-copy">
+            <span>{{ combo.itemCount }} phôi miễn phí</span>
+            <h3>{{ combo.title }}</h3>
+            @if (combo.description) { <p>{{ combo.description }}</p> }
+            <strong class="combo-price">{{ formatVnd(combo.priceVnd) }}</strong>
+            <button type="button" (click)="openCombo(combo); $event.stopPropagation()">Chọn combo <b>→</b></button>
+          </div>
+        </article>
+      } @empty {
+        @if (!loading()) {
+          <app-empty-state title="Chưa có combo kit" message="Admin thêm combo ở mục Combo Kit để hiển thị tại đây." />
+        }
+      }
+    </div>
   </section>
-  <section id="voucher" class="voucher"><span>☆</span><div><small>Quà chào thành viên mới</small><h2>Nhận voucher cho đơn đầu tiên</h2><p>Đăng ký tài khoản để không bỏ lỡ quà nhỏ và sản phẩm mới.</p></div><a routerLink="/register">Đăng ký ngay</a></section>
+
+  <section class="products-section" aria-labelledby="material-title">
+    <div class="section-intro">
+      <div>
+        <span>Món bán lẻ</span>
+        <h2 id="material-title">Nguyên liệu và món mua kèm</h2>
+      </div>
+      <p>Đất lẻ, màu lẻ và các món phụ trợ khách có thể mua thêm ngoài combo.</p>
+    </div>
+    @if (loading()) {
+      <div class="products-loading">@for (item of [1,2,3]; track item) { <span></span> }</div>
+    } @else if (materialProducts().length) {
+      <div class="products-grid">
+        @for (product of materialProducts(); track product.id; let index = $index) {
+          <app-product-card [product]="product" [animationDelay]="index * 80" />
+        }
+      </div>
+      <footer class="section-link"><a routerLink="/products" [queryParams]="{ type: 'MATERIAL' }">Xem tất cả món bán lẻ <span>→</span></a></footer>
+    } @else {
+      <app-empty-state title="Chưa có món bán lẻ" message="Admin thêm nguyên liệu/món bán lẻ để hiển thị tại đây." />
+    }
+  </section>
+
+  <section id="voucher" class="voucher">
+    <span>☆</span>
+    <div>
+      <small>Quà chào thành viên mới</small>
+      <h2>Nhận voucher cho đơn đầu tiên</h2>
+      <p>Đăng ký tài khoản để không bỏ lỡ quà nhỏ và sản phẩm mới.</p>
+    </div>
+    <a routerLink="/register">Đăng ký ngay</a>
+  </section>
 </div>
 
 @if (selectedCombo(); as combo) {
@@ -34,25 +126,83 @@
     <section class="combo-modal" role="dialog" aria-modal="true" [attr.aria-labelledby]="'combo-modal-title-' + combo.id" (click)="$event.stopPropagation()">
       <button class="combo-modal-close" type="button" (click)="closeCombo()" aria-label="Đóng cửa sổ combo">×</button>
       <div class="combo-modal-hero">
-        @if (combo.imageUrl) { <img [src]="combo.imageUrl" [alt]="combo.title" /> } @else { <div class="combo-modal-placeholder">♡</div> }
-        <div><span>Combo {{ combo.itemCount }} món tự chọn</span><h2 [id]="'combo-modal-title-' + combo.id">{{ combo.title }}</h2>@if (combo.description) { <p>{{ combo.description }}</p> }@if (combo.priceNote) { <small>{{ combo.priceNote }}</small> }</div>
+        @if (comboCover(combo)) {
+          <img [src]="comboCover(combo)!" [alt]="combo.title" />
+        } @else {
+          <div class="combo-modal-placeholder">♡</div>
+        }
+        <div>
+          <span>Combo kit · chọn {{ combo.itemCount }} phôi</span>
+          <h2 [id]="'combo-modal-title-' + combo.id">{{ combo.title }}</h2>
+          @if (combo.description) { <p>{{ combo.description }}</p> }
+          <strong class="combo-modal-price">{{ formatVnd(combo.priceVnd) }}</strong>
+          @if (combo.priceNote) { <small>{{ combo.priceNote }}</small> }
+        </div>
       </div>
+
+      @if (combo.components.length) {
+        <div class="combo-components">
+          <b>Bộ kit gồm</b>
+          <div>
+            @for (component of combo.components; track component.id ?? component.name) {
+              <span>{{ component.name }}@if (component.quantity) { <em> × {{ component.quantity }}{{ component.unit ? ' ' + component.unit : '' }}</em> }</span>
+            }
+          </div>
+        </div>
+      }
+
       <div class="combo-modal-body">
-        @for (slot of comboSlots(combo.id); track $index; let index = $index) {
-          <article class="combo-slot">
-            <header><b>Món {{ index + 1 }}</b><span>{{ slot.productId && slot.productBlankId ? 'Đã chọn đủ' : 'Chưa hoàn tất' }}</span></header>
-            <div class="combo-slot-fields">
-              <label><span>Sản phẩm</span><select [value]="slot.productId ?? ''" (change)="selectComboProduct(combo.id, index, $event)"><option value="">-- Chọn sản phẩm --</option>@for (product of comboProducts(); track product.id) { <option [value]="product.id">{{ product.name }} · {{ formatVnd(product.priceVnd) }}</option> }</select></label>
-              <label><span>Phôi</span><select [value]="slot.productBlankId ?? ''" (change)="selectComboBlank(combo.id, index, $event)"><option value="">-- Chọn phôi --</option>@for (blank of combo.blanks; track blank.id) { <option [value]="blank.id">{{ blank.name }} · {{ blank.size }}</option> }</select></label>
+        <div class="combo-selection-heading">
+          <div>
+            <b>Chọn phôi miễn phí</b>
+            <span>{{ selectedBlankTotal(combo.id) }}/{{ combo.itemCount }} đã chọn</span>
+          </div>
+          <p>Chọn đúng số lượng phôi đi kèm combo. Các phôi này không cộng thêm tiền.</p>
+        </div>
+
+        <div class="blank-choice-grid">
+          @for (blank of combo.blanks; track blank.id) {
+            <article
+              class="blank-choice"
+              [class.selected]="isBlankSelected(combo.id, blank.id)"
+            >
+              <img [src]="blankCover(blank)" [alt]="blank.name" />
+              <span>
+                <strong>{{ blank.name }}</strong>
+                <small>{{ blank.size }}</small>
+              </span>
+              <div class="blank-quantity-controls">
+                <button type="button" (click)="decreaseComboBlank(combo, blank)" [disabled]="selectedBlankQuantity(combo.id, blank.id) <= 0">−</button>
+                <b>{{ selectedBlankQuantity(combo.id, blank.id) }}</b>
+                <button type="button" (click)="increaseComboBlank(combo, blank)" [disabled]="selectedBlankTotal(combo.id) >= combo.itemCount">+</button>
+              </div>
+            </article>
+          } @empty {
+            <app-feedback-banner tone="error" message="Combo này chưa có danh sách phôi để khách chọn." />
+          }
+        </div>
+
+        @if (selectedBlanks(combo).length) {
+          <div class="selected-blank-list">
+            <b>Phôi đã chọn</b>
+            <div>
+              @for (blank of selectedBlanks(combo); track blank.id) {
+                <span>{{ blank.name }} · {{ blank.size }}@if ((blank.quantity ?? 1) > 1) { × {{ blank.quantity }} }</span>
+              }
             </div>
-            <div class="combo-previews">
-              @if (selectedProduct(slot.productId); as product) { <div><img [src]="product.primaryImageUrl || '/images/product-placeholder.svg'" [alt]="product.name" /><span><small>Sản phẩm</small><strong>{{ product.name }}</strong></span></div> } @else { <div class="preview-empty">Chưa chọn sản phẩm</div> }
-              @if (selectedBlank(combo, slot.productBlankId); as blank) { <div><img [src]="blank.imageUrl" [alt]="blank.name" /><span><small>Phôi</small><strong>{{ blank.name }}</strong><em>{{ blank.size }}</em></span></div> } @else { <div class="preview-empty">Chưa chọn phôi</div> }
-            </div>
-          </article>
+          </div>
         }
       </div>
-      <footer class="combo-modal-footer">@if (comboTotal(combo.id)) { <div><small>Tạm tính</small><strong>{{ formatVnd(comboTotal(combo.id)) }}</strong></div> } @else { <span>Chọn đủ sản phẩm và phôi để tiếp tục</span> }<button type="button" (click)="addCombo(combo)" [disabled]="addingComboId() === combo.id || !comboProducts().length || !combo.blanks.length">{{ addingComboId() === combo.id ? 'Đang thêm...' : 'Thêm combo vào giỏ' }}</button></footer>
+
+      <footer class="combo-modal-footer">
+        <div>
+          <small>Giá combo cố định</small>
+          <strong>{{ formatVnd(combo.priceVnd) }}</strong>
+        </div>
+        <button type="button" (click)="addCombo(combo)" [disabled]="addingComboId() === combo.id || !comboReady(combo)">
+          {{ addingComboId() === combo.id ? 'Đang thêm...' : 'Thêm combo vào giỏ' }}
+        </button>
+      </footer>
       @if (comboMessage()) { <app-feedback-banner tone="error" [message]="comboMessage()!" /> }
     </section>
   </div>
