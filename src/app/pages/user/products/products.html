@@ -1,22 +1,10 @@
 <section class="products-page">
-  <app-page-header
-    eyebrow="catalog"
-    title="3 nhóm mặt hàng"
-    [description]="selectedTypeInfo().description"
-  />
-
-  <nav class="category-filter" aria-label="Lọc theo nhóm mặt hàng">
+  <app-page-header eyebrow="catalog" title="Sản phẩm" [description]="selectedTypeInfo().description" />
+  <nav class="category-filter" aria-label="Lọc theo loại sản phẩm">
     @for (type of typeFilters; track type.value) {
-      <a
-        routerLink="/products"
-        [queryParams]="{ type: type.value }"
-        [class.active]="selectedType() === type.value"
-      >
-        {{ type.label }}
-      </a>
+      <a routerLink="/products" [queryParams]="{ type: type.value }" [class.active]="selectedType() === type.value">{{ type.label }}</a>
     }
   </nav>
-
   @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }
   @if (loading()) {
     <div class="products-loading">@for (item of [1,2,3,4]; track item) { <span></span> }</div>
@@ -27,6 +15,6 @@
       }
     </div>
   } @else {
-    <app-empty-state title="Nhóm này chưa có mặt hàng" message="Admin thêm dữ liệu cho nhóm này để hiển thị tại đây." />
+    <app-empty-state title="Loại này chưa có sản phẩm" message="Hãy thêm dữ liệu trong trang quản trị sản phẩm." />
   }
 </section>

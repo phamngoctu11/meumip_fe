@@ -13,68 +13,67 @@ export const routes: Routes = [
         title: 'meumip — Lovely handmade things',
         loadComponent: () => import('./pages/user/home/home').then((page) => page.Home),
       },
-  {
-    path: 'products',
-    title: '3 nhóm mặt hàng — meumip',
-    loadComponent: () => import('./pages/user/products/products').then((page) => page.ProductsPage),
-  },
-  {
-    path: 'products/:slug',
-    title: 'Chi tiết sản phẩm — meumip',
-    loadComponent: () =>
-      import('./pages/user/product-detail/product-detail').then((page) => page.ProductDetail),
-  },
-  {
-    path: 'cart',
-    title: 'Giỏ hàng — meumip',
-    loadComponent: () => import('./pages/user/cart/cart').then((page) => page.CartPage),
-  },
-  {
-    path: 'checkout',
-    title: 'Thanh toán — meumip',
-    loadComponent: () => import('./pages/user/checkout/checkout').then((page) => page.CheckoutPage),
-  },
-  {
-    path: 'contact',
-    title: 'Liên hệ — meumip',
-    loadComponent: () => import('./pages/user/contact/contact').then((page) => page.ContactPage),
-  },
-  {
-    path: 'info',
-    title: 'Thông tin shop — meumip',
-    loadComponent: () => import('./pages/user/info/info').then((page) => page.InfoPage),
-  },
-  { path: 'favorites', redirectTo: '/products' },
-  {
-    path: 'login',
-    title: 'Đăng nhập — meumip',
-    loadComponent: () => import('./pages/user/login/login').then((page) => page.LoginPage),
-  },
-  {
-    path: 'register',
-    title: 'Đăng ký — meumip',
-    loadComponent: () => import('./pages/user/register/register').then((page) => page.RegisterPage),
-  },
-  {
-    path: 'orders',
-    title: 'Đơn hàng của bạn — meumip',
-    canActivate: [authGuard],
-    loadComponent: () => import('./pages/user/orders/orders').then((page) => page.OrdersPage),
-  },
-  {
-    path: 'orders/:orderCode',
-    title: 'Chi tiết đơn hàng — meumip',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./pages/user/order-detail/order-detail').then((page) => page.OrderDetailPage),
-  },
+      {
+        path: 'products',
+        title: 'Sản phẩm — meumip',
+        loadComponent: () => import('./pages/user/products/products').then((page) => page.ProductsPage),
+      },
+      {
+        path: 'products/:id',
+        title: 'Chi tiết sản phẩm — meumip',
+        loadComponent: () =>
+          import('./pages/user/product-detail/product-detail').then((page) => page.ProductDetail),
+      },
+      {
+        path: 'cart',
+        title: 'Giỏ hàng — meumip',
+        loadComponent: () => import('./pages/user/cart/cart').then((page) => page.CartPage),
+      },
+      {
+        path: 'checkout',
+        title: 'Thanh toán — meumip',
+        loadComponent: () => import('./pages/user/checkout/checkout').then((page) => page.CheckoutPage),
+      },
+      {
+        path: 'contact',
+        title: 'Liên hệ — meumip',
+        loadComponent: () => import('./pages/user/contact/contact').then((page) => page.ContactPage),
+      },
+      {
+        path: 'info',
+        title: 'Thông tin shop — meumip',
+        loadComponent: () => import('./pages/user/info/info').then((page) => page.InfoPage),
+      },
+      { path: 'favorites', redirectTo: '/products' },
+      {
+        path: 'login',
+        title: 'Đăng nhập — meumip',
+        loadComponent: () => import('./pages/user/login/login').then((page) => page.LoginPage),
+      },
+      {
+        path: 'register',
+        title: 'Đăng ký — meumip',
+        loadComponent: () => import('./pages/user/register/register').then((page) => page.RegisterPage),
+      },
+      {
+        path: 'orders',
+        title: 'Đơn hàng của bạn — meumip',
+        canActivate: [authGuard],
+        loadComponent: () => import('./pages/user/orders/orders').then((page) => page.OrdersPage),
+      },
+      {
+        path: 'orders/:orderCode',
+        title: 'Chi tiết đơn hàng — meumip',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./pages/user/order-detail/order-detail').then((page) => page.OrderDetailPage),
+      },
     ],
   },
   {
     path: 'admin',
     canActivate: [adminGuard],
-    loadComponent: () =>
-      import('./pages/admin/layout/admin-layout').then((page) => page.AdminLayout),
+    loadComponent: () => import('./pages/admin/layout/admin-layout').then((page) => page.AdminLayout),
     children: [
       {
         path: '',
@@ -84,9 +83,21 @@ export const routes: Routes = [
       },
       {
         path: 'products',
-        title: 'Quản lý món bán lẻ — meumip',
+        title: 'Quản lý sản phẩm — meumip',
         loadComponent: () =>
           import('./pages/admin/products/admin-products').then((page) => page.AdminProducts),
+      },
+      {
+        path: 'products/new',
+        title: 'Thêm sản phẩm — meumip',
+        loadComponent: () =>
+          import('./pages/admin/product-form/admin-product-form').then((page) => page.AdminProductForm),
+      },
+      {
+        path: 'products/:id/edit',
+        title: 'Sửa sản phẩm — meumip',
+        loadComponent: () =>
+          import('./pages/admin/product-form/admin-product-form').then((page) => page.AdminProductForm),
       },
       {
         path: 'slides',
@@ -94,49 +105,15 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/admin/slides/admin-slides').then((page) => page.AdminSlides),
       },
       {
-        path: 'categories',
-        title: 'Quản lý danh mục — meumip',
-        loadComponent: () => import('./pages/admin/categories/admin-categories').then((page) => page.AdminCategories),
-      },
-      {
-        path: 'combos',
-        title: 'Quản lý combo — meumip',
-        loadComponent: () => import('./pages/admin/combos/admin-combos').then((page) => page.AdminCombos),
-      },
-      {
-        path: 'product-blanks',
-        title: 'Quản lý phôi — meumip',
-        loadComponent: () => import('./pages/admin/product-blanks/admin-product-blanks').then((page) => page.AdminProductBlanks),
-      },
-      {
-        path: 'products/new',
-        title: 'Thêm món bán lẻ — meumip',
-        loadComponent: () =>
-          import('./pages/admin/product-form/admin-product-form').then(
-            (page) => page.AdminProductForm,
-          ),
-      },
-      {
-        path: 'products/:id/edit',
-        title: 'Sửa món bán lẻ — meumip',
-        loadComponent: () =>
-          import('./pages/admin/product-form/admin-product-form').then(
-            (page) => page.AdminProductForm,
-          ),
-      },
-      {
         path: 'orders',
         title: 'Quản lý đơn hàng — meumip',
-        loadComponent: () =>
-          import('./pages/admin/orders/admin-orders').then((page) => page.AdminOrders),
+        loadComponent: () => import('./pages/admin/orders/admin-orders').then((page) => page.AdminOrders),
       },
       {
         path: 'orders/:id',
         title: 'Chi tiết đơn hàng — meumip',
         loadComponent: () =>
-          import('./pages/admin/order-detail/admin-order-detail').then(
-            (page) => page.AdminOrderDetail,
-          ),
+          import('./pages/admin/order-detail/admin-order-detail').then((page) => page.AdminOrderDetail),
       },
     ],
   },

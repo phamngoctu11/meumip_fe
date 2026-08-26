@@ -1,81 +1,18 @@
 export type CatalogItemType = 'BLANK' | 'KIT' | 'MATERIAL';
 
-export interface ProductSummary {
-  id: number;
-  type: CatalogItemType;
-  typeLabel: string;
-  slug: string;
-  name: string;
-  shortDescription: string | null;
-  priceVnd: number;
-  status: string;
-  primaryImageUrl: string | null;
-  images: ProductImage[];
-  categoryId: number | null;
-  categorySlug: string | null;
-  categoryName: string | null;
-  blankSize: string | null;
-  blankShape: string | null;
-  includedBlankCount: number | null;
-  selectionRequired: boolean;
-  tags: string[];
-}
-
-export interface Category {
-  id: number;
-  slug: string;
-  name: string;
-  description: string | null;
-  imageUrl: string | null;
-  sortOrder: number;
-  active: boolean;
-}
-
-export interface ProductBlank {
-  id: number;
-  slug: string | null;
-  name: string;
-  size: string;
+export interface ProductImage {
+  id: number | null;
   imageUrl: string;
-  images: ProductImage[];
-  priceVnd: number;
-  quantity?: number | null;
+  altText: string | null;
   sortOrder: number;
-  active: boolean;
+  primaryImage: boolean;
 }
 
-export interface HomeSlide {
-  id: number;
-  title: string;
-  eyebrow: string | null;
-  description: string | null;
+export interface ProductImageRequest {
   imageUrl: string;
-  linkLabel: string | null;
-  linkUrl: string | null;
+  altText: string;
   sortOrder: number;
-  active: boolean;
-}
-
-export interface HomeCombo {
-  id: number;
-  code: string | null;
-  title: string;
-  description: string | null;
-  imageUrl: string | null;
-  images: ProductImage[];
-  itemCount: number;
-  priceVnd: number;
-  priceNote: string | null;
-  components: KitComponent[];
-  tags: string[];
-  sortOrder: number;
-  active: boolean;
-  blanks: ProductBlank[];
-}
-
-export interface ComboBlankSelection {
-  productBlankId: number;
-  quantity: number;
+  primaryImage: boolean;
 }
 
 export interface KitComponent {
@@ -95,11 +32,40 @@ export interface KitComponentRequest {
   sortOrder: number;
 }
 
-export interface CategoryUpsertRequest {
-  slug: string;
+export interface ProductSummary {
+  id: number;
+  type: CatalogItemType;
+  typeLabel: string;
+  name: string;
+  priceVnd: number;
+  primaryImageUrl: string | null;
+  images: ProductImage[];
+  tags: string[];
+}
+
+export interface ProductDetail extends ProductSummary {
+  description: string | null;
+  kitComponents: KitComponent[];
+}
+
+export interface ProductUpsertRequest {
+  type: CatalogItemType;
   name: string;
   description: string;
+  priceVnd: number;
+  images: ProductImageRequest[];
+  tags: string[];
+  kitComponents: KitComponentRequest[];
+}
+
+export interface HomeSlide {
+  id: number;
+  title: string;
+  eyebrow: string | null;
+  description: string | null;
   imageUrl: string;
+  linkLabel: string | null;
+  linkUrl: string | null;
   sortOrder: number;
   active: boolean;
 }
@@ -115,76 +81,6 @@ export interface HomeSlideUpsertRequest {
   active: boolean;
 }
 
-export interface HomeComboUpsertRequest {
-  code: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  itemCount: number;
-  priceVnd: number;
-  priceNote: string;
-  images?: ProductImageRequest[];
-  components?: KitComponentRequest[];
-  tags?: string[];
-  sortOrder: number;
-  active: boolean;
-}
-
-export interface ProductBlankUpsertRequest {
-  slug?: string;
-  name: string;
-  size: string;
-  imageUrl: string;
-  priceVnd?: number;
-  sortOrder: number;
-  active: boolean;
-}
-
-export interface ProductImage {
-  id: number;
-  imageUrl: string;
-  altText: string | null;
-  sortOrder: number;
-  primaryImage: boolean;
-}
-
-export type ProductStatus = 'DRAFT' | 'ACTIVE' | 'SOLD_OUT' | 'HIDDEN';
-
-export interface ProductImageRequest {
-  imageUrl: string;
-  altText: string;
-  sortOrder: number;
-  primaryImage: boolean;
-}
-
-export interface ProductUpsertRequest {
-  type: CatalogItemType;
-  slug: string;
-  name: string;
-  shortDescription: string;
-  description: string;
-  priceVnd: number;
-  status: ProductStatus;
-  madeToOrder: boolean;
-  productionMinDays: number | null;
-  productionMaxDays: number | null;
-  shippingNote: string;
-  sizeNote: string;
-  materialNote: string;
-  blankSize: string;
-  blankShape: string;
-  includedBlankCount: number | null;
-  selectionRequired: boolean;
-  selectionNote: string;
-  categoryId: number | null;
-  categorySlug: string | null;
-  stockQuantity: number | null;
-  sortOrder: number;
-  images: ProductImageRequest[];
-  tags: string[];
-  kitComponents: KitComponentRequest[];
-}
-
 export interface ImageUploadResponse {
   publicId: string;
   imageUrl: string;
@@ -194,37 +90,16 @@ export interface ImageUploadResponse {
   bytes: number | null;
 }
 
-export interface ProductDetail extends ProductSummary {
-  description: string | null;
-  madeToOrder: boolean;
-  productionMinDays: number | null;
-  productionMaxDays: number | null;
-  shippingNote: string | null;
-  sizeNote: string | null;
-  materialNote: string | null;
-  selectionNote: string | null;
-  stockQuantity: number | null;
-  sortOrder: number;
-  kitComponents: KitComponent[];
-  blanks: ProductBlank[];
-}
-
 export interface CartItem {
   id: number;
   itemType: CatalogItemType;
   itemTypeLabel: string;
   productId: number;
-  productSlug: string;
   productName: string;
   imageUrl: string | null;
-  productBlankId: number | null;
-  productBlankName: string | null;
-  productBlankSize: string | null;
-  productBlankImageUrl: string | null;
   unitPriceVnd: number;
   quantity: number;
   lineTotalVnd: number;
-  selectedBlanks: ProductBlank[];
 }
 
 export interface Cart {
@@ -254,16 +129,10 @@ export interface OrderItem {
   itemType: CatalogItemType;
   itemTypeLabel: string;
   productName: string;
-  productSlug: string | null;
   productImageUrl: string | null;
-  productBlankId: number | null;
-  blankName: string | null;
-  blankSize: string | null;
-  blankImageUrl: string | null;
   unitPriceVnd: number;
   quantity: number;
   lineTotalVnd: number;
-  selectedBlanks: ProductBlank[];
 }
 
 export interface Order {

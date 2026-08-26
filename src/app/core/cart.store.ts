@@ -1,8 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { finalize, Observable, tap } from 'rxjs';
-import { Cart, ComboBlankSelection } from './models';
 import { AuthStore } from './auth.store';
+import { Cart } from './models';
 import { ShopApiService } from './shop-api.service';
 
 const CART_SESSION_KEY = 'meumip_cart_session';
@@ -33,24 +33,15 @@ export class CartStore {
       });
   }
 
-  add(productId: number, quantity: number, productBlankId?: number | null): Observable<Cart> {
+  add(productId: number, quantity: number): Observable<Cart> {
     this.loading.set(true);
     this.error.set(null);
-    return this.api.addCartItem(this.requestSessionId(), productId, quantity, productBlankId).pipe(
+    return this.api.addCartItem(this.requestSessionId(), productId, quantity).pipe(
       tap({
         next: (cart) => this.cartState.set(cart),
         error: (error: HttpErrorResponse) =>
           this.error.set(error.error?.message ?? 'Không thể thêm sản phẩm vào giỏ.'),
       }),
-      finalize(() => this.loading.set(false)),
-    );
-  }
-
-  addCombo(comboId: number, selections: ComboBlankSelection[], quantity = 1): Observable<Cart> {
-    this.loading.set(true);
-    this.error.set(null);
-    return this.api.addCombo(this.requestSessionId(), comboId, selections, quantity).pipe(
-      tap({ next: (cart) => this.cartState.set(cart), error: (error: HttpErrorResponse) => this.error.set(error.error?.message ?? 'Không thể thêm combo vào giỏ.') }),
       finalize(() => this.loading.set(false)),
     );
   }
@@ -70,9 +61,7 @@ export class CartStore {
 
   requestSessionId(): string | null {
     const currentCartSessionId = this.cartState()?.sessionId?.trim();
-    if (currentCartSessionId) {
-      return currentCartSessionId;
-    }
+    if (currentCartSessionId) return currentCartSessionId;
     return this.authStore.user() ? null : this.sessionId();
   }
 
@@ -86,26 +75,19 @@ export class CartStore {
   private getOrCreateSessionId(): string {
     if (typeof localStorage !== 'undefined') {
       const existing = localStorage.getItem(CART_SESSION_KEY);
-      if (existing) {
-        return existing;
-      }
+      if (existing) return existing;
     }
-
     const sessionId = this.createSessionId();
     this.writeSessionId(sessionId);
     return sessionId;
   }
 
   private createSessionId(): string {
-    if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
-      return crypto.randomUUID();
-    }
+    if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return crypto.randomUUID();
     return `meumip-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   }
 
   private writeSessionId(sessionId: string): void {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(CART_SESSION_KEY, sessionId);
-    }
+    if (typeof localStorage !== 'undefined') localStorage.setItem(CART_SESSION_KEY, sessionId);
   }
 }

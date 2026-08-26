@@ -131,8 +131,7 @@
   background: #fff;
 }
 
-.products-section,
-.combo-section {
+.products-section {
   padding: clamp(4rem, 8vw, 7rem) clamp(.25rem, 2vw, 1.5rem) 0;
   scroll-margin-top: 90px;
 }
@@ -189,89 +188,6 @@
   text-decoration: none;
 }
 
-.combo-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-}
-
-.combo-visual {
-  position: relative;
-  height: 155px;
-  margin-top: 1.5rem;
-}
-
-.combo-visual i {
-  position: absolute;
-  display: grid;
-  width: 100px;
-  height: 100px;
-  place-items: center;
-  border: 5px solid #fff;
-  border-radius: 38% 62% 55% 45%;
-  background: #ffb8ce;
-  color: #fff;
-  font: normal 2.5rem sans-serif;
-  box-shadow: 0 10px 30px #74422c1b;
-}
-
-.combo-visual i:nth-child(2) {
-  left: 28%;
-  top: 35px;
-  background: #bba8d7;
-  transform: rotate(12deg);
-}
-
-.combo-visual i:nth-child(3) {
-  right: 8%;
-  top: 5px;
-  background: #f2ce96;
-  transform: rotate(-8deg);
-}
-
-.voucher {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 1.5rem;
-  margin: 5rem 1rem 3rem;
-  padding: 2rem;
-  border: 2px dashed #f3acba;
-  border-radius: 30px;
-  background: #fff5ed;
-  scroll-margin-top: 100px;
-}
-
-.voucher > span {
-  color: #f5b653;
-  font-size: 4rem;
-}
-
-.voucher small {
-  color: var(--pink-strong);
-  font-weight: 900;
-}
-
-.voucher h2 {
-  margin: .25rem 0;
-  color: var(--cocoa);
-  font: 900 1.7rem var(--font-rounded);
-}
-
-.voucher p {
-  margin: 0;
-  color: var(--muted);
-}
-
-.voucher a {
-  padding: .85rem 1.2rem;
-  border-radius: 99px;
-  background: var(--pink-strong);
-  color: #fff;
-  font-weight: 900;
-  text-decoration: none;
-}
-
 @keyframes shine {
   to { background-position: -200%; }
 }
@@ -306,16 +222,6 @@
   .slider-arrow { display: none; }
   .section-intro { grid-template-columns: 1fr; }
   .section-intro > p { display: none; }
-  .combo-grid { grid-template-columns: 1fr; }
-  .voucher {
-    grid-template-columns: auto 1fr;
-    margin: 3rem 0 1rem;
-    padding: 1.25rem;
-  }
-  .voucher a {
-    grid-column: 1 / -1;
-    text-align: center;
-  }
 }
 
 @media (max-width: 460px) {
@@ -324,29 +230,5 @@
     grid-template-columns: 1fr;
   }
   .slide-content p { font-size: .92rem; }
-  .products-section,
-  .combo-section { padding-top: 4rem; }
-}
-
-.blank-quantity-controls {
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-}
-
-.blank-quantity-controls button {
-  width: 28px;
-  height: 28px;
-  border: 0;
-  border-radius: 50%;
-  background: var(--cocoa);
-  color: #fff;
-}
-
-.blank-quantity-controls button:disabled {
-  opacity: .35;
-}
-
-.blank-quantity-controls b {
-  color: var(--berry);
+  .products-section { padding-top: 4rem; }
 }

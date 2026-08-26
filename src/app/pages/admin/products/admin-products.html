@@ -1,7 +1,7 @@
 <div class="admin-page">
   <header class="admin-page-header">
-    <div><p>materials manager</p><h1>Món bán lẻ</h1><span>Quản lý đất, màu và các nguyên liệu/món mua kèm.</span></div>
-    <a class="admin-primary-action" routerLink="/admin/products/new">+ Thêm món bán lẻ</a>
+    <div><p>product manager</p><h1>Sản phẩm</h1><span>Quản lý phôi, bộ kit và nguyên liệu trong một nơi.</span></div>
+    <a class="admin-primary-action" routerLink="/admin/products/new">+ Thêm sản phẩm</a>
   </header>
 
   @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }
@@ -10,15 +10,13 @@
   <form class="filter-bar" [formGroup]="filterForm">
     <label>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.4-4.4M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" /></svg>
-      <input type="search" formControlName="search" placeholder="Tìm theo tên hoặc slug..." />
+      <input type="search" formControlName="search" placeholder="Tìm theo tên sản phẩm..." />
     </label>
-    <select formControlName="status" aria-label="Lọc theo trạng thái">
-      <option value="ALL">Tất cả trạng thái</option>
-      @for (status of productStatuses; track status.value) {
-        <option [value]="status.value">{{ status.label }}</option>
-      }
+    <select formControlName="type" aria-label="Lọc theo loại sản phẩm">
+      <option value="ALL">Tất cả loại</option>
+      @for (type of productTypes; track type.value) { <option [value]="type.value">{{ type.label }}</option> }
     </select>
-    <span>{{ visibleProducts().length }} món bán lẻ</span>
+    <span>{{ visibleProducts().length }} sản phẩm</span>
   </form>
 
   @if (loading()) {
@@ -26,25 +24,23 @@
   } @else if (visibleProducts().length) {
     <div class="product-table-wrap">
       <table>
-        <thead><tr><th>Mặt hàng</th><th>Trạng thái</th><th>Giá</th><th>Tồn kho</th><th>Thứ tự</th><th><span class="sr-only">Thao tác</span></th></tr></thead>
+        <thead><tr><th>Sản phẩm</th><th>Loại</th><th>Giá</th><th><span class="sr-only">Thao tác</span></th></tr></thead>
         <tbody>
           @for (product of visibleProducts(); track product.id) {
             <tr>
               <td>
                 <div class="product-cell">
                   <img appImageFallback [src]="product.primaryImageUrl || product.images[0]?.imageUrl || '/images/product-placeholder.svg'" [alt]="product.name" />
-                  <div><strong>{{ product.name }}</strong><small>/{{ product.slug }}</small></div>
+                  <div><strong>{{ product.name }}</strong><small>#{{ product.id }}</small></div>
                 </div>
               </td>
-              <td><span class="status-badge" [attr.data-status]="product.status">{{ productStatusLabel(product.status) }}</span></td>
+              <td><span class="status-badge">{{ product.typeLabel }}</span></td>
               <td><b>{{ formatVnd(product.priceVnd) }}</b></td>
-              <td>{{ product.madeToOrder ? 'Làm theo đơn' : (product.stockQuantity ?? '—') }}</td>
-              <td>{{ product.sortOrder }}</td>
               <td>
                 <div class="row-actions">
                   <a [routerLink]="['/admin/products', product.id, 'edit']">Sửa</a>
-                  <button type="button" (click)="archive(product)" [disabled]="archivingId() === product.id || product.status === 'HIDDEN'">
-                    {{ product.status === 'HIDDEN' ? 'Đã ẩn' : archivingId() === product.id ? 'Đang ẩn...' : 'Ẩn' }}
+                  <button type="button" (click)="remove(product)" [disabled]="deletingId() === product.id">
+                    {{ deletingId() === product.id ? 'Đang xóa...' : 'Xóa' }}
                   </button>
                 </div>
               </td>
@@ -54,6 +50,6 @@
       </table>
     </div>
   } @else {
-    <div class="empty-list"><span>☁</span><h2>Không tìm thấy món bán lẻ</h2><p>Thử đổi từ khóa hoặc bộ lọc trạng thái.</p></div>
+    <div class="empty-list"><span>☁</span><h2>Không tìm thấy sản phẩm</h2><p>Thử đổi từ khóa hoặc loại sản phẩm.</p></div>
   }
 </div>

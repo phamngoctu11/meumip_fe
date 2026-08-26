@@ -1,9 +1,6 @@
 <section class="admin-shell">
   <aside class="admin-sidebar" [class.admin-sidebar--open]="menuOpen()">
-    <div class="admin-sidebar__heading">
-      <span>meumip</span>
-      <small>studio admin</small>
-    </div>
+    <div class="admin-sidebar__heading"><span>meumip</span><small>studio admin</small></div>
 
     <nav aria-label="Điều hướng quản trị">
       <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">
@@ -12,7 +9,7 @@
       </a>
       <a routerLink="/admin/products" routerLinkActive="active" (click)="closeMenu()">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 7 8-4 8 4-8 4-8-4Zm0 5 8 4 8-4M4 17l8 4 8-4" /></svg>
-        Món bán lẻ
+        Sản phẩm
       </a>
       <a routerLink="/admin/orders" routerLinkActive="active" (click)="closeMenu()">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12l2 4v14H4V7l2-4Zm-2 4h16M9 11a3 3 0 0 0 6 0" /></svg>
@@ -21,14 +18,6 @@
       <a routerLink="/admin/slides" routerLinkActive="active" (click)="closeMenu()">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM8 15l3-3 2 2 3-4 4 5M8 9h.01" /></svg>
         Slide trang chủ
-      </a>
-      <a routerLink="/admin/combos" routerLinkActive="active" (click)="closeMenu()">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10l3 5-8 11L4 9l3-5Zm-3 5h16M9 4l3 5 3-5" /></svg>
-        Combo Kit
-      </a>
-      <a routerLink="/admin/product-blanks" routerLinkActive="active" (click)="closeMenu()">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 8v8l8 5 8-5V8l-8-5Zm0 0v9m8-4-8 4-8-4m8 4v9" /></svg>
-        Phôi lẻ
       </a>
     </nav>
 
@@ -44,9 +33,7 @@
     </div>
   </aside>
 
-  @if (menuOpen()) {
-    <button class="sidebar-backdrop" type="button" (click)="closeMenu()" aria-label="Đóng menu"></button>
-  }
+  @if (menuOpen()) { <button class="sidebar-backdrop" type="button" (click)="closeMenu()" aria-label="Đóng menu"></button> }
 
   <div class="admin-main">
     <header class="admin-mobile-header">

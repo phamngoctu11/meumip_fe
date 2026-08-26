@@ -1,38 +1,18 @@
 <div class="page-shell">
-  <a class="back-link" routerLink="/products"><span>←</span> Quay lại tiệm</a>
+  <a class="back-link" routerLink="/products"><span>←</span> Quay lại danh sách sản phẩm</a>
 
   @if (loading()) {
-    <div class="detail-skeleton" aria-label="Đang tải sản phẩm">
-      <div class="detail-skeleton__image"></div>
-      <div class="detail-skeleton__copy"><span></span><span></span><span></span></div>
-    </div>
+    <div class="detail-skeleton"><div class="detail-skeleton__image"></div><div class="detail-skeleton__copy"><span></span><span></span><span></span></div></div>
   } @else if (product(); as item) {
-    @if (previewMode()) {
-      <app-feedback-banner message="Đang xem dữ liệu mẫu vì backend chưa phản hồi." />
-    }
-
     <article class="product-detail">
       <div class="gallery">
         <div class="gallery-main">
-          <img
-            appImageFallback
-            [src]="item.images[selectedImage()]?.imageUrl || item.primaryImageUrl || '/images/product-placeholder.svg'"
-            [alt]="item.images[selectedImage()]?.altText || item.name"
-          />
-          @if (item.madeToOrder) {
-            <span class="made-label">made to order</span>
-          }
+          <img appImageFallback [src]="selectedImage()" [alt]="item.name" />
         </div>
-
         @if (item.images.length > 1) {
-          <div class="gallery-thumbs" aria-label="Ảnh sản phẩm">
-            @for (image of item.images; track image.id; let index = $index) {
-              <button
-                type="button"
-                [class.active]="selectedImage() === index"
-                (click)="selectImage(index)"
-                [attr.aria-label]="'Xem ảnh ' + (index + 1)"
-              >
+          <div class="gallery-thumbs">
+            @for (image of item.images; track image.id || image.imageUrl) {
+              <button type="button" [class.active]="selectedImage() === image.imageUrl" (click)="selectedImage.set(image.imageUrl)">
                 <img appImageFallback [src]="image.imageUrl" [alt]="image.altText || item.name" />
               </button>
             }
@@ -41,112 +21,37 @@
       </div>
 
       <div class="product-copy">
-        <p class="eyebrow">{{ item.typeLabel || 'handmade little thing' }}</p>
+        <p class="eyebrow">{{ item.typeLabel }}</p>
         <h1>{{ item.name }}</h1>
         <p class="price">{{ formatVnd(item.priceVnd) }}</p>
-        @if (item.shortDescription) {
-          <p class="short-description">{{ item.shortDescription }}</p>
-        }
+
+        @if (item.description) { <p class="description">{{ item.description }}</p> }
         @if (item.tags.length) {
-          <div class="tag-list">
-            @for (tag of item.tags; track tag) { <span>#{{ tag }}</span> }
-          </div>
+          <div class="tag-list">@for (tag of item.tags; track tag) { <span>#{{ tag }}</span> }</div>
         }
 
-        <div class="divider"><span>✿</span></div>
-
-        @if (item.description) {
-          <p class="description">{{ item.description }}</p>
-        }
-
-        <dl class="product-notes">
-          @if (item.blankShape) {
-            <div><dt>Hình dáng phôi</dt><dd>{{ item.blankShape }}</dd></div>
-          }
-          @if (item.blankSize) {
-            <div><dt>Kích cỡ phôi</dt><dd>{{ item.blankSize }}</dd></div>
-          }
-          @if (item.materialNote) {
-            <div><dt>Chất liệu</dt><dd>{{ item.materialNote }}</dd></div>
-          }
-          @if (item.sizeNote) {
-            <div><dt>Kích thước</dt><dd>{{ item.sizeNote }}</dd></div>
-          }
-          @if (item.madeToOrder && item.productionMinDays) {
-            <div>
-              <dt>Thời gian làm</dt>
-              <dd>{{ item.productionMinDays }}–{{ item.productionMaxDays || item.productionMinDays }} ngày</dd>
-            </div>
-          }
-          @if (item.shippingNote) {
-            <div><dt>Giao hàng</dt><dd>{{ item.shippingNote }}</dd></div>
-          }
-        </dl>
-
-        @if (item.type === 'KIT') {
-          <app-feedback-banner message="Combo kit cần chọn phôi miễn phí trong khu vực Combo trên trang chủ trước khi thêm vào giỏ." />
-          @if (item.kitComponents.length) {
-            <dl class="product-notes">
-              @for (component of item.kitComponents; track component.id ?? component.name) {
-                <div>
-                  <dt>{{ component.name }}</dt>
-                  <dd>{{ component.quantity }}{{ component.unit ? ' ' + component.unit : '' }}@if (component.note) { · {{ component.note }} }</dd>
-                </div>
-              }
-            </dl>
-          }
-        }
-
-        @if (needsBlankSelection(item)) {
-          <fieldset class="blank-picker" [formGroup]="purchaseForm">
-            <legend>Chọn phôi <small>* bắt buộc</small></legend>
-            <p>{{ item.selectionNote || 'Chọn kích thước và kiểu phôi bạn muốn dùng cho sản phẩm này.' }}</p>
-            <div class="blank-options">
-              @for (blank of item.blanks; track blank.id) {
-                <label [class.selected]="purchaseForm.controls.productBlankId.value === blank.id">
-                  <input type="radio" formControlName="productBlankId" [value]="blank.id" />
-                  <img appImageFallback [src]="blank.imageUrl || blank.images[0]?.imageUrl || '/images/product-placeholder.svg'" [alt]="blank.name" />
-                  <span><strong>{{ blank.name }}</strong><small>{{ blank.size }}</small></span>
-                </label>
-              }
-            </div>
-            @if (purchaseForm.controls.productBlankId.invalid && purchaseForm.controls.productBlankId.touched) {
-              <small class="blank-error">Bạn cần chọn một phôi.</small>
+        @if (item.type === 'KIT' && item.kitComponents.length) {
+          <div class="divider">♡</div>
+          <dl class="product-notes">
+            @for (component of item.kitComponents; track component.id || component.name) {
+              <div>
+                <dt>{{ component.name }}</dt>
+                <dd>{{ component.quantity }} {{ component.unit || '' }}@if (component.note) { · {{ component.note }} }</dd>
+              </div>
             }
-          </fieldset>
-        } @else if (item.selectionRequired && item.type !== 'KIT') {
-          <app-feedback-banner tone="error" message="Sản phẩm này yêu cầu chọn phôi nhưng hiện chưa có phôi khả dụng." />
+          </dl>
         }
 
-        <form class="buy-row" [formGroup]="purchaseForm" (ngSubmit)="addToCart()">
-          <app-quantity-stepper
-            formControlName="quantity"
-            [disabled]="cartStore.loading() || item.type === 'KIT'"
-          />
-          <button
-            class="add-button"
-            type="submit"
-            [disabled]="cartStore.loading() || !canAddToCart(item)"
-          >
-            @if (cartStore.loading()) {
-              Đang thêm...
-            } @else if (item.status !== 'ACTIVE') {
-              Tạm hết hàng
-            } @else if (item.type === 'KIT') {
-              Chọn ở trang chủ
-            } @else {
-              Thêm vào giỏ <span>♡</span>
-            }
+        <form class="buy-row" [formGroup]="cartForm" (ngSubmit)="addToCart()">
+          <app-quantity-stepper formControlName="quantity" [disabled]="cartStore.loading()" />
+          <button class="add-button" type="submit" [disabled]="cartStore.loading() || cartForm.invalid">
+            {{ cartStore.loading() ? 'Đang thêm...' : 'Thêm vào giỏ' }} <span>♡</span>
           </button>
         </form>
 
-        @if (added()) {
-          <app-feedback-banner tone="success" message="Đã thêm sản phẩm vào giỏ hàng." />
-        }
+        @if (added()) { <app-feedback-banner tone="success" message="Đã thêm sản phẩm vào giỏ hàng." /> }
         @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }
-        @if (cartStore.error()) {
-          <app-feedback-banner tone="error" [message]="cartStore.error()!" />
-        }
+        @if (cartStore.error()) { <app-feedback-banner tone="error" [message]="cartStore.error()!" /> }
       </div>
     </article>
   } @else {

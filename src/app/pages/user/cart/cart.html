@@ -1,46 +1,23 @@
 <section class="cart-page">
-  <app-page-header
-    eyebrow="your tiny collection"
-    title="Giỏ hàng"
-    description="Những món be bé bạn đã chọn đang đợi được đóng gói ở đây."
-  />
+  <app-page-header eyebrow="your tiny collection" title="Giỏ hàng" description="Những món bạn đã chọn đang đợi được đóng gói ở đây." />
 
   @if (cartStore.loading() && !cartStore.cart()) {
-    <div class="cart-loading" aria-label="Đang tải giỏ hàng">
-      <span></span><span></span>
-    </div>
+    <div class="cart-loading" aria-label="Đang tải giỏ hàng"><span></span><span></span></div>
   } @else if (cartStore.error() && !cartStore.cart()) {
-    <div class="cart-error">
-      <app-feedback-banner tone="error" [message]="cartStore.error()!" />
-      <button class="button button--secondary" type="button" (click)="reload()">Thử lại</button>
-    </div>
+    <div class="cart-error"><app-feedback-banner tone="error" [message]="cartStore.error()!" /><button class="button button--secondary" type="button" (click)="reload()">Thử lại</button></div>
   } @else if (cartStore.cart(); as cart) {
     @if (cart.items.length) {
       <div class="cart-layout">
         <div class="cart-items">
           @for (item of cart.items; track item.id) {
             <article class="cart-item">
-              <a class="cart-item__image" [routerLink]="['/products', item.productSlug]">
-                <img
-                  appImageFallback
-                  [src]="item.imageUrl || '/images/product-placeholder.svg'"
-                  [alt]="item.productName"
-                />
+              <a class="cart-item__image" [routerLink]="['/products', item.productId]">
+                <img appImageFallback [src]="item.imageUrl || '/images/product-placeholder.svg'" [alt]="item.productName" />
               </a>
               <div class="cart-item__copy">
-                <h2><a [routerLink]="['/products', item.productSlug]">{{ item.productName }}</a></h2>
+                <h2><a [routerLink]="['/products', item.productId]">{{ item.productName }}</a></h2>
                 <p>{{ formatVnd(item.unitPriceVnd) }} × {{ item.quantity }}</p>
                 <span class="blank-info">{{ item.itemTypeLabel }}</span>
-                @if (item.selectedBlanks.length) {
-                  <span class="blank-info">
-                    Phôi:
-                    @for (blank of item.selectedBlanks; track blank.id; let last = $last) {
-                      {{ blank.name }} · {{ blank.size }}@if ((blank.quantity ?? 1) > 1) { × {{ blank.quantity }} }@if (!last) { , }
-                    }
-                  </span>
-                } @else if (item.productBlankName) {
-                  <span class="blank-info">Phôi: {{ item.productBlankName }}@if (item.productBlankSize) { · {{ item.productBlankSize }} }</span>
-                }
                 <span>Số lượng: {{ item.quantity }}</span>
               </div>
               <div class="cart-item__total">
@@ -50,31 +27,21 @@
             </article>
           }
         </div>
-
         <aside class="cart-summary">
-          <p class="summary-eyebrow">order summary</p>
-          <h2>Tóm tắt</h2>
+          <p class="summary-eyebrow">order summary</p><h2>Tóm tắt</h2>
           <dl>
             <div><dt>Sản phẩm ({{ cart.itemCount }})</dt><dd>{{ formatVnd(cart.subtotalVnd) }}</dd></div>
             <div><dt>Phí giao hàng</dt><dd>Tính khi đặt hàng</dd></div>
             <div class="summary-total"><dt>Tạm tính</dt><dd>{{ formatVnd(cart.subtotalVnd) }}</dd></div>
           </dl>
           <a class="button button--primary" routerLink="/checkout">Tiến hành đặt hàng <span>→</span></a>
-          <a class="continue-link" routerLink="/products">← Tiếp tục xem mặt hàng</a>
+          <a class="continue-link" routerLink="/products">← Tiếp tục xem sản phẩm</a>
         </aside>
       </div>
     } @else {
-      <app-empty-state
-        icon="♡"
-        title="Giỏ hàng còn trống"
-        message="Hãy chọn một món nhỏ xinh để bắt đầu nhé."
-      >
-        <a class="button button--primary" routerLink="/products">Xem 3 nhóm mặt hàng</a>
-      </app-empty-state>
+      <app-empty-state icon="♡" title="Giỏ hàng còn trống" message="Hãy chọn một sản phẩm để bắt đầu nhé."><a class="button button--primary" routerLink="/products">Xem sản phẩm</a></app-empty-state>
     }
   } @else {
-    <app-empty-state icon="♡" title="Giỏ hàng còn trống" message="Hãy chọn một món nhỏ xinh để bắt đầu nhé.">
-      <a class="button button--primary" routerLink="/products">Xem 3 nhóm mặt hàng</a>
-    </app-empty-state>
+    <app-empty-state icon="♡" title="Giỏ hàng còn trống" message="Hãy chọn một sản phẩm để bắt đầu nhé."><a class="button button--primary" routerLink="/products">Xem sản phẩm</a></app-empty-state>
   }
 </section>

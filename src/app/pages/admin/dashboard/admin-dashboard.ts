@@ -22,8 +22,8 @@ export class AdminDashboard implements OnInit {
   readonly formatVnd = formatVnd;
   readonly orderStatusLabel = orderStatusLabel;
 
-  readonly activeProducts = computed(
-    () => this.products().filter((product) => product.status === 'ACTIVE').length,
+  readonly kitProducts = computed(
+    () => this.products().filter((product) => product.type === 'KIT').length,
   );
   readonly pendingOrders = computed(
     () =>

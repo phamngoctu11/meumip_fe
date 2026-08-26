@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize, switchMap } from 'rxjs';
 import { CatalogItemType, ProductSummary } from '../../../core/models';
@@ -8,16 +8,12 @@ import { FeedbackBanner } from '../../../shared/feedback-banner/feedback-banner'
 import { PageHeader } from '../../../shared/page-header/page-header';
 import { ProductCard } from '../../../shared/product-card/product-card';
 
-type ProductTypeFilter = {
-  value: CatalogItemType;
-  label: string;
-  description: string;
-};
+type ProductTypeFilter = { value: CatalogItemType; label: string; description: string };
 
 const PRODUCT_TYPES: ProductTypeFilter[] = [
-  { value: 'BLANK', label: 'Phôi lẻ', description: 'Các mẫu phôi trơn để tự làm móc khóa.' },
-  { value: 'KIT', label: 'Combo Kit', description: 'Bộ kit giá cố định, chọn phôi miễn phí theo combo.' },
-  { value: 'MATERIAL', label: 'Món bán lẻ', description: 'Đất, màu và nguyên liệu mua kèm.' },
+  { value: 'BLANK', label: 'Phôi', description: 'Các mẫu phôi để bạn tự do sáng tạo.' },
+  { value: 'KIT', label: 'Bộ kit', description: 'Các bộ dụng cụ và nguyên liệu được đóng thành một sản phẩm.' },
+  { value: 'MATERIAL', label: 'Nguyên liệu', description: 'Đất, màu và nguyên liệu mua lẻ.' },
 ];
 
 @Component({
@@ -38,16 +34,22 @@ export class ProductsPage implements OnInit {
   readonly error = signal<string | null>(null);
 
   ngOnInit(): void {
-    this.route.queryParamMap.pipe(switchMap((params) => {
-      const type = this.resolveType(params.get('type'));
-      this.selectedType.set(type);
-      this.loading.set(true);
-      this.error.set(null);
-      return this.api.getCatalog(type, undefined, undefined, 0, 100).pipe(finalize(() => this.loading.set(false)));
-    })).subscribe({
-      next: (products) => this.products.set(products),
-      error: (error) => this.error.set(error.error?.message ?? 'Không thể tải danh sách mặt hàng.'),
-    });
+    this.route.queryParamMap
+      .pipe(
+        switchMap((params) => {
+          const type = this.resolveType(params.get('type'));
+          this.selectedType.set(type);
+          this.loading.set(true);
+          this.error.set(null);
+          return this.api
+            .getProducts(type, undefined, undefined, 0, 100)
+            .pipe(finalize(() => this.loading.set(false)));
+        }),
+      )
+      .subscribe({
+        next: (products) => this.products.set(products),
+        error: (error) => this.error.set(error.error?.message ?? 'Không thể tải danh sách sản phẩm.'),
+      });
   }
 
   selectedTypeInfo(): ProductTypeFilter {
