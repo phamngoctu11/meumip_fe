@@ -2,9 +2,13 @@
   <header class="admin-page-header">
     <div><p>studio overview</p><h1>Tổng quan</h1><span>Theo dõi sản phẩm và đơn hàng của cửa hàng.</span></div>
     <a class="admin-primary-action" routerLink="/admin/products/new">+ Thêm sản phẩm</a>
+    <button class="admin-logout" type="button" [disabled]="clearingCache()" (click)="clearCache()">
+      {{ clearingCache() ? 'Đang xóa...' : 'Xóa bộ nhớ đệm' }}
+    </button>
   </header>
 
   @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }
+  @if (success()) { <app-feedback-banner tone="success" [message]="success()!" /> }
 
   @if (loading()) {
     <div class="stats-grid stats-grid--loading"><span></span><span></span><span></span><span></span></div>

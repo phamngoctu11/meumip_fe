@@ -24,6 +24,11 @@
         <p class="eyebrow">{{ item.typeLabel }}</p>
         <h1>{{ item.name }}</h1>
         <p class="price">{{ formatVnd(item.priceVnd) }}</p>
+        @if (item.type === 'BLANK' && (item.blankSize || item.volume)) {
+          <p class="volume"><span>Kích cỡ</span> {{ item.blankSize || item.volume }}</p>
+        } @else if (item.type === 'MATERIAL' && item.volume) {
+          <p class="volume"><span>Quy cách</span> {{ item.volume }}</p>
+        }
 
         @if (item.description) { <p class="description">{{ item.description }}</p> }
         @if (item.tags.length) {
@@ -42,9 +47,40 @@
           </dl>
         }
 
+        @if (item.type === 'KIT') {
+          <section class="blank-picker">
+            <div class="blank-picker__heading">
+              <div><small>Phôi miễn phí</small><h2>Chọn phôi cho combo</h2></div>
+              <strong [class.complete]="comboSelectionReady()">{{ selectedBlankTotal() }}/{{ requiredBlankTotal() }}</strong>
+            </div>
+            <p>Combo này gồm {{ item.includedBlankCount ?? 1 }} phôi miễn phí cho mỗi bộ. Bạn có thể chọn nhiều chiếc cùng một mẫu.</p>
+            @if (blanksLoading()) {
+              <div class="blank-picker__loading">Đang tải danh sách phôi...</div>
+            } @else if (blanksError()) {
+              <app-feedback-banner tone="error" [message]="blanksError()!" />
+            } @else {
+              <div class="blank-grid">
+                @for (blank of availableBlanks(); track blank.id) {
+                  <article [class.selected]="selectedBlankQuantity(blank.id) > 0">
+                    <img appImageFallback [src]="blankCover(blank)" [alt]="blank.name" />
+                    <div><strong>{{ blank.name }}</strong><small>{{ blank.blankSize || blank.volume || 'Chưa có kích cỡ' }}</small></div>
+                    <div class="blank-counter">
+                      <button type="button" (click)="decreaseBlank(blank)" [disabled]="selectedBlankQuantity(blank.id) === 0">−</button>
+                      <b>{{ selectedBlankQuantity(blank.id) }}</b>
+                      <button type="button" (click)="increaseBlank(blank)" [disabled]="selectedBlankTotal() >= requiredBlankTotal()">+</button>
+                    </div>
+                  </article>
+                } @empty {
+                  <div class="blank-picker__loading">Chưa có sản phẩm phôi để lựa chọn.</div>
+                }
+              </div>
+            }
+          </section>
+        }
+
         <form class="buy-row" [formGroup]="cartForm" (ngSubmit)="addToCart()">
           <app-quantity-stepper formControlName="quantity" [disabled]="cartStore.loading()" />
-          <button class="add-button" type="submit" [disabled]="cartStore.loading() || cartForm.invalid">
+          <button class="add-button" type="submit" [disabled]="cartStore.loading() || cartForm.invalid || (item.type === 'KIT' && !comboSelectionReady())">
             {{ cartStore.loading() ? 'Đang thêm...' : 'Thêm vào giỏ' }} <span>♡</span>
           </button>
         </form>

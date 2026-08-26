@@ -18,6 +18,13 @@
                 <h2><a [routerLink]="['/products', item.productId]">{{ item.productName }}</a></h2>
                 <p>{{ formatVnd(item.unitPriceVnd) }} × {{ item.quantity }}</p>
                 <span class="blank-info">{{ item.itemTypeLabel }}</span>
+                @if (item.selectedBlanks.length) {
+                  <div class="selected-blank-list">
+                    @for (blank of item.selectedBlanks; track blank.productId) {
+                      <span><img appImageFallback [src]="blank.imageUrl || '/images/product-placeholder.svg'" [alt]="blank.name" /><b>{{ blank.name }}</b><small>{{ blank.size || 'Chưa có kích cỡ' }} × {{ blank.quantity }}</small></span>
+                    }
+                  </div>
+                }
                 <span>Số lượng: {{ item.quantity }}</span>
               </div>
               <div class="cart-item__total">

@@ -41,21 +41,43 @@ export interface ProductSummary {
   primaryImageUrl: string | null;
   images: ProductImage[];
   tags: string[];
+  volume?: string;
+  blankSize?: string | null;
+  includedBlankCount?: number | null;
 }
 
 export interface ProductDetail extends ProductSummary {
   description: string | null;
   kitComponents: KitComponent[];
+  volume?: string;
+
 }
 
 export interface ProductUpsertRequest {
   type: CatalogItemType;
   name: string;
   description: string;
+  volume: string;
+  blankSize: string;
+  includedBlankCount: number | null;
   priceVnd: number;
   images: ProductImageRequest[];
   tags: string[];
   kitComponents: KitComponentRequest[];
+}
+
+export interface ComboBlankSelection {
+  productId: number;
+  quantity: number;
+}
+
+export interface BlankSelection {
+  productId: number;
+  name: string;
+  size: string | null;
+  imageUrl: string | null;
+  quantity: number;
+  sortOrder: number;
 }
 
 export interface HomeSlide {
@@ -100,6 +122,7 @@ export interface CartItem {
   unitPriceVnd: number;
   quantity: number;
   lineTotalVnd: number;
+  selectedBlanks: BlankSelection[];
 }
 
 export interface Cart {
@@ -133,6 +156,7 @@ export interface OrderItem {
   unitPriceVnd: number;
   quantity: number;
   lineTotalVnd: number;
+  selectedBlanks: BlankSelection[];
 }
 
 export interface Order {

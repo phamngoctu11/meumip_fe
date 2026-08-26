@@ -23,6 +23,9 @@ export class AdminApiService {
   listSlides(): Observable<HomeSlide[]> {
     return this.get<HomeSlide[]>(`${this.adminUrl}/slides`);
   }
+  clearCache(): Observable<void> {
+    return this.get<void>(`${this.adminUrl}/clear-cache`);
+  }
 
   createSlide(request: HomeSlideUpsertRequest): Observable<HomeSlide> {
     return this.post<HomeSlide>(`${this.adminUrl}/slides`, request);

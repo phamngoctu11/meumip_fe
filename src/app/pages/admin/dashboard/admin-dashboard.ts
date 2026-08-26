@@ -18,7 +18,9 @@ export class AdminDashboard implements OnInit {
   readonly products = signal<ProductDetail[]>([]);
   readonly orders = signal<Order[]>([]);
   readonly loading = signal(true);
+  readonly clearingCache = signal(false);
   readonly error = signal<string | null>(null);
+  readonly success = signal<string | null>(null);
   readonly formatVnd = formatVnd;
   readonly orderStatusLabel = orderStatusLabel;
 
@@ -40,6 +42,22 @@ export class AdminDashboard implements OnInit {
 
   ngOnInit(): void {
     this.load();
+  }
+  clearCache(): void {
+    if (this.clearingCache()) return;
+
+    this.clearingCache.set(true);
+    this.error.set(null);
+    this.success.set(null);
+
+    this.api
+      .clearCache()
+      .pipe(finalize(() => this.clearingCache.set(false)))
+      .subscribe({
+        next: () => this.success.set('Đã xóa bộ nhớ đệm.'),
+        error: (error) =>
+          this.error.set(error.error?.message ?? 'Không thể xóa bộ nhớ đệm. Vui lòng thử lại.'),
+      });
   }
 
   load(): void {

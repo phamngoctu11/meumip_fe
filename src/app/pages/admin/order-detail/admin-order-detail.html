@@ -17,7 +17,9 @@
             @for (item of currentOrder.items; track item.id) {
               <article>
                 <img appImageFallback [src]="item.productImageUrl || '/images/product-placeholder.svg'" [alt]="item.productName" />
-                <div><strong>{{ item.productName }}</strong><small>{{ item.itemTypeLabel }}</small><small>{{ formatVnd(item.unitPriceVnd) }} × {{ item.quantity }}</small></div>
+                <div><strong>{{ item.productName }}</strong><small>{{ item.itemTypeLabel }}</small><small>{{ formatVnd(item.unitPriceVnd) }} × {{ item.quantity }}</small>
+                  @if (item.selectedBlanks.length) { <div class="order-blanks">@for (blank of item.selectedBlanks; track blank.productId) { <small>{{ blank.name }} · {{ blank.size || 'Chưa có kích cỡ' }} × {{ blank.quantity }}</small> }</div> }
+                </div>
                 <b>{{ formatVnd(item.lineTotalVnd) }}</b>
               </article>
             }

@@ -55,7 +55,11 @@
             @for (item of cartStore.cart()!.items; track item.id) {
               <div class="summary-item">
                 <div class="summary-image"><img appImageFallback [src]="item.imageUrl || '/images/product-placeholder.svg'" [alt]="item.productName" /><span>{{ item.quantity }}</span></div>
-                <div><strong>{{ item.productName }}</strong><small>{{ item.itemTypeLabel }}</small><small>{{ formatVnd(item.unitPriceVnd) }}</small></div>
+                <div><strong>{{ item.productName }}</strong><small>{{ item.itemTypeLabel }}</small><small>{{ formatVnd(item.unitPriceVnd) }}</small>
+                  @if (item.selectedBlanks.length) {
+                    @for (blank of item.selectedBlanks; track blank.productId) { <small>{{ blank.name }} · {{ blank.size || 'Chưa có kích cỡ' }} × {{ blank.quantity }}</small> }
+                  }
+                </div>
                 <b>{{ formatVnd(item.lineTotalVnd) }}</b>
               </div>
             }

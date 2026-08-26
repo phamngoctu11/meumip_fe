@@ -30,6 +30,13 @@
               </select>
             </label>
             <label class="field"><span>Giá bán (VND) *</span><input formControlName="priceVnd" type="number" min="0" step="1000" /></label>
+            @if (productForm.controls.type.value === 'BLANK') {
+              <label class="field"><span>Kích cỡ phôi</span><input formControlName="blankSize" type="text" placeholder="Ví dụ: 5 cm" /></label>
+            } @else if (productForm.controls.type.value === 'MATERIAL') {
+              <label class="field"><span>Quy cách / khối lượng</span><input formControlName="volume" type="text" placeholder="Ví dụ: 100 g" /></label>
+            } @else {
+              <label class="field"><span>Số phôi miễn phí *</span><input formControlName="includedBlankCount" type="number" min="1" max="3" /></label>
+            }
             <label class="field field--wide">
               <span>Tên sản phẩm *</span>
               <input formControlName="name" type="text" placeholder="Bộ kit làm móc khóa" />
@@ -96,6 +103,13 @@
           <div class="card-title card-title--compact"><div><h2>Tóm tắt</h2><p>Sản phẩm sẽ xuất hiện theo loại đã chọn và có thể mua ngay.</p></div></div>
           <label class="field"><span>Loại</span><strong>{{ productForm.controls.type.value }}</strong></label>
           <label class="field"><span>Giá</span><strong>{{ productForm.controls.priceVnd.value }} VND</strong></label>
+          @if (productForm.controls.type.value === 'BLANK' && productForm.controls.blankSize.value) {
+            <label class="field"><span>Kích cỡ phôi</span><strong>{{ productForm.controls.blankSize.value }}</strong></label>
+          } @else if (productForm.controls.type.value === 'KIT') {
+            <label class="field"><span>Phôi miễn phí</span><strong>{{ productForm.controls.includedBlankCount.value }} phôi / combo</strong></label>
+          } @else if (productForm.controls.volume.value) {
+            <label class="field"><span>Quy cách</span><strong>{{ productForm.controls.volume.value }}</strong></label>
+          }
         </section>
         <button class="mobile-save" type="submit" [disabled]="saving() || uploading()">{{ saving() ? 'Đang lưu...' : 'Lưu sản phẩm' }}</button>
       </aside>

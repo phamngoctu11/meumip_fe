@@ -7,9 +7,9 @@ import { ProductCard } from '../../../shared/product-card/product-card';
 
 const FALLBACK_SLIDE: HomeSlide = {
   id: 0,
-  title: 'Tự tay làm nên điều dễ thương',
+  title: 'Lỗi tải ảnh',
   eyebrow: 'meumip handmade',
-  description: 'Khám phá phôi, bộ kit và nguyên liệu dành cho góc sáng tạo của bạn.',
+  description: 'Lỗi hiển thị ảnh.',
   imageUrl: '/images/hero-slide-1.svg',
   linkLabel: 'Xem sản phẩm',
   linkUrl: '/products',

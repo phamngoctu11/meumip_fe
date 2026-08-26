@@ -6,6 +6,7 @@ import {
   ApiResponse,
   Cart,
   CatalogItemType,
+  ComboBlankSelection,
   CheckoutRequest,
   CheckoutResponse,
   HomeSlide,
@@ -45,8 +46,19 @@ export class ShopApiService {
       .pipe(map((response) => this.unwrap(response)));
   }
 
-  addCartItem(sessionId: string | null, productId: number, quantity: number): Observable<Cart> {
-    const body: { sessionId?: string; productId: number; quantity: number } = { productId, quantity };
+  addCartItem(
+    sessionId: string | null,
+    productId: number,
+    quantity: number,
+    selectedBlanks: ComboBlankSelection[] = [],
+  ): Observable<Cart> {
+    const body: {
+      sessionId?: string;
+      productId: number;
+      quantity: number;
+      selectedBlanks?: ComboBlankSelection[];
+    } = { productId, quantity };
+    if (selectedBlanks.length) body.selectedBlanks = selectedBlanks;
     const resolvedSessionId = sessionId?.trim();
     if (resolvedSessionId) body.sessionId = resolvedSessionId;
     return this.http

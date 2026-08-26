@@ -110,6 +110,23 @@
   font-weight: 700;
 }
 
+.volume {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0.75rem 0 0;
+  color: var(--cocoa);
+  font-weight: 700;
+
+  span {
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+}
+
 .description {
   color: var(--muted);
   line-height: 1.85;
@@ -244,3 +261,56 @@
   .gallery-main { border-radius: 8px 36px 8px 8px; }
   .buy-row { grid-template-columns: 1fr; }
 }
+
+.blank-picker {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px solid var(--sand);
+  border-radius: 18px;
+  background: #fffaf7;
+
+  > p { margin: .6rem 0 1rem; color: var(--muted); font-size: .82rem; line-height: 1.5; }
+}
+
+.blank-picker__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  small { color: var(--pink-strong); font-size: .66rem; font-weight: 900; text-transform: uppercase; }
+  h2 { margin: .15rem 0 0; color: var(--cocoa); font: 900 1.05rem var(--font-rounded); }
+  > strong { padding: .4rem .65rem; border-radius: 999px; background: var(--cream-deep); color: var(--berry); }
+  > strong.complete { background: var(--sage-soft); color: #56715a; }
+}
+
+.blank-grid { display: grid; gap: .65rem; max-height: 330px; overflow: auto; }
+.blank-grid article {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .7rem;
+  padding: .55rem;
+  border: 1px solid #eadfd8;
+  border-radius: 12px;
+  background: white;
+
+  &.selected { border-color: var(--pink); box-shadow: 0 0 0 2px var(--pink-soft); }
+  > img { width: 58px; height: 58px; border-radius: 9px; object-fit: cover; }
+  > div:not(.blank-counter) { display: grid; gap: .2rem; min-width: 0; }
+  > div strong { overflow: hidden; color: var(--cocoa); font-size: .82rem; text-overflow: ellipsis; white-space: nowrap; }
+  > div small { color: var(--muted); font-size: .72rem; }
+}
+
+.blank-counter {
+  display: grid;
+  grid-template-columns: 28px 24px 28px;
+  align-items: center;
+  text-align: center;
+
+  button { width: 28px; height: 28px; border: 1px solid var(--sand); border-radius: 50%; background: white; color: var(--berry); cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: .35; }
+  b { font-size: .8rem; }
+}
+
+.blank-picker__loading { padding: 1.4rem; border: 1px dashed var(--sand); border-radius: 12px; color: var(--muted); font-size: .8rem; text-align: center; }

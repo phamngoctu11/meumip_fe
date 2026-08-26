@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { finalize, Observable, tap } from 'rxjs';
 import { AuthStore } from './auth.store';
-import { Cart } from './models';
+import { Cart, ComboBlankSelection } from './models';
 import { ShopApiService } from './shop-api.service';
 
 const CART_SESSION_KEY = 'meumip_cart_session';
@@ -33,10 +33,10 @@ export class CartStore {
       });
   }
 
-  add(productId: number, quantity: number): Observable<Cart> {
+  add(productId: number, quantity: number, selectedBlanks: ComboBlankSelection[] = []): Observable<Cart> {
     this.loading.set(true);
     this.error.set(null);
-    return this.api.addCartItem(this.requestSessionId(), productId, quantity).pipe(
+    return this.api.addCartItem(this.requestSessionId(), productId, quantity, selectedBlanks).pipe(
       tap({
         next: (cart) => this.cartState.set(cart),
         error: (error: HttpErrorResponse) =>
