@@ -1,40 +1,73 @@
 <a class="skip-link" href="#main-content">Bỏ qua đến nội dung chính</a>
-<header class="site-header">
+<header class="site-header" [class.is-scrolled]="scrolled()">
   <nav class="site-nav" aria-label="Điều hướng chính">
-    <a class="mini-brand" routerLink="/" aria-label="meumip.co - Trang chủ">meumip<span>.co</span><i>♥</i></a>
+    <div class="nav-start">
+      <button class="icon-button" type="button" (click)="openDrawer()" aria-label="Mở menu" aria-controls="shop-drawer" [attr.aria-expanded]="drawerOpen()"><app-shop-icon name="menu" /></button>
+      <button class="icon-button" type="button" (click)="openSearch()" aria-label="Tìm sản phẩm"><app-shop-icon name="search" /></button>
+    </div>
+    <a class="mini-brand" routerLink="/" aria-label="meumip.co — Trang chủ">meumip<span>.co</span><i aria-hidden="true">♡</i></a>
     <div class="primary-links">
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Trang chủ</a>
+      <a routerLink="/products" routerLinkActive="active">Sản phẩm</a>
       <a routerLink="/contact" routerLinkActive="active">Liên hệ</a>
-      <a routerLink="/" fragment="products-section">3 nhóm mặt hàng</a>
     </div>
     <div class="nav-actions">
-      <a class="header-action history-link" routerLink="/orders">Lịch sử mua hàng</a>
-      <a class="header-action order-link" routerLink="/orders">Đơn hàng</a>
-      <a class="header-action voucher-action" routerLink="/" fragment="voucher">Voucher</a>
-      <a class="cart-action" routerLink="/cart" aria-label="Giỏ hàng"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2 11h11l2-8H6M9 20h.01M17 20h.01" /></svg><span>Giỏ hàng</span><b>{{ cartStore.itemCount() }}</b></a>
-      @if (authStore.user(); as user) {
-        <div class="account-menu">
-          <button type="button" class="account-trigger" (click)="toggleAccountMenu()" [attr.aria-expanded]="accountMenuOpen()">
-            @if (user.avatarUrl) { <img [src]="user.avatarUrl" alt="" /> } @else { <span class="avatar-fallback">{{ user.displayName.charAt(0).toUpperCase() }}</span> }
-            <span class="account-greeting"><small>Xin chào</small><strong>{{ user.displayName }}</strong></span><span class="chevron" aria-hidden="true">⌄</span>
-          </button>
-          @if (accountMenuOpen()) {
-            <div class="account-dropdown">
-              @if (isAdmin(user.role)) { <a routerLink="/admin" (click)="closeAccountMenu()">Trang quản trị</a> }
-              <a routerLink="/orders" (click)="closeAccountMenu()">Đơn hàng của tôi</a>
-              <a routerLink="/orders" (click)="closeAccountMenu()">Lịch sử mua hàng</a>
-              <button type="button" (click)="logout()" [disabled]="authStore.submitting()">{{ authStore.submitting() ? 'Đang đăng xuất...' : 'Đăng xuất' }}</button>
-            </div>
-          }
-        </div>
-      } @else {
-        <div class="guest-actions"><a class="login-button" routerLink="/login">Đăng nhập</a><a class="register-button" routerLink="/register">Đăng ký</a></div>
-      }
+      <button class="icon-button" type="button" (click)="ui.voucherOpen.set(true)" aria-label="Ví voucher"><app-shop-icon name="gift" /></button>
+      <a class="icon-button cart-action" routerLink="/cart" [attr.aria-label]="'Giỏ hàng, ' + cartStore.itemCount() + ' sản phẩm'"><app-shop-icon name="cart" />@if (cartStore.itemCount()) { <b>{{ cartStore.itemCount() }}</b> }</a>
+      <a class="desktop-account" routerLink="/orders"><app-shop-icon name="orders" /> Đơn hàng</a>
     </div>
   </nav>
+  <div class="header-scallop" aria-hidden="true"></div>
 </header>
-<main id="main-content"><router-outlet /></main>
-<footer class="site-footer">
-  <a class="custom-banner" routerLink="/contact">☆　♡　 dịch vụ làm theo yêu cầu!　♡　♧</a>
-  <div class="desktop-footer"><a class="footer-brand" routerLink="/">meumip.co</a><p>Những món đồ bé xinh, được gói bằng thật nhiều yêu thương.</p><nav><a routerLink="/" fragment="products-section">3 nhóm mặt hàng</a><a routerLink="/contact">Liên hệ</a><a routerLink="/info">Thông tin shop</a></nav><small>© {{ currentYear }} meumip</small></div>
-</footer>
+<main id="main-content" tabindex="-1"><router-outlet /></main>
+<app-storefront-footer />
+<div class="scroll-controls" aria-label="Di chuyển trên trang">
+  <button type="button" (click)="scrollTo('top')" aria-label="Lên đầu trang"><app-shop-icon name="up" /></button>
+  <button type="button" (click)="scrollTo('bottom')" aria-label="Xuống cuối trang"><app-shop-icon name="down" /></button>
+</div>
+
+<dialog #drawer id="shop-drawer" class="drawer" aria-labelledby="drawer-title" (click)="closeBackdrop($event)" (close)="onDialogClose($event)">
+  <div class="drawer-content">
+    <div class="drawer-heading"><a id="drawer-title" class="mini-brand" routerLink="/">meumip.co</a><button class="icon-button" type="button" autofocus (click)="closeAll()" aria-label="Đóng menu"><app-shop-icon name="close" /></button></div>
+    @if (authStore.user(); as user) {
+      <p class="greeting">Chào {{ user.displayName }} ♡</p>
+      <div class="account-links">
+        @if (isAdmin(user.role)) { <a routerLink="/admin">Trang quản trị</a> }
+        <button type="button" (click)="logout()" [disabled]="authStore.submitting()">{{ authStore.submitting() ? 'Đang đăng xuất…' : 'Đăng xuất' }}</button>
+      </div>
+      @if (authStore.error()) { <p role="alert">{{ authStore.error() }}</p> }
+    } @else {
+      <div class="account-links"><a routerLink="/login">Đăng nhập</a><a routerLink="/register">Đăng ký</a></div>
+      <p class="member-note">Một góc nhỏ dành riêng cho thành viên ♡</p>
+    }
+    <nav class="drawer-links" aria-label="Menu cửa hàng">
+      <a routerLink="/products"><app-shop-icon name="star" /> Khám phá sản phẩm</a>
+      <a routerLink="/cart"><app-shop-icon name="cart" /> Giỏ hàng <span>{{ cartStore.itemCount() }}</span></a>
+      <a routerLink="/orders"><app-shop-icon name="orders" /> Lịch sử mua hàng</a>
+      <button type="button" (click)="closeAll(); ui.voucherOpen.set(true)"><app-shop-icon name="gift" /> Ví voucher</button>
+    </nav>
+    <app-shop-details [compact]="true" />
+  </div>
+</dialog>
+
+<dialog #search class="small-dialog search-dialog" aria-labelledby="search-title" (click)="closeBackdrop($event)" (close)="onDialogClose($event)">
+  <div class="dialog-content">
+    <button class="icon-button dialog-close" type="button" (click)="closeAll()" aria-label="Đóng tìm kiếm"><app-shop-icon name="close" /></button>
+    <h2 id="search-title">Bạn tìm món gì nè?</h2>
+    <form (submit)="searchProducts($event, searchInput.value)">
+      <label for="shop-search">Tên sản phẩm, nhân vật hoặc bộ sưu tập</label>
+      <div class="search-field"><input #searchInput id="shop-search" type="search" placeholder="Tìm một món bé xinh…" autofocus /><button class="icon-button" type="submit" aria-label="Tìm kiếm"><app-shop-icon name="search" /></button></div>
+    </form>
+  </div>
+</dialog>
+
+<dialog #voucher class="small-dialog voucher-dialog" aria-labelledby="voucher-title" (click)="closeBackdrop($event)" (close)="onDialogClose($event)">
+  <div class="dialog-content">
+    <button class="icon-button dialog-close" type="button" autofocus (click)="closeAll()" aria-label="Đóng ví voucher"><app-shop-icon name="close" /></button>
+    <span class="voucher-mark" aria-hidden="true">♫</span>
+    <h2 id="voucher-title">Ví voucher của bạn</h2>
+    <div class="voucher-ticket"><span>Một món quà đang được chuẩn bị</span><strong>20.000đ</strong><p>Ưu đãi thành viên dự kiến áp dụng cho mọi sản phẩm, trong 7 ngày từ khi nhận.</p><b>Sắp ra mắt</b></div>
+    <p>Chương trình chưa mở nhận voucher. Mip sẽ thông báo khi quà sẵn sàng nhé!</p>
+    @if (!authStore.user()) { <a class="button button--primary" routerLink="/register">Đăng ký thành viên</a> } @else { <button class="button button--secondary" type="button" (click)="closeAll()">Tiếp tục khám phá</button> }
+  </div>
+</dialog>

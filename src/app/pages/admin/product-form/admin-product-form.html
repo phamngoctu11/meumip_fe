@@ -79,7 +79,7 @@
           <section class="form-card">
             <div class="card-title"><span>03</span><div><h2>Thành phần bộ kit</h2><p>Danh sách thông tin đi kèm bộ kit, không tạo luồng mua riêng.</p></div></div>
             <div class="upload-row"><button type="button" (click)="addKitComponent()">+ Thêm thành phần</button></div>
-            <div class="image-list" formArrayName="kitComponents">
+            <div class="image-list kit-component-list" formArrayName="kitComponents">
               @for (component of kitComponents.controls; track component; let index = $index) {
                 <div class="image-row" [formGroupName]="index">
                   <div class="image-fields">

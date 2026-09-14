@@ -1,79 +1,53 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { catchError, finalize, forkJoin, of } from 'rxjs';
-import { HomeSlide, ProductSummary } from '../../../core/models';
+import { catchError, of, Subscription } from 'rxjs';
+import { HomeSlide } from '../../../core/models';
 import { ShopApiService } from '../../../core/shop-api.service';
-import { ProductCard } from '../../../shared/product-card/product-card';
-
-const FALLBACK_SLIDE: HomeSlide = {
-  id: 0,
-  title: 'Lỗi tải ảnh',
-  eyebrow: 'meumip handmade',
-  description: 'Lỗi hiển thị ảnh.',
-  imageUrl: '/images/hero-slide-1.svg',
-  linkLabel: 'Xem sản phẩm',
-  linkUrl: '/products',
-  sortOrder: 0,
-  active: true,
-};
+import { StorefrontUiStore } from '../../../core/storefront-ui.store';
+import { Catalog } from '../../../shared/catalog/catalog';
+import { ShopIcon } from '../../../shared/shop-icon/shop-icon';
+import { ImageFallbackDirective } from '../../../shared/image-fallback.directive';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, ProductCard],
+  imports: [RouterLink, Catalog, ShopIcon, ImageFallbackDirective],
   templateUrl: './home.html',
   styleUrl: './home.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Home implements OnInit, OnDestroy {
   private readonly api = inject(ShopApiService);
-  private sliderTimer: ReturnType<typeof setInterval> | null = null;
-
-  readonly slides = signal<HomeSlide[]>([FALLBACK_SLIDE]);
+  private timer: ReturnType<typeof setInterval> | null = null;
+  private subscription?: Subscription;
+  private touchStart: { x: number; y: number } | null = null;
+  readonly ui = inject(StorefrontUiStore);
+  readonly slides = signal<HomeSlide[]>([]);
   readonly activeSlide = signal(0);
-  readonly blankProducts = signal<ProductSummary[]>([]);
-  readonly kitProducts = signal<ProductSummary[]>([]);
-  readonly materialProducts = signal<ProductSummary[]>([]);
-  readonly loading = signal(true);
+  readonly paused = signal(false);
+  readonly shaking = signal(false);
 
   ngOnInit(): void {
-    forkJoin({
-      slides: this.api.getHomeSlides().pipe(catchError(() => of([] as HomeSlide[]))),
-      blanks: this.api.getProducts('BLANK', undefined, undefined, 0, 4),
-      kits: this.api.getProducts('KIT', undefined, undefined, 0, 4),
-      materials: this.api.getProducts('MATERIAL', undefined, undefined, 0, 4),
-    })
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: ({ slides, blanks, kits, materials }) => {
-          this.slides.set(slides.length ? slides : [FALLBACK_SLIDE]);
-          this.blankProducts.set(blanks);
-          this.kitProducts.set(kits);
-          this.materialProducts.set(materials);
-          this.startSlider();
-        },
-      });
+    this.subscription = this.api.getHomeSlides().pipe(catchError(() => of([] as HomeSlide[]))).subscribe(slides => {
+      this.slides.set(slides.filter(slide => slide.active).sort((a, b) => a.sortOrder - b.sortOrder).slice(0, 5));
+      if (this.slides().length > 1 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        this.timer = setInterval(() => { if (!this.paused() && !document.hidden) this.nextSlide(); }, 7000);
+      }
+    });
   }
 
-  ngOnDestroy(): void {
-    if (this.sliderTimer) clearInterval(this.sliderTimer);
+  ngOnDestroy(): void { if (this.timer) clearInterval(this.timer); this.subscription?.unsubscribe(); }
+  previousSlide(): void { this.activeSlide.update(index => (index - 1 + this.slides().length) % this.slides().length); }
+  nextSlide(): void { this.activeSlide.update(index => (index + 1) % this.slides().length); }
+  goToSlide(index: number): void { this.paused.set(true); this.activeSlide.set(index); }
+  onTouchStart(event: TouchEvent): void { this.touchStart = { x: event.changedTouches[0].clientX, y: event.changedTouches[0].clientY }; this.paused.set(true); }
+  onTouchEnd(event: TouchEvent): void {
+    if (!this.touchStart || this.slides().length < 2) return;
+    const dx = event.changedTouches[0].clientX - this.touchStart.x;
+    const dy = event.changedTouches[0].clientY - this.touchStart.y;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) dx < 0 ? this.nextSlide() : this.previousSlide();
+    this.touchStart = null;
   }
-
-  previousSlide(): void {
-    const count = this.slides().length;
-    this.activeSlide.update((index) => (index - 1 + count) % count);
-  }
-
-  nextSlide(): void {
-    const count = this.slides().length;
-    this.activeSlide.update((index) => (index + 1) % count);
-  }
-
-  goToSlide(index: number): void {
-    this.activeSlide.set(index);
-  }
-
-  private startSlider(): void {
-    if (this.slides().length < 2) return;
-    this.sliderTimer = setInterval(() => this.nextSlide(), 7000);
-  }
+  openGift(): void { this.shaking.set(true); }
+  finishGift(): void { this.shaking.set(false); this.ui.voucherOpen.set(true); }
+  safeLink(url: string | null): string | null { return url && (/^\/(?!\/)/.test(url) || /^https?:\/\//i.test(url)) ? url : null; }
 }

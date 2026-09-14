@@ -1,72 +1,50 @@
-<main class="home-page">
-  <section class="hero-slider" aria-label="Giới thiệu cửa hàng">
-    <div class="slides" [style.transform]="'translateX(-' + activeSlide() * 100 + '%)'">
-      @for (slide of slides(); track slide.id) {
-        <article class="slide">
-          <img [src]="slide.imageUrl" [alt]="slide.title" />
-          <div class="slide-overlay"></div>
-          <div class="slide-content">
-            @if (slide.eyebrow) { <span>{{ slide.eyebrow }}</span> }
-            <h1>{{ slide.title }}</h1>
-            @if (slide.description) { <p>{{ slide.description }}</p> }
-            @if (slide.linkUrl) {
-              <a [routerLink]="slide.linkUrl">{{ slide.linkLabel || 'Khám phá ngay' }} <b>→</b></a>
-            }
-          </div>
-        </article>
+<div class="home-page">
+  <section class="hero-section" aria-label="Góc giới thiệu của meumip">
+    <span class="hero-star" aria-hidden="true"><app-shop-icon name="star" /></span>
+    <div class="hero-slider" role="region" aria-roledescription="trình chiếu" aria-label="Bộ sưu tập nổi bật" (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)" (mouseenter)="paused.set(true)" (mouseleave)="paused.set(false)" (focusin)="paused.set(true)">
+      @if (slides().length) {
+        <div class="slides" [style.transform]="'translateX(-' + activeSlide() * 100 + '%)'">
+          @for (slide of slides(); track slide.id; let index = $index) {
+            <article class="slide" [attr.inert]="activeSlide() !== index ? '' : null" [attr.aria-hidden]="activeSlide() !== index" [attr.aria-label]="(index + 1) + ' / ' + slides().length">
+              <img appImageFallback [src]="slide.imageUrl" [alt]="slide.title" [attr.fetchpriority]="index === 0 ? 'high' : 'auto'" />
+              <div class="slide-content">
+                @if (slide.eyebrow) { <span>{{ slide.eyebrow }}</span> }
+                <h2>{{ slide.title }}</h2>
+                @if (slide.description) { <p>{{ slide.description }}</p> }
+                @if (safeLink(slide.linkUrl); as link) {
+                  @if (link.startsWith('/')) { <a [routerLink]="link">{{ slide.linkLabel || 'Khám phá ngay' }} ↗</a> }
+                  @else { <a [href]="link" target="_blank" rel="noopener noreferrer">{{ slide.linkLabel || 'Khám phá ngay' }} ↗</a> }
+                }
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="welcome-slide">
+          <span class="welcome-eyebrow">made with a little love</span>
+          <h1>Một góc nhỏ,<br />ngàn điều <em>bé xinh.</em></h1>
+          <p>Phôi, bộ kit và những món nguyên liệu<br />cho thế giới sáng tạo của bạn.</p>
+          <a routerLink="/" fragment="products-section">Ghé xem cùng Mip <span aria-hidden="true">↗</span></a>
+          <span class="welcome-doodle one" aria-hidden="true">✿</span><span class="welcome-doodle two" aria-hidden="true">♡</span><span class="welcome-doodle three" aria-hidden="true">✧</span>
+        </div>
+      }
+      @if (slides().length > 1) {
+        <button class="slider-arrow previous" type="button" (click)="paused.set(true); previousSlide()" aria-label="Ảnh trước"><app-shop-icon name="left" /></button>
+        <button class="slider-arrow next" type="button" (click)="paused.set(true); nextSlide()" aria-label="Ảnh sau"><app-shop-icon name="right" /></button>
+        <div class="slider-dots">
+          @for (slide of slides(); track slide.id; let index = $index) { <button type="button" [class.active]="activeSlide() === index" (click)="goToSlide(index)" [attr.aria-label]="'Xem ảnh ' + (index + 1)" [attr.aria-pressed]="activeSlide() === index"><span></span></button> }
+        </div>
+        <button class="slider-pause" type="button" (click)="paused.set(!paused())" [attr.aria-label]="paused() ? 'Tiếp tục trình chiếu' : 'Tạm dừng trình chiếu'">{{ paused() ? '▷' : 'Ⅱ' }}</button>
       }
     </div>
-    @if (slides().length > 1) {
-      <button class="slider-arrow previous" type="button" (click)="previousSlide()" aria-label="Slide trước">‹</button>
-      <button class="slider-arrow next" type="button" (click)="nextSlide()" aria-label="Slide sau">›</button>
-      <div class="slider-dots">
-        @for (slide of slides(); track slide.id; let index = $index) {
-          <button type="button" [class.active]="activeSlide() === index" (click)="goToSlide(index)" [attr.aria-label]="'Mở slide ' + (index + 1)"></button>
-        }
-      </div>
-    }
+    <p class="hero-caption">Những điều dễ thương luôn bắt đầu từ một chút tò mò <span aria-hidden="true">✧</span></p>
   </section>
 
-  <section class="products-section" id="blanks">
-    <div class="section-intro">
-      <div><span>phôi</span><h2>Phôi lẻ để bạn tự do sáng tạo</h2></div>
-      <p>Các sản phẩm loại phôi được quản lý trực tiếp trong màn sản phẩm chung.</p>
-    </div>
-    @if (loading()) {
-      <div class="products-loading">@for (item of [1,2,3,4]; track item) { <span></span> }</div>
-    } @else {
-      <div class="products-grid">
-        @for (product of blankProducts(); track product.id; let index = $index) {
-          <app-product-card [product]="product" [animationDelay]="index * 60" />
-        }
-      </div>
-    }
-    <p class="section-link"><a routerLink="/products" [queryParams]="{ type: 'BLANK' }">Xem tất cả phôi →</a></p>
+  <section class="music-ribbon" id="voucher" aria-label="Món quà thành viên">
+    <svg class="music-lines" viewBox="0 0 1000 180" preserveAspectRatio="none" aria-hidden="true"><path d="M-20 75Q150-35 340 62T700 110T1020 10" stroke="#ffe7f1"/><path d="M-20 100Q150-10 340 87T700 135T1020 35" stroke="#ffead7"/><path d="M-20 125Q150 15 340 112T700 160T1020 60" stroke="#e9f1f7"/></svg>
+    <span class="music-symbol symbol-one" aria-hidden="true">𝄞</span><span class="music-symbol symbol-two" aria-hidden="true">♫</span>
+    <button type="button" class="gift-note" [class.shaking]="shaking()" (click)="openGift()" (animationend)="finishGift()" aria-label="Khám phá quà tặng thành viên"><app-shop-icon name="note" /><span>Chạm một nốt, mở quà nhỏ</span></button>
+    <span class="music-symbol symbol-three" aria-hidden="true">♪</span><span class="music-flower" aria-hidden="true">✿</span>
   </section>
-
-  <section class="products-section" id="kits">
-    <div class="section-intro">
-      <div><span>bộ kit</span><h2>Trọn bộ cho một buổi thủ công</h2></div>
-      <p>Mỗi bộ kit có thể khai báo danh sách thành phần ngay trong phần quản trị sản phẩm.</p>
-    </div>
-    <div class="products-grid">
-      @for (product of kitProducts(); track product.id; let index = $index) {
-        <app-product-card [product]="product" [animationDelay]="index * 60" />
-      }
-    </div>
-    <p class="section-link"><a routerLink="/products" [queryParams]="{ type: 'KIT' }">Xem tất cả bộ kit →</a></p>
-  </section>
-
-  <section class="products-section" id="materials">
-    <div class="section-intro">
-      <div><span>nguyên liệu</span><h2>Thêm màu sắc cho góc sáng tạo</h2></div>
-      <p>Nguyên liệu và món bán lẻ dùng chung luồng xem, thêm giỏ hàng và thanh toán.</p>
-    </div>
-    <div class="products-grid">
-      @for (product of materialProducts(); track product.id; let index = $index) {
-        <app-product-card [product]="product" [animationDelay]="index * 60" />
-      }
-    </div>
-    <p class="section-link"><a routerLink="/products" [queryParams]="{ type: 'MATERIAL' }">Xem tất cả nguyên liệu →</a></p>
-  </section>
-</main>
+  <app-catalog />
+</div>

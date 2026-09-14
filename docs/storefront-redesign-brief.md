@@ -1,6 +1,11 @@
 # Meumip storefront redesign brief
 
-Updated: 2026-08-05
+Updated: 2026-09-14
+
+> Implementation update: the current user request authorizes the mobile design
+> implementation from the supplied sketches. The preparation/asset-approval
+> notes below are historical. See [storefront-implementation.md](storefront-implementation.md)
+> for shipped UI, verification, configuration and remaining backend dependencies.
 
 ## Current status
 

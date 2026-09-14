@@ -1,12 +1,10 @@
-<article class="product-card" [style.--delay]="animationDelay() + 'ms'">
-  <a class="product-image" [routerLink]="['/products', product().id]" [attr.aria-label]="'Xem ' + product().name">
-    <img appImageFallback [src]="product().primaryImageUrl || product().images[0]?.imageUrl || '/images/product-placeholder.svg'" [alt]="product().name" loading="lazy" />
-    <span class="new-pill">{{ product().typeLabel }}</span>
-    <span class="image-action">Xem chi tiết</span>
+<article class="product-card">
+  <a class="product-link" [routerLink]="['/products', product().id]">
+    <div class="product-image">
+      <img appImageFallback [src]="product().primaryImageUrl || product().images[0]?.imageUrl || '/images/product-placeholder.svg'" [alt]="product().name" loading="lazy" />
+      <span class="type-pill">{{ product().typeLabel }}</span>
+      <span class="image-action">Xem chi tiết ↗</span>
+    </div>
+    <div class="product-info"><h3>{{ product().name }}</h3><strong>{{ formatVnd(product().priceVnd) }}</strong></div>
   </a>
-  <div class="product-info">
-    <div><h3><a [routerLink]="['/products', product().id]">{{ product().name }}</a></h3></div>
-    <strong>{{ formatVnd(product().priceVnd) }}</strong>
-    <button type="button" aria-label="Thêm vào yêu thích">♡</button>
-  </div>
 </article>

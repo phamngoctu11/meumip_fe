@@ -6,28 +6,28 @@
   />
 
   <div class="contact-grid">
-    <a class="contact-card contact-card--pink" href="https://www.instagram.com/meumip" target="_blank" rel="noreferrer">
+    <a class="contact-card contact-card--pink" [href]="shop.instagram" target="_blank" rel="noreferrer">
       <span class="contact-icon">♡</span>
       <small>nhắn tin nhanh nhất</small>
       <h2>Instagram</h2>
       <p>Ảnh sản phẩm mới, work in progress và những điều be bé.</p>
-      <b>@meumip <span>↗</span></b>
+      <b>Mở Instagram <span>↗</span></b>
     </a>
 
-    <a class="contact-card contact-card--sage" href="https://www.tiktok.com/@meumipzz" target="_blank" rel="noreferrer">
+    <a class="contact-card contact-card--sage" [href]="shop.tiktok" target="_blank" rel="noreferrer">
       <span class="contact-icon">✦</span>
       <small>xem quá trình làm</small>
       <h2>TikTok</h2>
       <p>Cùng xem từng bé được tạo hình và hoàn thiện như thế nào.</p>
-      <b>@meumipzz <span>↗</span></b>
+      <b>Mở TikTok <span>↗</span></b>
     </a>
 
-    <a class="contact-card contact-card--lavender" href="mailto:hello@meumip.local">
+    <a class="contact-card contact-card--lavender" [href]="shop.email ? 'mailto:' + shop.email : shop.facebook" target="_blank" rel="noopener noreferrer">
       <span class="contact-icon">✉</span>
       <small>cho câu chuyện dài hơn</small>
-      <h2>Email</h2>
+      <h2>{{ shop.email ? 'Email' : 'Facebook' }}</h2>
       <p>Gửi thông tin chi tiết về đơn hàng hoặc đề nghị hợp tác.</p>
-      <b>hello&#64;meumip.local <span>→</span></b>
+      <b>{{ shop.email || 'Mở Facebook' }} <span>→</span></b>
     </a>
   </div>
 

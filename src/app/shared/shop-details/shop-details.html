@@ -1,0 +1,49 @@
+<div class="shop-details" [class.compact]="compact()">
+  <section class="working-hours" aria-label="Thời gian làm việc">
+    <span class="little-doodle" aria-hidden="true">✧</span>
+    <h2>Thời gian làm việc / trả lời tin nhắn</h2>
+    <p class="hours">{{ shop.hours }}</p>
+    <p class="workdays">{{ shop.workdays }}</p>
+    <p class="holiday">{{ shop.holidayNote }}</p>
+    <span class="bunny" aria-hidden="true">/)/)<br />(˶ᵔ ᵕ ᵔ˶)</span>
+  </section>
+  <section class="bank-details" aria-label="Thông tin ngân hàng">
+    <h2>Thông tin ngân hàng</h2>
+    @if (shop.bankAccountNumber) {
+      <p>{{ shop.bankName }} · {{ shop.bankAccountNumber }}</p>
+      <p>{{ shop.bankAccountName }}</p>
+    }
+    <div class="qr-frame">
+      @if (shop.bankQrImage) {
+        <img [src]="shop.bankQrImage" alt="Mã QR ngân hàng của meumip" loading="lazy" />
+      } @else {
+        <app-shop-icon name="heart" />
+        <strong>Thanh toán cùng Mip</strong>
+        <p>Mã QR và thông tin chuyển khoản sẽ hiện sau khi bạn đặt hàng.</p>
+        <a routerLink="/cart">Đến giỏ hàng <span aria-hidden="true">↗</span></a>
+      }
+    </div>
+  </section>
+  <nav class="social-links" aria-label="Mạng xã hội của meumip">
+    <a [href]="shop.instagram" target="_blank" rel="noopener noreferrer" aria-label="Instagram meumip"><app-shop-icon name="instagram" /></a>
+    @if (shop.facebook) { <a [href]="shop.facebook" target="_blank" rel="noopener noreferrer" aria-label="Facebook meumip"><app-shop-icon name="facebook" /></a> }
+    @if (shop.youtube) { <a [href]="shop.youtube" target="_blank" rel="noopener noreferrer" aria-label="YouTube meumip"><app-shop-icon name="youtube" /></a> }
+    <a [href]="shop.tiktok" target="_blank" rel="noopener noreferrer" aria-label="TikTok meumip"><app-shop-icon name="tiktok" /></a>
+  </nav>
+  <div class="contact-links">
+    @if (shop.email) { <a [href]="'mailto:' + shop.email">Email: {{ shop.email }}</a> }
+    <a routerLink="/contact">Liên hệ / yêu cầu hợp tác</a>
+  </div>
+  <nav class="policy-links" aria-label="Thông tin mua hàng">
+    <a routerLink="/info" fragment="terms">Thông tin đặt hàng / TOS / Điều khoản</a>
+    <a routerLink="/info" fragment="exchange">Hướng dẫn đổi quà thẻ sưu tầm</a>
+    <a routerLink="/info" fragment="guide">Hướng dẫn sử dụng</a>
+  </nav>
+  @if (!compact()) {
+    <div class="thank-you">
+      <span aria-hidden="true">♡</span>
+      <p>Cảm ơn bbi đã ghé thăm &gt;w&lt;<br />Nếu có câu hỏi nào, cứ liên hệ trực tiếp để Mip hỗ trợ nhé!</p>
+    </div>
+    <a class="home-link" routerLink="/">Home <span aria-hidden="true">⌂</span></a>
+  }
+</div>
