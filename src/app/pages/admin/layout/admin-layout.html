@@ -37,6 +37,7 @@
           <div><strong>{{ user.displayName }}</strong><small>{{ user.email }}</small></div>
         </div>
       }
+      <button class="admin-theme" type="button" aria-label="Đổi màu giao diện" (click)="closeMenu(); themeStore.openPicker()">Đổi màu giao diện</button>
       <button class="admin-logout" type="button" (click)="logout()">Đăng xuất</button>
     </div>
   </aside>

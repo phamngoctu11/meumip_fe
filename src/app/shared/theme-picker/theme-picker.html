@@ -1,0 +1,59 @@
+<dialog
+  #dialog
+  class="theme-dialog"
+  aria-labelledby="theme-title"
+  aria-describedby="theme-description"
+  (cancel)="cancel($event)"
+  (close)="onNativeClose()"
+  (click)="closeFromBackdrop($event)"
+>
+  <section class="theme-panel">
+    <button class="close-button" type="button" aria-label="Đóng bảng màu" (click)="cancel()">×</button>
+    <header>
+      <p>your colors</p>
+      <h2 id="theme-title">Chọn màu giao diện</h2>
+      <span id="theme-description">Di chuột hoặc focus để xem thử. Màu chỉ được lưu sau khi bạn xác nhận.</span>
+    </header>
+
+    <div class="palette-grid" role="list" aria-label="Các bảng màu">
+      @for (theme of themeStore.options; track theme.id) {
+        <button
+          type="button"
+          class="palette-card"
+          [class.palette-card--selected]="themeStore.selectedTheme() === theme.id"
+          [attr.aria-pressed]="themeStore.selectedTheme() === theme.id"
+          [attr.aria-label]="'Màu ' + theme.label"
+          (mouseenter)="preview(theme.id)"
+          (mouseleave)="themeStore.clearPreview()"
+          (focus)="preview(theme.id)"
+          (blur)="themeStore.clearPreview()"
+          (click)="select(theme.id)"
+        >
+          <span class="swatches" aria-hidden="true">
+            @for (color of theme.swatches; track color) {
+              <i [style.background-color]="color"></i>
+            }
+          </span>
+          <strong>{{ theme.label }}</strong>
+          <small>{{ theme.description }}</small>
+          @if (themeStore.selectedTheme() === theme.id) {
+            <b aria-hidden="true">✓</b>
+          }
+        </button>
+      }
+    </div>
+
+    <p class="storage-note">
+      @if (authStore.user(); as user) {
+        Màu sẽ được lưu riêng cho {{ user.displayName }} trên trình duyệt này.
+      } @else {
+        Bạn đang chọn màu cho chế độ khách trên trình duyệt này.
+      }
+    </p>
+
+    <footer>
+      <button class="cancel-button" type="button" (click)="cancel()">Hủy thay đổi</button>
+      <button class="confirm-button" type="button" (click)="confirm()">Xác nhận màu này</button>
+    </footer>
+  </section>
+</dialog>

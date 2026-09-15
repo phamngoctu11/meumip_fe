@@ -6,6 +6,7 @@ import { AuthStore } from '../../../../core/auth.store';
 import { CartStore } from '../../../../core/cart.store';
 import { STOREFRONT } from '../../../../core/storefront.config';
 import { StorefrontUiStore } from '../../../../core/storefront-ui.store';
+import { ThemeStore } from '../../../../core/theme.store';
 import { StorefrontFooter } from '../../../../shared/storefront-footer/storefront-footer';
 import { ShopDetails } from '../../../../shared/shop-details/shop-details';
 import { ShopIcon } from '../../../../shared/shop-icon/shop-icon';
@@ -22,6 +23,7 @@ export class StorefrontLayout {
   private readonly destroyRef = inject(DestroyRef);
   readonly cartStore = inject(CartStore);
   readonly authStore = inject(AuthStore);
+  readonly themeStore = inject(ThemeStore);
   readonly ui = inject(StorefrontUiStore);
   readonly shop = STOREFRONT;
   readonly scrolled = signal(false);

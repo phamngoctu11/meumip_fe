@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthStore } from '../../../core/auth.store';
+import { ThemeStore } from '../../../core/theme.store';
 
 @Component({
   selector: 'app-admin-layout',
@@ -11,6 +12,7 @@ import { AuthStore } from '../../../core/auth.store';
 })
 export class AdminLayout {
   readonly authStore = inject(AuthStore);
+  readonly themeStore = inject(ThemeStore);
   private readonly router = inject(Router);
   readonly menuOpen = signal(false);
 

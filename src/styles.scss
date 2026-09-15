@@ -44,9 +44,105 @@
   --font-body: 'Karla', Arial, sans-serif;
   --shadow-soft: 0 18px 55px rgba(122, 82, 57, 0.12);
   --line: #f2dcd5;
+  --theme-header: #ffeaed;
+  --theme-header-edge: #ffd2d9;
+  --theme-drawer: #fff0f1;
+  --theme-tint-rgb: 234, 159, 194;
   color-scheme: light;
   font-family: var(--font-body);
   font-synthesis: none;
+}
+
+:root[data-theme='sage'] {
+  --ink: #5f735f;
+  --frame-pink: #c7dec8;
+  --doodle-pink: #93bf9d;
+  --sky: #d9e8cf;
+  --cream: #f8fbf5;
+  --cream-deep: #edf5eb;
+  --cocoa: #405b46;
+  --caramel: #89a786;
+  --caramel-dark: #607c64;
+  --berry: #55775e;
+  --pink: #8fbd99;
+  --pink-strong: #6c9f78;
+  --pink-soft: #e5f2e7;
+  --sand: #d6e3d1;
+  --muted: #758372;
+  --line: #dce9d9;
+  --theme-header: #deefe0;
+  --theme-header-edge: #c8e2cd;
+  --theme-drawer: #eaf5e9;
+  --theme-tint-rgb: 108, 159, 120;
+}
+
+:root[data-theme='sky'] {
+  --ink: #59758b;
+  --frame-pink: #c9e4f6;
+  --doodle-pink: #8fc8eb;
+  --sky: #a8d7f3;
+  --cream: #f6fbfe;
+  --cream-deep: #eaf5fb;
+  --cocoa: #385b71;
+  --caramel: #78a2bc;
+  --caramel-dark: #537f99;
+  --berry: #4d7998;
+  --pink: #86c2e8;
+  --pink-strong: #579dca;
+  --pink-soft: #e3f3fc;
+  --sand: #cfdfeb;
+  --muted: #708696;
+  --line: #d9e9f3;
+  --theme-header: #dff2fd;
+  --theme-header-edge: #c8e5f5;
+  --theme-drawer: #eaf7fd;
+  --theme-tint-rgb: 87, 157, 202;
+}
+
+:root[data-theme='lavender'] {
+  --ink: #716482;
+  --frame-pink: #ded2ed;
+  --doodle-pink: #bba6d5;
+  --sky: #d8e2f2;
+  --cream: #fbf9fd;
+  --cream-deep: #f2edf8;
+  --cocoa: #58466d;
+  --caramel: #9e8ab2;
+  --caramel-dark: #79658e;
+  --berry: #73578f;
+  --pink: #b89bd5;
+  --pink-strong: #9272b5;
+  --pink-soft: #f0eafa;
+  --sand: #dfd5e8;
+  --muted: #81758d;
+  --line: #e8e0ef;
+  --theme-header: #eee6f7;
+  --theme-header-edge: #ddd0eb;
+  --theme-drawer: #f4eef9;
+  --theme-tint-rgb: 146, 114, 181;
+}
+
+:root[data-theme='peach'] {
+  --ink: #826650;
+  --frame-pink: #f4d1bc;
+  --doodle-pink: #eab08d;
+  --sky: #e8dfc8;
+  --cream: #fffaf5;
+  --cream-deep: #fff0e6;
+  --cocoa: #694b37;
+  --caramel: #c48d69;
+  --caramel-dark: #9c6c4d;
+  --berry: #a46343;
+  --pink: #e5a178;
+  --pink-strong: #db8a5b;
+  --pink-soft: #ffecdf;
+  --sand: #ecd7c8;
+  --muted: #897567;
+  --line: #f1dfd3;
+  --theme-header: #ffeadc;
+  --theme-header-edge: #f4d0b9;
+  --theme-drawer: #fff1e8;
+  --theme-tint-rgb: 219, 138, 91;
 }
 
 *,
@@ -71,6 +167,7 @@ body {
   font-family: var(--font-body);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 180ms ease, color 180ms ease;
 }
 
 button,

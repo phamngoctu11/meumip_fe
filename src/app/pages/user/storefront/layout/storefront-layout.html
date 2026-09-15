@@ -12,6 +12,7 @@
       <a routerLink="/contact" routerLinkActive="active">Liên hệ</a>
     </div>
     <div class="nav-actions">
+      <button class="icon-button" type="button" (click)="themeStore.openPicker()" aria-label="Đổi màu giao diện"><app-shop-icon name="palette" /></button>
       <button class="icon-button" type="button" (click)="ui.voucherOpen.set(true)" aria-label="Ví voucher"><app-shop-icon name="gift" /></button>
       <a class="icon-button cart-action" routerLink="/cart" [attr.aria-label]="'Giỏ hàng, ' + cartStore.itemCount() + ' sản phẩm'"><app-shop-icon name="cart" />@if (cartStore.itemCount()) { <b>{{ cartStore.itemCount() }}</b> }</a>
       <a class="desktop-account" routerLink="/orders"><app-shop-icon name="orders" /> Đơn hàng</a>
@@ -44,6 +45,7 @@
       <a routerLink="/products"><app-shop-icon name="star" /> Khám phá sản phẩm</a>
       <a routerLink="/cart"><app-shop-icon name="cart" /> Giỏ hàng <span>{{ cartStore.itemCount() }}</span></a>
       <a routerLink="/orders"><app-shop-icon name="orders" /> Lịch sử mua hàng</a>
+      <button type="button" (click)="closeAll(); themeStore.openPicker()"><app-shop-icon name="palette" /> Đổi màu giao diện</button>
       <button type="button" (click)="closeAll(); ui.voucherOpen.set(true)"><app-shop-icon name="gift" /> Ví voucher</button>
     </nav>
     <app-shop-details [compact]="true" />

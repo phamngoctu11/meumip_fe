@@ -85,6 +85,7 @@
   }
 }
 
+.admin-theme,
 .admin-logout {
   padding: 0;
   border: 0;
@@ -96,6 +97,12 @@
   text-align: left;
 
   &:hover { color: var(--pink-strong); }
+}
+
+.admin-theme::before {
+  content: '◉';
+  margin-right: 0.5rem;
+  color: var(--pink-strong);
 }
 
 .admin-user {

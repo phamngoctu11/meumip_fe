@@ -177,11 +177,44 @@ try {
   ]) {
     await page.goto(base + route); await page.waitForTimeout(200); await noOverflow(route);
   }
+
+  await page.goto(base); await ready();
+  const originalFooterBackground = await page.locator('.site-footer').evaluate(element => getComputedStyle(element).backgroundImage);
+  await page.getByRole('button', { name: 'Đổi màu giao diện', exact: true }).click();
+  await page.getByRole('button', { name: 'Màu Xanh lá', exact: true }).hover();
+  assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'sage', 'Hover previews a theme');
+  const themedFooterBackground = await page.locator('.site-footer').evaluate(element => getComputedStyle(element).backgroundImage);
+  assert.notEqual(themedFooterBackground, originalFooterBackground, 'Dotted footer background uses the previewed theme');
+  assert.equal(await page.evaluate(() => localStorage.getItem('meumip:theme:guest')), null, 'Preview is not persisted');
+  await page.getByRole('button', { name: 'Hủy thay đổi', exact: true }).click();
+  await waitFor(() => page.evaluate(() => document.documentElement.dataset.theme === 'rose'), 'Cancel restores the committed theme');
+
+  await page.getByRole('button', { name: 'Đổi màu giao diện', exact: true }).click();
+  await page.getByRole('button', { name: 'Màu Tím lavender', exact: true }).click();
+  await page.getByRole('button', { name: 'Xác nhận màu này', exact: true }).click();
+  assert.equal(await page.evaluate(() => localStorage.getItem('meumip:theme:guest')), 'lavender', 'Confirmed guest theme is persisted');
+  await page.reload(); await ready();
+  assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'lavender', 'Guest theme is restored after reload');
+
   authenticatedAdmin = true;
   for (const route of ['/admin/security', '/admin/users']) {
     await page.goto(base + route); await page.waitForTimeout(200); await noOverflow(route);
   }
+  assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'rose', 'A signed-in user does not inherit the guest theme');
+  await page.getByRole('button', { name: 'Mở menu quản trị', exact: true }).click();
+  await page.getByRole('button', { name: 'Đổi màu giao diện', exact: true }).click();
+  await page.getByRole('button', { name: 'Màu Xanh lá', exact: true }).click();
+  await page.getByRole('button', { name: 'Xác nhận màu này', exact: true }).click();
+  assert.equal(await page.evaluate(() => localStorage.getItem('meumip:theme:user:1')), 'sage', 'Signed-in theme is stored by user id');
+
   authenticatedAdmin = false;
+  await page.goto(base); await ready();
+  assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'lavender', 'Guest theme returns after signing out');
+  await page.evaluate(() => {
+    localStorage.setItem('meumip:theme:guest', 'rose');
+    localStorage.removeItem('meumip:theme:user:1');
+  });
+  await page.reload(); await ready();
   await page.goto(base + '/orders'); await page.locator('.login-page').waitFor();
   assert.ok(page.url().includes('/login'), 'Purchase history keeps authentication guard');
 
@@ -194,6 +227,6 @@ try {
   await page.locator('.welcome-slide').waitFor();
   await captureTop('home-fallback-390.png');
   assert.deepEqual(errors, [], 'No unhandled browser errors');
-  console.log('PASS: responsive layouts (320/390/430/768/1440), auth/admin security pages, CSRF writes, drawer/focus/scroll, vouchers, catalog, cart and checkout.');
+  console.log('PASS: responsive layouts (320/390/430/768/1440), per-user themes, auth/admin security pages, CSRF writes, drawer/focus/scroll, vouchers, catalog, cart and checkout.');
   console.log('Screenshots: ' + output + ' (API fixtures, not production data).');
 } finally { await browser.close(); }
