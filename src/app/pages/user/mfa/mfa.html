@@ -1,0 +1,16 @@
+<section class="login-page">
+  <div class="login-art" aria-hidden="true"><span class="art-sparkle art-sparkle--one">✦</span><span class="art-sparkle art-sparkle--two">♡</span><div class="art-sticker"><span>keep it</span><strong>safe!</strong></div><p>thêm một bước nhỏ để bảo vệ studio</p></div>
+  <div class="login-panel">
+    <a class="back-link" routerLink="/login"><span>←</span> Đăng nhập lại</a>
+    <div class="auth-icon" aria-hidden="true">•••</div>
+    <div class="login-heading"><p>two-factor authentication</p><h1>Mã xác thực</h1><div>Nhập mã 6 số từ ứng dụng Authenticator hoặc một recovery code chưa sử dụng.</div></div>
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label class="field"><span>Mã MFA hoặc recovery code</span><input formControlName="code" autocomplete="one-time-code" inputmode="numeric" maxlength="100" placeholder="000000" autofocus />
+        @if (form.controls.code.invalid && form.controls.code.touched) { <small>Vui lòng nhập mã xác thực.</small> }
+      </label>
+      @if (authStore.error()) { <app-feedback-banner tone="error" [message]="authStore.error()!" /> }
+      <button class="button button--primary login-button" type="submit" [disabled]="authStore.submitting()">{{ authStore.submitting() ? 'Đang xác thực...' : 'Xác thực và đăng nhập' }}</button>
+    </form>
+    <p class="privacy-note">Challenge đăng nhập có hiệu lực trong 5 phút. Mỗi mã TOTP chỉ dùng thành công một lần.</p>
+  </div>
+</section>

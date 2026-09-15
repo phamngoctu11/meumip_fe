@@ -1,16 +1,17 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { catchError, map, of } from 'rxjs';
-import { AuthApiService } from './auth-api.service';
+import { map } from 'rxjs';
+import { AuthStore } from './auth.store';
 
 export const authGuard: CanActivateFn = (_route, state) => {
-  const authApi = inject(AuthApiService);
+  const authStore = inject(AuthStore);
   const router = inject(Router);
 
-  return authApi.getCurrentUser().pipe(
-    map(() => true),
-    catchError(() =>
-      of(router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } })),
+  return authStore.checkSession().pipe(
+    map((user) =>
+      user
+        ? true
+        : router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } }),
     ),
   );
 };

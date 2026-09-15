@@ -28,15 +28,15 @@
       <label class="field">
         <span>Mật khẩu</span>
         <div class="password-input">
-          <input [type]="passwordVisible() ? 'text' : 'password'" formControlName="password" autocomplete="new-password" placeholder="Tối thiểu 8 ký tự" />
+          <input [type]="passwordVisible() ? 'text' : 'password'" formControlName="password" autocomplete="new-password" placeholder="Tối thiểu 12 ký tự" />
           <button type="button" (click)="togglePassword()">{{ passwordVisible() ? 'Ẩn' : 'Hiện' }}</button>
         </div>
-        @if (registerForm.controls.password.invalid && registerForm.controls.password.touched) { <small>Mật khẩu cần có từ 8 đến 100 ký tự.</small> }
+        @if (registerForm.controls.password.invalid && registerForm.controls.password.touched) { <small>Mật khẩu cần ít nhất 12 ký tự và không quá 72 byte UTF-8.</small> }
       </label>
       <label class="field">
         <span>Xác nhận mật khẩu</span>
         <input [type]="passwordVisible() ? 'text' : 'password'" formControlName="confirmPassword" autocomplete="new-password" placeholder="Nhập lại mật khẩu" />
-        @if (registerForm.controls.confirmPassword.invalid && registerForm.controls.confirmPassword.touched) { <small>Mật khẩu xác nhận chưa khớp.</small> }
+        @if ((registerForm.controls.confirmPassword.invalid || registerForm.hasError('fieldsMismatch')) && registerForm.controls.confirmPassword.touched) { <small>Mật khẩu xác nhận chưa khớp.</small> }
       </label>
 
       @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }

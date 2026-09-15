@@ -1,0 +1,14 @@
+<div class="users-page">
+  <header><p>access control</p><h1>Quyền tài khoản</h1><span>Thay đổi vai trò hoặc khóa/mở khóa một tài khoản theo ID.</span></header>
+  <section class="access-card">
+    <div class="notice">Backend hiện chỉ cung cấp API cập nhật theo ID và chưa có API danh sách người dùng. Nhập ID từ hệ thống quản trị/database đã được xác minh.</div>
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label><span>User ID</span><input type="number" min="1" step="1" formControlName="userId" />@if (form.controls.userId.invalid && form.controls.userId.touched) { <small>ID phải là số nguyên dương.</small> }</label>
+      <label><span>Vai trò mới</span><select formControlName="role"><option value="">Không thay đổi</option><option value="CUSTOMER">Customer</option><option value="ADMIN">Admin</option></select></label>
+      <label><span>Trạng thái mới</span><select formControlName="status"><option value="">Không thay đổi</option><option value="ACTIVE">Active</option><option value="LOCKED">Locked</option></select></label>
+      @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }
+      @if (success()) { <app-feedback-banner tone="success" [message]="success()!" /> }
+      <button type="submit" [disabled]="submitting()">{{ submitting() ? 'Đang cập nhật...' : 'Cập nhật quyền truy cập' }}</button>
+    </form>
+  </section>
+</div>

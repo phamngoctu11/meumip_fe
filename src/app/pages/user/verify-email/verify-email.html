@@ -1,0 +1,87 @@
+<section class="login-page verify-page">
+  <div class="login-art" aria-hidden="true">
+    <span class="art-sparkle art-sparkle--one">✦</span>
+    <span class="art-sparkle art-sparkle--two">♡</span>
+    <div class="art-sticker">
+      <span>one little</span>
+      <strong>click!</strong>
+    </div>
+    <p>xác thực email để giữ tài khoản meumip của bạn an toàn</p>
+  </div>
+
+  <div class="login-panel">
+    <a class="back-link" routerLink="/login"><span>←</span> Quay lại đăng nhập</a>
+
+    @if (state() === 'verified') {
+      <div class="auth-icon auth-icon--success" aria-hidden="true">✓</div>
+      <div class="login-heading">
+        <p>all done</p>
+        <h1>Đã xác thực!</h1>
+        <div>Email của bạn đã sẵn sàng. Hãy đăng nhập lại để tiếp tục.</div>
+      </div>
+      @if (success()) {
+        <app-feedback-banner tone="success" [message]="success()!" />
+      }
+      <a class="button button--primary login-button action-link" routerLink="/login">
+        Đăng nhập lại <span>♡</span>
+      </a>
+    } @else if (state() === 'ready') {
+      <div class="auth-icon" aria-hidden="true">✉</div>
+      <div class="login-heading">
+        <p>almost there</p>
+        <h1>Xác thực email</h1>
+        <div>Nhấn nút bên dưới để xác nhận email cho tài khoản của bạn.</div>
+      </div>
+      @if (error()) {
+        <app-feedback-banner tone="error" [message]="error()!" />
+      }
+      <button
+        class="button button--primary login-button"
+        type="button"
+        [disabled]="submitting()"
+        (click)="confirmVerification()"
+      >
+        {{ submitting() ? 'Đang xác thực...' : 'Xác nhận email' }}
+      </button>
+      <button class="text-button" type="button" (click)="showRequestForm()">
+        Liên kết không dùng được? Gửi email mới
+      </button>
+    } @else {
+      <div class="auth-icon" aria-hidden="true">✉</div>
+      <div class="login-heading">
+        <p>check your inbox</p>
+        <h1>Xác thực email</h1>
+        <div>Nhập email tài khoản để nhận liên kết xác thực mới.</div>
+      </div>
+
+      <form [formGroup]="emailForm" (ngSubmit)="requestEmail()" novalidate>
+        <label class="field">
+          <span>Email</span>
+          <input
+            type="email"
+            formControlName="email"
+            autocomplete="email"
+            placeholder="hello@example.com"
+          />
+          @if (emailForm.controls.email.invalid && emailForm.controls.email.touched) {
+            <small>Vui lòng nhập một địa chỉ email hợp lệ.</small>
+          }
+        </label>
+
+        @if (success()) {
+          <app-feedback-banner tone="success" [message]="success()!" />
+        }
+        @if (error()) {
+          <app-feedback-banner tone="error" [message]="error()!" />
+        }
+
+        <button class="button button--primary login-button" type="submit" [disabled]="submitting()">
+          {{ submitting() ? 'Đang gửi...' : 'Gửi email xác thực' }}
+        </button>
+      </form>
+      <p class="privacy-note">
+        Liên kết có hiệu lực trong 24 giờ và chỉ được sử dụng một lần.
+      </p>
+    }
+  </div>
+</section>

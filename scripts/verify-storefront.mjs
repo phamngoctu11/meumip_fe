@@ -14,6 +14,7 @@ const errors = [];
 const requests = [];
 let failProducts = false;
 let showSlides = true;
+let authenticatedAdmin = false;
 let checkoutRequest = null;
 const products = Array.from({ length: 125 }, (_, i) => ({
   id: i + 1, type: ['BLANK', 'KIT', 'MATERIAL'][i % 3], typeLabel: ['Phôi', 'Bộ kit', 'Nguyên liệu'][i % 3],
@@ -28,8 +29,12 @@ await context.route('**/api/**', async route => {
   const url = new URL(req.url());
   requests.push(url.pathname + url.search);
   let data = null;
-  if (url.pathname === '/api/auth/me') return route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ success: false, message: 'Guest fixture' }) });
-  if (url.pathname === '/api/home/slides') data = showSlides ? slideFixtures : [];
+  if (url.pathname === '/api/auth/csrf') data = { headerName: 'X-CSRF-TOKEN', token: 'browser-csrf' };
+  else if (url.pathname === '/api/auth/me') {
+    if (!authenticatedAdmin) return route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify({ success: false, message: 'Guest fixture' }) });
+    data = { id: 1, email: 'admin@example.com', displayName: 'Admin', avatarUrl: null, role: 'ADMIN' };
+  }
+  else if (url.pathname === '/api/home/slides') data = showSlides ? slideFixtures : [];
   else if (url.pathname === '/api/products') {
     if (failProducts) return route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ success: false, message: 'Fixture outage' }) });
     let list = [...products].reverse();
@@ -39,12 +44,14 @@ await context.route('**/api/**', async route => {
     data = list.slice(page * size, (page + 1) * size);
   } else if (/\/api\/products\/\d+$/.test(url.pathname)) data = products.find(p => p.id === Number(url.pathname.split('/').pop()));
   else if (url.pathname === '/api/cart/items' && req.method() === 'POST') {
+    assert.equal(req.headers()['x-csrf-token'], 'browser-csrf', 'Cart write includes CSRF token');
     const body = req.postDataJSON();
     const product = products.find(p => p.id === body.productId);
     cart = { ...cart, items: [{ id: 1, itemType: product.type, itemTypeLabel: product.typeLabel, productId: product.id, productName: product.name, imageUrl: product.primaryImageUrl, unitPriceVnd: product.priceVnd, quantity: body.quantity, lineTotalVnd: product.priceVnd * body.quantity, selectedBlanks: [] }], itemCount: body.quantity, subtotalVnd: product.priceVnd * body.quantity };
     data = cart;
   } else if (url.pathname === '/api/cart') data = cart;
   else if (url.pathname === '/api/checkout') {
+    assert.equal(req.headers()['x-csrf-token'], 'browser-csrf', 'Checkout includes CSRF token');
     checkoutRequest = req.postDataJSON();
     data = { order: { orderCode: 'TEST-001', customerEmail: checkoutRequest.email }, payment: { amountVnd: cart.subtotalVnd, bankCode: 'TEST BANK', bankAccountNumber: 'TEST ONLY', bankAccountName: 'TEST FIXTURE', transferContent: 'TEST-001', qrImageUrl: null } };
     cart = { ...cart, items: [], itemCount: 0, subtotalVnd: 0 };
@@ -156,9 +163,25 @@ try {
   assert.equal(checkoutRequest.cartSessionId, 'storefront-browser-test');
   await noOverflow('payment success');
 
-  for (const route of ['/login', '/register', '/contact', '/info', '/products/2']) {
+  for (const route of [
+    '/login',
+    '/register',
+    '/auth/verify-email',
+    '/auth/forgot-password',
+    '/auth/reset-password',
+    '/auth/mfa',
+    '/auth/mfa-enrollment',
+    '/contact',
+    '/info',
+    '/products/2',
+  ]) {
     await page.goto(base + route); await page.waitForTimeout(200); await noOverflow(route);
   }
+  authenticatedAdmin = true;
+  for (const route of ['/admin/security', '/admin/users']) {
+    await page.goto(base + route); await page.waitForTimeout(200); await noOverflow(route);
+  }
+  authenticatedAdmin = false;
   await page.goto(base + '/orders'); await page.locator('.login-page').waitFor();
   assert.ok(page.url().includes('/login'), 'Purchase history keeps authentication guard');
 
@@ -171,6 +194,6 @@ try {
   await page.locator('.welcome-slide').waitFor();
   await captureTop('home-fallback-390.png');
   assert.deepEqual(errors, [], 'No unhandled browser errors');
-  console.log('PASS: responsive layouts (320/390/430/768/1440), drawer/focus/scroll, vouchers, swipe, persistent grid, full-catalog sorting/pagination, search, error recovery, cart, checkout and auth guard.');
+  console.log('PASS: responsive layouts (320/390/430/768/1440), auth/admin security pages, CSRF writes, drawer/focus/scroll, vouchers, catalog, cart and checkout.');
   console.log('Screenshots: ' + output + ' (API fixtures, not production data).');
 } finally { await browser.close(); }

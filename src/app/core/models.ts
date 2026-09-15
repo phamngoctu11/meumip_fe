@@ -219,6 +219,27 @@ export interface ShopUser {
   role: string;
 }
 
+export type MfaNextStep = 'MFA_REQUIRED' | 'MFA_ENROLLMENT_REQUIRED';
+
+export interface MfaChallenge {
+  nextStep: MfaNextStep;
+}
+
+export type LoginResponse = ShopUser | MfaChallenge;
+
+export interface MfaEnrollment {
+  secret: string;
+  otpAuthUri: string;
+}
+
+export type UserRole = 'ADMIN' | 'CUSTOMER';
+export type UserStatus = 'ACTIVE' | 'LOCKED';
+
+export interface UserAccessRequest {
+  role?: UserRole;
+  status?: UserStatus;
+}
+
 export interface LoginRequest {
   email: string;
   password: string;
@@ -226,6 +247,11 @@ export interface LoginRequest {
 
 export interface RegisterRequest extends LoginRequest {
   displayName: string;
+}
+
+export interface CsrfTokenResponse {
+  headerName: string;
+  token: string;
 }
 
 export interface ApiErrorBody {

@@ -122,6 +122,19 @@ form {
   gap: 1.3rem;
 }
 
+:host app-feedback-banner + form {
+  margin-top: 1.3rem;
+}
+
+.forgot-link {
+  justify-self: end;
+  margin-top: -0.65rem;
+  color: var(--berry);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-underline-offset: 3px;
+}
+
 .field {
   display: grid;
   gap: 0.5rem;

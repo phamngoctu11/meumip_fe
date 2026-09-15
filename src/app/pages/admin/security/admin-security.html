@@ -1,0 +1,21 @@
+<div class="security-page">
+  <header><p>account protection</p><h1>Bảo mật tài khoản</h1><span>Quản lý Authenticator và các phiên đăng nhập của admin.</span></header>
+  @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }
+  <div class="security-grid">
+    <section class="security-card">
+      <div class="card-heading"><span aria-hidden="true">⌁</span><div><h2>Reset MFA</h2><p>Dùng khi chuyển sang thiết bị Authenticator mới.</p></div></div>
+      <div class="warning">Sau khi reset, mọi phiên sẽ bị thu hồi. Bạn cần đăng nhập và thực hiện enrollment qua email lại từ đầu.</div>
+      <form [formGroup]="form" (ngSubmit)="resetMfa()" novalidate>
+        <label><span>Mật khẩu hiện tại</span><div class="password-field"><input [type]="passwordVisible() ? 'text' : 'password'" formControlName="password" autocomplete="current-password" /><button type="button" (click)="togglePassword()">{{ passwordVisible() ? 'Ẩn' : 'Hiện' }}</button></div></label>
+        <label><span>Mã TOTP mới hoặc recovery code chưa dùng</span><input formControlName="code" autocomplete="one-time-code" maxlength="100" /></label>
+        <p class="hint">Không dùng lại mã TOTP vừa dùng để đăng nhập trong cùng chu kỳ 30 giây.</p>
+        <button class="danger-button" type="submit" [disabled]="submitting()">{{ submitting() ? 'Đang reset...' : 'Reset MFA và đăng xuất' }}</button>
+      </form>
+    </section>
+    <section class="security-card">
+      <div class="card-heading"><span aria-hidden="true">↗</span><div><h2>Đăng xuất mọi nơi</h2><p>Thu hồi ngay toàn bộ phiên của tài khoản hiện tại.</p></div></div>
+      <p class="card-copy">Dùng tùy chọn này nếu bạn nghi ngờ tài khoản đang được mở trên thiết bị không an toàn.</p>
+      <button class="secondary-button" type="button" [disabled]="loggingOutAll()" (click)="logoutAll()">{{ loggingOutAll() ? 'Đang đăng xuất...' : 'Đăng xuất tất cả thiết bị' }}</button>
+    </section>
+  </div>
+</div>

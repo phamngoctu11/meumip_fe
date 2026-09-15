@@ -13,6 +13,7 @@ import {
   Payment,
   ProductDetail,
   ProductUpsertRequest,
+  UserAccessRequest,
 } from './models';
 
 @Injectable({ providedIn: 'root' })
@@ -24,7 +25,11 @@ export class AdminApiService {
     return this.get<HomeSlide[]>(`${this.adminUrl}/slides`);
   }
   clearCache(): Observable<void> {
-    return this.get<void>(`${this.adminUrl}/clear-cache`);
+    return this.post<void>(`${this.adminUrl}/clear-cache`, null);
+  }
+
+  updateUserAccess(userId: number, request: UserAccessRequest): Observable<void> {
+    return this.patch<void>(`${this.adminUrl}/users/${userId}/access`, request);
   }
 
   createSlide(request: HomeSlideUpsertRequest): Observable<HomeSlide> {

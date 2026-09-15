@@ -1,0 +1,119 @@
+:host app-feedback-banner {
+  display: block;
+}
+
+.auth-card {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.auth-icon {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  margin-bottom: 1.35rem;
+  place-items: center;
+  border: 2px dashed var(--pink-strong);
+  border-radius: 18px;
+  background: var(--pink-soft);
+  color: var(--berry);
+  font-size: 1.45rem;
+  font-weight: 900;
+  transform: rotate(-4deg);
+
+  &--success {
+    border-color: var(--sage);
+    background: var(--sage-soft);
+    color: #58705d;
+  }
+}
+
+.flow-actions {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.action-link {
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+.text-button {
+  justify-self: center;
+  padding: 0.45rem;
+  border: 0;
+  background: transparent;
+  color: var(--berry);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.flow-note {
+  margin: 0;
+  padding: 0.9rem 1rem;
+  border-radius: 13px;
+  background: var(--cream-deep);
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.secret-box {
+  display: grid;
+  gap: 0.6rem;
+  padding: 1rem;
+  border: 1px dashed var(--sand);
+  border-radius: 14px;
+  background: white;
+
+  span {
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+  }
+
+  code {
+    overflow-wrap: anywhere;
+    color: var(--cocoa);
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+  }
+}
+
+.qr-code {
+  width: 240px;
+  max-width: 100%;
+  margin: 0 auto;
+  border: 10px solid white;
+  border-radius: 16px;
+  box-shadow: var(--shadow-soft);
+}
+
+.recovery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  code {
+    display: block;
+    padding: 0.7rem;
+    border: 1px solid var(--sand);
+    border-radius: 10px;
+    background: white;
+    color: var(--cocoa);
+    font-size: 0.72rem;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 480px) {
+  .recovery-grid { grid-template-columns: 1fr; }
+}

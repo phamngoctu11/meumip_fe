@@ -56,6 +56,41 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/user/register/register').then((page) => page.RegisterPage),
       },
       {
+        path: 'auth/verify-email',
+        title: 'Xác thực email — meumip',
+        loadComponent: () =>
+          import('./pages/user/verify-email/verify-email').then((page) => page.VerifyEmailPage),
+      },
+      {
+        path: 'auth/forgot-password',
+        title: 'Quên mật khẩu — meumip',
+        loadComponent: () =>
+          import('./pages/user/forgot-password/forgot-password').then(
+            (page) => page.ForgotPasswordPage,
+          ),
+      },
+      {
+        path: 'auth/reset-password',
+        title: 'Đặt lại mật khẩu — meumip',
+        loadComponent: () =>
+          import('./pages/user/reset-password/reset-password').then(
+            (page) => page.ResetPasswordPage,
+          ),
+      },
+      {
+        path: 'auth/mfa',
+        title: 'Xác thực hai bước — meumip',
+        loadComponent: () => import('./pages/user/mfa/mfa').then((page) => page.MfaPage),
+      },
+      {
+        path: 'auth/mfa-enrollment',
+        title: 'Thiết lập MFA — meumip',
+        loadComponent: () =>
+          import('./pages/user/mfa-enrollment/mfa-enrollment').then(
+            (page) => page.MfaEnrollmentPage,
+          ),
+      },
+      {
         path: 'orders',
         title: 'Đơn hàng của bạn — meumip',
         canActivate: [authGuard],
@@ -114,6 +149,18 @@ export const routes: Routes = [
         title: 'Chi tiết đơn hàng — meumip',
         loadComponent: () =>
           import('./pages/admin/order-detail/admin-order-detail').then((page) => page.AdminOrderDetail),
+      },
+      {
+        path: 'users',
+        title: 'Quyền tài khoản — meumip',
+        loadComponent: () =>
+          import('./pages/admin/users/admin-users').then((page) => page.AdminUsersPage),
+      },
+      {
+        path: 'security',
+        title: 'Bảo mật tài khoản — meumip',
+        loadComponent: () =>
+          import('./pages/admin/security/admin-security').then((page) => page.AdminSecurityPage),
       },
     ],
   },

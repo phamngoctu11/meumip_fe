@@ -18,6 +18,10 @@
       <div>Đăng nhập để xem đơn hàng và lưu thông tin nhận hàng của bạn.</div>
     </div>
 
+    @if (notice()) {
+      <app-feedback-banner tone="success" [message]="notice()!" />
+    }
+
     <form [formGroup]="loginForm" (ngSubmit)="submit()" novalidate>
       <label class="field">
         <span>Email</span>
@@ -54,6 +58,8 @@
         }
       </label>
 
+      <a class="forgot-link" routerLink="/auth/forgot-password">Quên mật khẩu?</a>
+
       @if (authStore.error()) {
         <app-feedback-banner tone="error" [message]="authStore.error()!" />
       }
@@ -67,6 +73,7 @@
       </button>
     </form>
 
+    <p class="privacy-note"><a routerLink="/auth/verify-email">Chưa nhận được email xác thực?</a></p>
     <p class="privacy-note">Thông tin đăng nhập được gửi trực tiếp tới meumip backend qua session bảo mật.</p>
     <p class="privacy-note">Chưa có tài khoản? <a routerLink="/register">Đăng ký tại đây</a>.</p>
   </div>

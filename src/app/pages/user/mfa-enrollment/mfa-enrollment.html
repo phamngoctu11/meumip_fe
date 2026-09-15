@@ -1,0 +1,38 @@
+<section class="login-page enrollment-page">
+  <div class="login-art" aria-hidden="true"><span class="art-sparkle art-sparkle--one">✦</span><span class="art-sparkle art-sparkle--two">♡</span><div class="art-sticker"><span>secure the</span><strong>studio!</strong></div><p>thiết lập Authenticator cho tài khoản quản trị</p></div>
+  <div class="login-panel">
+    <a class="back-link" routerLink="/login"><span>←</span> Đăng nhập lại</a>
+    @if (stage() === 'email') {
+      <div class="auth-icon" aria-hidden="true">✉</div><div class="login-heading"><p>step 1 of 3</p><h1>Cho phép thiết lập MFA</h1><div>Backend sẽ gửi một liên kết dùng một lần tới email admin. Hãy mở link trên cùng trình duyệt đang giữ challenge đăng nhập.</div></div>
+      <div class="flow-actions">
+        @if (success()) { <app-feedback-banner tone="success" [message]="success()!" /> }
+        @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }
+        <button class="button button--primary login-button" type="button" [disabled]="submitting()" (click)="requestEnrollmentEmail()">{{ submitting() ? 'Đang gửi...' : 'Gửi email thiết lập MFA' }}</button>
+      </div>
+    } @else if (stage() === 'token') {
+      <div class="auth-icon" aria-hidden="true">2</div><div class="login-heading"><p>step 2 of 3</p><h1>Bắt đầu thiết lập</h1><div>Liên kết đã sẵn sàng. Token chỉ được dùng khi bạn bấm tiếp tục.</div></div>
+      @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }
+      <button class="button button--primary login-button" type="button" [disabled]="submitting()" (click)="setup()">{{ submitting() ? 'Đang chuẩn bị...' : 'Tiếp tục thiết lập' }}</button>
+    } @else if (stage() === 'setup') {
+      <div class="auth-icon" aria-hidden="true">⌁</div><div class="login-heading"><p>step 2 of 3</p><h1>Quét mã QR</h1><div>Quét bằng ứng dụng Authenticator, sau đó nhập mã 6 số hiện tại. QR được tạo ngay trong trình duyệt.</div></div>
+      @if (qrDataUrl()) { <img class="qr-code" [src]="qrDataUrl()!" alt="Mã QR thiết lập ứng dụng Authenticator" /> }
+      @if (enrollment(); as setup) { <div class="secret-box"><span>Không quét được? Nhập secret thủ công</span><code>{{ setup.secret }}</code><button class="text-button" type="button" (click)="copySecret()">Sao chép secret</button></div> }
+      <form [formGroup]="codeForm" (ngSubmit)="confirm()" novalidate>
+        <label class="field"><span>Mã 6 số từ Authenticator</span><input formControlName="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" />
+          @if (codeForm.controls.code.invalid && codeForm.controls.code.touched) { <small>Mã xác thực phải gồm đúng 6 chữ số.</small> }
+        </label>
+        @if (success()) { <app-feedback-banner tone="success" [message]="success()!" /> }
+        @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }
+        <button class="button button--primary login-button" type="submit" [disabled]="submitting()">{{ submitting() ? 'Đang xác nhận...' : 'Xác nhận và bật MFA' }}</button>
+      </form>
+    } @else {
+      <div class="auth-icon auth-icon--success" aria-hidden="true">✓</div><div class="login-heading"><p>step 3 of 3</p><h1>Lưu recovery codes</h1><div>Đây là lần duy nhất các mã này được hiển thị. Mỗi mã chỉ sử dụng được một lần.</div></div>
+      <app-feedback-banner tone="success" message="MFA đã được bật. Hãy lưu các mã dưới đây ở nơi an toàn và ngoại tuyến." />
+      <ul class="recovery-grid">@for (code of recoveryCodes(); track code) { <li><code>{{ code }}</code></li> }</ul>
+      <div class="recovery-actions"><button class="button button--secondary" type="button" (click)="copyRecoveryCodes()">Sao chép</button><button class="button button--secondary" type="button" (click)="downloadRecoveryCodes()">Tải file .txt</button></div>
+      @if (success()) { <app-feedback-banner tone="info" [message]="success()!" /> }
+      <p class="flow-note">Đăng nhập lại và dùng mã TOTP của chu kỳ tiếp theo; không dùng lại mã vừa xác nhận.</p>
+      <a class="button button--primary action-link" routerLink="/login">Đăng nhập lại</a>
+    }
+  </div>
+</section>
