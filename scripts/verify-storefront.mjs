@@ -115,7 +115,7 @@ try {
   await page.getByRole('button', { name: 'Trang cuối', exact: true }).click();
   await waitFor(async () => (await page.locator('.page-status').innerText()) === 'Trang 11 / 11', 'Last page');
   assert.equal(await page.locator('.product-card').count(), 5);
-  await page.getByRole('button', { name: 'Phôi', exact: true }).click();
+  await page.locator('.category-filter select').selectOption('BLANK');
   await waitFor(async () => (await page.locator('.page-status').innerText()) === 'Trang 1 / 4', 'Category resets page');
 
   await page.getByRole('button', { name: 'Tìm sản phẩm', exact: true }).click();
@@ -151,10 +151,12 @@ try {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(base + '/products/1');
   await page.locator('.product-detail').waitFor();
+  await captureTop('product-detail-390.png');
   await page.locator('.add-button').click();
   await waitFor(() => Promise.resolve(cart.itemCount === 1), 'Add to cart retains API payload');
   await page.goto(base + '/cart'); await page.locator('.cart-item').waitFor(); await noOverflow('cart');
   await page.goto(base + '/checkout'); await page.locator('.checkout-form').waitFor(); await noOverflow('checkout');
+  await captureTop('checkout-390.png');
   await page.locator('.submit-button').click();
   await page.locator('input.ng-invalid.ng-touched').first().waitFor();
   for (const [field, value] of Object.entries({ email: 'fixture@example.com', recipientName: 'Khách kiểm thử', recipientPhone: '0900000000', province: 'Hồ Chí Minh', addressLine: 'Địa chỉ kiểm thử' })) await page.locator('[formControlName="' + field + '"]').fill(value);
@@ -176,6 +178,7 @@ try {
     '/products/2',
   ]) {
     await page.goto(base + route); await page.waitForTimeout(200); await noOverflow(route);
+    if (route === '/login') await captureTop('login-390.png');
   }
 
   await page.goto(base); await ready();

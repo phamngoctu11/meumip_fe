@@ -6,7 +6,7 @@
     <div class="order-loading"><span></span><span></span></div>
   } @else if (order(); as currentOrder) {
     <header class="order-heading">
-      <div><p>your order</p><h1>#{{ currentOrder.orderCode }}</h1><span>Đặt lúc {{ currentOrder.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span></div>
+    <div><p>Đơn hàng của bạn</p><h1>#{{ currentOrder.orderCode }}</h1><span>Đặt lúc {{ currentOrder.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span></div>
       <div class="status-group"><span [attr.data-status]="currentOrder.orderStatus">{{ orderStatusLabel(currentOrder.orderStatus) }}</span><small>{{ paymentStatusLabel(currentOrder.paymentStatus) }}</small></div>
     </header>
     <div class="order-grid">

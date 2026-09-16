@@ -19,19 +19,19 @@
 }
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 :root {
-  --font-hand: 'Mali', 'Nunito', sans-serif;
-  --ink: #916e56;
+  --font-hand: 'Nunito', 'Arial Rounded MT Bold', sans-serif;
+  --ink: #765445;
   --frame-pink: #ffd0d5;
   --doodle-pink: #f5aacd;
   --sky: #cfe7ff;
   --cream: #fffaf6;
   --cream-deep: #fff3ed;
-  --cocoa: #70402e;
+  --cocoa: #684434;
   --caramel: #bd835f;
   --caramel-dark: #a96f4d;
-  --berry: #a65e7b;
+  --berry: #934d69;
   --pink: #ea9fc2;
-  --pink-strong: #df78aa;
+  --pink-strong: #b9577c;
   --pink-soft: #fbe7f0;
   --sage: #9db89f;
   --sage-soft: #edf5eb;
@@ -41,7 +41,7 @@
   --muted: #8f7768;
   --font-display: 'Nunito', 'Arial Rounded MT Bold', sans-serif;
   --font-rounded: 'Nunito', 'Arial Rounded MT Bold', sans-serif;
-  --font-body: 'Karla', Arial, sans-serif;
+  --font-body: 'Nunito', Arial, sans-serif;
   --shadow-soft: 0 18px 55px rgba(122, 82, 57, 0.12);
   --line: #f2dcd5;
   --theme-header: #ffeaed;
@@ -217,19 +217,16 @@ textarea {
     box-shadow 160ms ease;
 
   &--primary {
-    background: var(--cocoa);
-    box-shadow: 0 6px 0 var(--caramel-dark);
+    background: var(--caramel-dark);
     color: white;
 
     &:hover:not(:disabled) {
       background: var(--pink-strong);
-      box-shadow: 0 6px 0 var(--berry);
       transform: translateY(-2px);
     }
 
     &:active:not(:disabled) {
-      box-shadow: 0 2px 0 var(--berry);
-      transform: translateY(3px);
+      transform: translateY(1px);
     }
   }
 

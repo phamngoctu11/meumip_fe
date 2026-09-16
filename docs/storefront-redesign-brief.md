@@ -24,7 +24,7 @@ assets below have been selected or approved.
 - Keep the administration area function-first for the initial redesign phase.
 - Use reusable Angular components and typed `FormBuilder` forms.
 - The backend remains available at `http://localhost:8080`.
-- The `meumip.co` logo will be supplied as an SVG and optionally a transparent
+- The `meumip&co` logo will be supplied as an SVG and optionally a transparent
   PNG fallback. The SVG wordmark must be outlined so it does not depend on a
   client-installed font.
 - The primary handwritten font will be self-hosted as WOFF2 and must include
@@ -94,7 +94,7 @@ assets below have been selected or approved.
 
 ## Asset checklist before visual implementation is finalized
 
-- [ ] Approved `meumip.co` SVG wordmark.
+- [ ] Approved `meumip&co` SVG wordmark.
 - [ ] Transparent PNG logo fallback.
 - [ ] Approved handwritten web font with Vietnamese support.
 - [ ] WOFF2 files for only the weights actually used.

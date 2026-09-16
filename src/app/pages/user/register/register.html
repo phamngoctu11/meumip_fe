@@ -2,14 +2,14 @@
   <div class="login-art" aria-hidden="true">
     <span class="art-sparkle art-sparkle--one">✦</span>
     <span class="art-sparkle art-sparkle--two">♡</span>
-    <div class="art-sticker"><span>join</span><strong>meumip!</strong></div>
+    <div class="art-sticker"><span>tham gia</span><strong>meumip!</strong></div>
     <p>một tài khoản nhỏ để giữ lại những đơn hàng đáng yêu</p>
   </div>
 
   <div class="login-panel">
     <a class="back-link" routerLink="/"><span>←</span> Quay về tiệm</a>
     <div class="login-heading">
-      <p>new friend</p>
+      <p>Người bạn mới</p>
       <h1>Đăng ký</h1>
       <div>Tạo tài khoản để theo dõi các món đồ đang được meumip chuẩn bị cho bạn.</div>
     </div>
@@ -41,7 +41,7 @@
 
       @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }
       <button class="button button--primary login-button" type="submit" [disabled]="submitting()">
-        {{ submitting() ? 'Đang tạo tài khoản...' : 'Tạo tài khoản ♡' }}
+        {{ submitting() ? 'Đang tạo tài khoản...' : 'Tạo tài khoản' }}
       </button>
     </form>
     <p class="privacy-note">Đã có tài khoản? <a routerLink="/login">Đăng nhập tại đây</a>.</p>

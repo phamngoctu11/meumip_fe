@@ -10,7 +10,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        title: 'meumip — Lovely handmade things',
+        title: 'meumip — Những món đồ thủ công bé xinh',
         loadComponent: () => import('./pages/user/home/home').then((page) => page.Home),
       },
       {

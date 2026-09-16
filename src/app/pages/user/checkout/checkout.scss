@@ -34,17 +34,6 @@
     font-size: 1.35rem;
     font-weight: 700;
 
-    span {
-      display: grid;
-      width: 2rem;
-      height: 2rem;
-      place-items: center;
-      border-radius: 50%;
-      background: var(--pink-soft);
-      color: var(--berry);
-      font-family: var(--font-body);
-      font-size: 0.66rem;
-    }
   }
 }
 
@@ -221,7 +210,7 @@
       font-family: var(--font-rounded);
       font-size: 0.9rem;
       text-overflow: ellipsis;
-      text-transform: lowercase;
+      &::first-letter { text-transform: uppercase; }
       white-space: nowrap;
     }
 

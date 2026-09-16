@@ -3,17 +3,17 @@
     <span class="art-sparkle art-sparkle--one">✦</span>
     <span class="art-sparkle art-sparkle--two">♡</span>
     <div class="art-sticker">
-      <span>hello</span>
-      <strong>again!</strong>
+      <span>chào bạn</span>
+      <strong>trở lại!</strong>
     </div>
-    <p>lovely to see you back at meumip</p>
+    <p>Thật vui khi bạn quay lại meumip</p>
   </div>
 
   <div class="login-panel">
     <a class="back-link" routerLink="/"><span>←</span> Quay về tiệm</a>
 
     <div class="login-heading">
-      <p>welcome back</p>
+      <p>Chào mừng trở lại</p>
       <h1>Đăng nhập</h1>
       <div>Đăng nhập để xem đơn hàng và lưu thông tin nhận hàng của bạn.</div>
     </div>
@@ -68,13 +68,13 @@
         @if (authStore.submitting()) {
           Đang đăng nhập...
         } @else {
-          Đăng nhập <span>♡</span>
+          Đăng nhập
         }
       </button>
     </form>
 
     <p class="privacy-note"><a routerLink="/auth/verify-email">Chưa nhận được email xác thực?</a></p>
-    <p class="privacy-note">Thông tin đăng nhập được gửi trực tiếp tới meumip backend qua session bảo mật.</p>
+    <p class="privacy-note">Thông tin đăng nhập của bạn được truyền qua kết nối bảo mật.</p>
     <p class="privacy-note">Chưa có tài khoản? <a routerLink="/register">Đăng ký tại đây</a>.</p>
   </div>
 </section>

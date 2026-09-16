@@ -45,7 +45,7 @@
       margin: 0;
       font-family: var(--font-rounded);
       font-size: 1.35rem;
-      text-transform: lowercase;
+      &::first-letter { text-transform: uppercase; }
 
       a {
         color: var(--cocoa);

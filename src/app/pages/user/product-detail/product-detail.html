@@ -31,10 +31,6 @@
         }
 
         @if (item.description) { <p class="description">{{ item.description }}</p> }
-        @if (item.tags.length) {
-          <div class="tag-list">@for (tag of item.tags; track tag) { <span>#{{ tag }}</span> }</div>
-        }
-
         @if (item.type === 'KIT' && item.kitComponents.length) {
           <div class="divider">♡</div>
           <dl class="product-notes">
@@ -78,12 +74,15 @@
           </section>
         }
 
-        <form class="buy-row" [formGroup]="cartForm" (ngSubmit)="addToCart()">
-          <app-quantity-stepper formControlName="quantity" [disabled]="cartStore.loading()" />
-          <button class="add-button" type="submit" [disabled]="cartStore.loading() || cartForm.invalid || (item.type === 'KIT' && !comboSelectionReady())">
-            {{ cartStore.loading() ? 'Đang thêm...' : 'Thêm vào giỏ' }} <span>♡</span>
-          </button>
-        </form>
+        <div class="purchase-panel">
+          <span>Số lượng</span>
+          <form class="buy-row" [formGroup]="cartForm" (ngSubmit)="addToCart()">
+            <app-quantity-stepper formControlName="quantity" [disabled]="cartStore.loading()" />
+            <button class="add-button" type="submit" [disabled]="cartStore.loading() || cartForm.invalid || (item.type === 'KIT' && !comboSelectionReady())">
+              {{ cartStore.loading() ? 'Đang thêm...' : 'Thêm vào giỏ' }}
+            </button>
+          </form>
+        </div>
 
         @if (added()) { <app-feedback-banner tone="success" message="Đã thêm sản phẩm vào giỏ hàng." /> }
         @if (error()) { <app-feedback-banner tone="error" [message]="error()!" /> }

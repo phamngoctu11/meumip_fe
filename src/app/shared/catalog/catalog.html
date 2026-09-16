@@ -1,10 +1,8 @@
 <section #catalog class="catalog" id="products-section" aria-labelledby="catalog-title">
   <div class="catalog-heading"><div><span class="eyebrow">góc nhỏ của meumip</span><h2 id="catalog-title">Những món bé xinh <span aria-hidden="true">♡</span></h2></div><span class="catalog-count" aria-live="polite">@if (!loading() && !error()) { {{ filtered().length }} sản phẩm }</span></div>
-  <nav class="category-tabs" aria-label="Loại sản phẩm">
-    @for (item of types; track item.value) { <button type="button" [class.active]="type() === item.value" [attr.aria-pressed]="type() === item.value" (click)="updateFilter('type', item.value)">{{ item.label }}</button> }
-  </nav>
   <div class="catalog-toolbar">
-    <label class="tag-filter"><span class="sr-only">Danh mục / bộ sưu tập</span><select [value]="tag()" (change)="updateFilter('tag', $any($event.target).value)"><option value="">Danh mục</option>@for (item of tags(); track item) { <option [value]="item">{{ item }}</option> }</select></label>
+    <label class="category-filter"><span class="sr-only">Loại sản phẩm</span><select [value]="type()" (change)="updateFilter('type', $any($event.target).value)">@for (item of types; track item.value) { <option [value]="item.value">{{ item.value ? item.label : 'Danh mục' }}</option> }</select></label>
+    <label class="tag-filter"><span class="sr-only">Bộ sưu tập</span><select [value]="tag()" (change)="updateFilter('tag', $any($event.target).value)"><option value="">Bộ sưu tập</option>@for (item of tags(); track item) { <option [value]="item">{{ item }}</option> }</select></label>
     <label class="sort-filter"><span class="sr-only">Sắp xếp sản phẩm</span><select [value]="sort()" (change)="updateFilter('sort', $any($event.target).value)"><option value="newest">Mới nhất</option><option value="price-asc">Giá thấp → cao</option><option value="price-desc">Giá cao → thấp</option><option disabled>Phổ biến · sắp có</option></select></label>
     <div class="grid-controls" aria-label="Số cột sản phẩm"><button type="button" aria-label="Hiển thị 2 cột" [attr.aria-pressed]="ui.columns() === 2" [class.active]="ui.columns() === 2" (click)="ui.setColumns(2)"><app-shop-icon name="grid2" /></button><button type="button" aria-label="Hiển thị 3 cột" [attr.aria-pressed]="ui.columns() === 3" [class.active]="ui.columns() === 3" (click)="ui.setColumns(3)"><app-shop-icon name="grid3" /></button></div>
   </div>

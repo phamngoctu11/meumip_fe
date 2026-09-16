@@ -1,7 +1,7 @@
 // Only publish verified contact/payment details here. Never use the sample
 // account number from the design sketches for real payments.
 export const STOREFRONT = {
-  name: 'meumip.co',
+  name: 'meumip&co',
   instagram: 'https://www.instagram.com/',
   tiktok: 'https://www.tiktok.com/',
   facebook: 'https://www.facebook.com/',

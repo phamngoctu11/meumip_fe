@@ -5,7 +5,7 @@
       <button class="icon-button" type="button" (click)="openDrawer()" aria-label="Mở menu" aria-controls="shop-drawer" [attr.aria-expanded]="drawerOpen()"><app-shop-icon name="menu" /></button>
       <button class="icon-button" type="button" (click)="openSearch()" aria-label="Tìm sản phẩm"><app-shop-icon name="search" /></button>
     </div>
-    <a class="mini-brand" routerLink="/" aria-label="meumip.co — Trang chủ">meumip<span>.co</span><i aria-hidden="true">♡</i></a>
+    <a class="mini-brand" routerLink="/" aria-label="meumip&co — Trang chủ">meumip<span>&co</span></a>
     <div class="primary-links">
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Trang chủ</a>
       <a routerLink="/products" routerLinkActive="active">Sản phẩm</a>
@@ -29,7 +29,7 @@
 
 <dialog #drawer id="shop-drawer" class="drawer" aria-labelledby="drawer-title" (click)="closeBackdrop($event)" (close)="onDialogClose($event)">
   <div class="drawer-content">
-    <div class="drawer-heading"><a id="drawer-title" class="mini-brand" routerLink="/">meumip.co</a><button class="icon-button" type="button" autofocus (click)="closeAll()" aria-label="Đóng menu"><app-shop-icon name="close" /></button></div>
+    <div class="drawer-heading"><a id="drawer-title" class="mini-brand" routerLink="/">meumip&co</a><button class="icon-button" type="button" autofocus (click)="closeAll()" aria-label="Đóng menu"><app-shop-icon name="close" /></button></div>
     @if (authStore.user(); as user) {
       <p class="greeting">Chào {{ user.displayName }} ♡</p>
       <div class="account-links">
@@ -45,7 +45,6 @@
       <a routerLink="/products"><app-shop-icon name="star" /> Khám phá sản phẩm</a>
       <a routerLink="/cart"><app-shop-icon name="cart" /> Giỏ hàng <span>{{ cartStore.itemCount() }}</span></a>
       <a routerLink="/orders"><app-shop-icon name="orders" /> Lịch sử mua hàng</a>
-      <button type="button" (click)="closeAll(); themeStore.openPicker()"><app-shop-icon name="palette" /> Đổi màu giao diện</button>
       <button type="button" (click)="closeAll(); ui.voucherOpen.set(true)"><app-shop-icon name="gift" /> Ví voucher</button>
     </nav>
     <app-shop-details [compact]="true" />

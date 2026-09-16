@@ -10,8 +10,9 @@
 .image-action { position: absolute; bottom: 1rem; left: 50%; padding: .5rem .8rem; border-radius: 20px; background: #fffaf6; color: #a45579; font-size: .75rem; font-weight: 700; white-space: nowrap; opacity: 0; transform: translate(-50%, 6px); transition: .2s; }
 .product-link:hover .image-action, .product-link:focus-visible .image-action { opacity: 1; transform: translate(-50%, 0); }
 .product-info { padding: .8rem .2rem .1rem; text-align: center; }
-h3 { display: -webkit-box; margin: 0 0 .35rem; overflow: hidden; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: anywhere; font: 600 .95rem/1.7 var(--font-hand, var(--font-rounded)); transition: color .18s; }
-strong { font: 800 .9rem/1.6 var(--font-rounded); color: #986e58; transition: color .18s; }
+h3 { display: -webkit-box; margin: 0 0 .35rem; overflow: hidden; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow-wrap: anywhere; font: 700 .95rem/1.55 var(--font-rounded); transition: color .18s; }
+h3::first-letter { text-transform: uppercase; }
+strong { font: 800 .9rem/1.6 var(--font-rounded); color: var(--pink-strong); transition: color .18s; }
 .product-link:hover h3, .product-link:focus-visible h3, .product-link:active h3, .product-link:hover strong, .product-link:active strong { color: #c16b92; }
 @media (max-width: 600px) {
   .product-image { border-width: 3px; }
